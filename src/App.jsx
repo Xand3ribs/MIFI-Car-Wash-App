@@ -3,10 +3,12 @@ import Header from "./components/header";
 
 function App() {
   return (
-    <div>
-      <Header />
-      <Hero />
-    </div>
+    
+      <div className="container min-h-screen bg-navy-deep flex flex-col">
+        <Header />
+        <Hero />
+      </div>
+    
   );
 }
 
