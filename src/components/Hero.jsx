@@ -9,9 +9,9 @@ function Hero() {
 
         <div className="container px-4">
 
-          <div className="flex flex-col items-start justify-center gap-6 pl-16 w-[500px] text-white">
-
-            <h1 className="text-[3rem]">We Bring the wash to you </h1>
+          <div className="flex flex-col items-start justify-center gap-6 lg:pl-16 w-auto lg:w-[500px] text-white">
+ 
+            <h1 className="text-[2.5rem] lg:text-[3rem]">We Bring the wash to you </h1>
 
             <p className="text-lg">Lorem ipsum dolor sit amet consectetur adipisicing elit. </p>
 
