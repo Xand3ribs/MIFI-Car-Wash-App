@@ -1,12 +1,19 @@
 import Hero from "./components/Hero";
 import Header from "./components/header";
+import Footer from "./components/footer";
 
 function App() {
   return (
     
-      <div className="container min-h-screen bg-navy-deep flex flex-col">
+      <div className="container flex flex-col">
         <Header />
-        <Hero />
+
+        <main className="flex-grow">
+
+          <Hero />
+        </main>
+
+        <Footer />
       </div>
     
   );
