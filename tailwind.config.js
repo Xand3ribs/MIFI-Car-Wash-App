@@ -2,6 +2,16 @@ module.exports = {
   content: ["./src/**/*.{js,jsx}"],
   plugins: [require("daisyui")],
   theme: {
+    screens: {
+      // 'xs': '475px',
+      'sm': '475px',
+      'md': '640px',
+      'lg': '768px',
+      'xl': '1024px',
+      '2xl': '1280px',
+      '3xl': '1400px',
+    },
+
     extend: {
       colors: {
         'navy-deep': '#0B1220',

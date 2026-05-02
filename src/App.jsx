@@ -1,21 +1,16 @@
-import Hero from "./components/Hero";
-import Header from "./components/header";
-import Footer from "./components/footer";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Booking from "./pages/Booking";
+import Home from "./pages/Home"
+import AppRoutes from "./routes";
+
 
 function App() {
   return (
+    <BrowserRouter>
     
-      <div className="container flex flex-col">
-        <Header />
+      <AppRoutes />
 
-        <main className="flex-grow">
-
-          <Hero />
-        </main>
-
-        <Footer />
-      </div>
-    
+    </BrowserRouter>
   );
 }
 
