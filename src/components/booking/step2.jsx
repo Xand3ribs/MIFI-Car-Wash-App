@@ -22,8 +22,8 @@ function ChangeView({ center }) {
   return null;
 }
 
-function Step2() {
-  const [address, setAddress] = useState('');
+function Step2({ address, setAddress }) {
+ 
   const [manualDetails, setManualDetails] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -121,7 +121,7 @@ function Step2() {
               Enter your street name
             </label>
 
-            <label className="input flex items-center gap-2 bg-gray-dark rounded-2xl p-4 text-white">
+            <label className="input flex items-center gap-2 bg-gray-dark rounded-2xl p-4 text-white border border-border-dark">
               <svg
                 className="h-[1em] opacity-50"
                 xmlns="http://www.w3.org/2000/svg"
@@ -185,7 +185,7 @@ function Step2() {
           </div>
 
           {/* additional details */}
-          <div className="mt-10">
+          <div className="mt-4 lg:mt-10">
             <label className="text-white text-sm mb-2 block font-medium">
               House Number / Building Details
             </label>

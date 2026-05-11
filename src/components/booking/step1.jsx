@@ -39,9 +39,7 @@ function Step1({
           {/* vehicle selection */}
           <div
             className="flex flex-col gap-6 w-full text-[1rem] sm:text-[1.5rem]
-                    [&>div]:
-                    [&>div>div]:flex [&>div>div]:items-center [&>div>div]:gap-2
-                    [&_p]:"
+                    [&>div>div]:flex [&>div>div]:items-center [&>div>div]:gap-2"
           >
             {vehicles.map((vehicle, index) => (
               <div

@@ -21,7 +21,7 @@ function Hero() {
 
             <Link
               to="/booking"
-              className="btn bg-blue-action text-white  rounded-field w-auto"
+              className="btn bg-blue-action  text-navy-deep btn-lg rounded-field w-auto"
             >
               Book a Wash Now
             </Link>

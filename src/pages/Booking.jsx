@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import Step1 from '../components/booking/step1';
 import Step2 from '../components/booking/step2';
+import Step3 from '../components/booking/step3';
+import Step4 from '../components/booking/step4';
 
 function Booking() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -21,9 +23,38 @@ function Booking() {
   const progress = (currentStep / 5) * 100;
 
   const [selectedVehicle, setSelectedVehicle] = useState(null);
+
   const [selectedService, setSelectedService] = useState(null);
 
-  const isContinueDisabled = !selectedVehicle || !selectedService;
+  const [address, setAddress] = useState('');
+
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const [selectedTime, setSelectedTime] = useState(null);
+
+  const [userInfo, setUserInfo] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: ''
+  });
+
+  // btn continue disabled state logic
+  const isContinueDisabled = (() => {
+    if (currentStep === 1) {
+      return !selectedVehicle || !selectedService;
+    }
+    if (currentStep === 2) {
+      return !address;
+    }
+    if (currentStep === 3) {
+      return !selectedDate || !selectedTime;
+    }
+    if (currentStep === 4) {
+      return !userInfo.firstName || !userInfo.lastName || !userInfo.email || userInfo.phone.length < 10;
+    }
+    return false;
+  })();
 
   return (
     <div className="flex flex-col justify-between h-screen bg-navy-deep [&>div]: ">
@@ -63,6 +94,7 @@ function Booking() {
 
       {/* booking content */}
       <div className="px-10 py-8 flex-1 overflow-y-auto">
+
         {currentStep === 1 && (
           <Step1
             selectedVehicle={selectedVehicle}
@@ -72,7 +104,26 @@ function Booking() {
           />
         )}
 
-        {currentStep === 2 && <Step2 />}
+        {currentStep === 2 &&  (<Step2 
+
+          address={address}
+          setAddress={setAddress}
+        /> )}
+
+        {currentStep === 3 &&  (<Step3 
+
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          selectedTime={selectedTime}
+          setSelectedTime={setSelectedTime}
+        />)}
+
+        {currentStep === 4 &&  (<Step4 
+          userInfo={userInfo}
+          setUserInfo={setUserInfo}
+        />)}
+
+        {currentStep === 5 && <Step5 />}
       </div>
 
       {/* Footer */}
