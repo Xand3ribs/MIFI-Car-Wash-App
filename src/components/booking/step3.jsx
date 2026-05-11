@@ -50,7 +50,7 @@ function Step3({ selectedDate, setSelectedDate, selectedTime, setSelectedTime })
             Time Slot
           </label>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
 
             {timeSlots.map((time) => {
 

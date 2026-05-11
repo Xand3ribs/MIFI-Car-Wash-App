@@ -185,7 +185,7 @@ function Step2({ address, setAddress }) {
           </div>
 
           {/* additional details */}
-          <div className="mt-10">
+          <div className="mt-4 lg:mt-10">
             <label className="text-white text-sm mb-2 block font-medium">
               House Number / Building Details
             </label>

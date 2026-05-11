@@ -13,18 +13,18 @@ function Step4({ userInfo, setUserInfo }) {
             </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-16 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 
         [&>div]:flex [&>div]:flex-col [&>div]:gap-3
-        [&_input]:w-full  [&_input]:text-xl [&_input]:bg-gray-dark 
+        [&_input]:w-full [&_input]:text-lg  [&_input]:lg:text-xl [&_input]:bg-gray-dark 
         [&_.input]:flex [&_.input]:items-center [&_.input]:gap-2 [&_.input]:text-white
          [&_.input]:rounded-2xl  [&_input]:placeholder:italic
-        [&_.input]:bg-gray-dark [&_.input]:p-[28px]
+        [&_.input]:bg-gray-dark [&_.input]:p-[20px] [&_.input]:lg:p-[28px]
         [&_svg]:h-[1em] [&_svg]:opacity-50">
 
         {/* firstname */}
         <div>
 
-            <label className="text-2xl text-white">First-name :</label>
+            <label className="text-lg lg:text-2xl text-white">First-name :</label>
 
             <label className="input validator border border-border-dark focus-within:border-blue-action">
 
@@ -57,7 +57,7 @@ function Step4({ userInfo, setUserInfo }) {
 
         {/* lastname */}
         <div>
-            <label className="text-2xl text-white">Last-name :</label>
+            <label className="text-lg lg:text-2xl text-white">Last-name :</label>
 
             <label className="input validator border-border-dark focus-within:border-blue-action">
 
@@ -91,7 +91,7 @@ function Step4({ userInfo, setUserInfo }) {
 
         {/* email */}
         <div>
-            <label className="text-2xl text-white">E-mail :</label>
+            <label className="text-lg lg:text-2xl text-white">E-mail :</label>
 
             <label className="input validator border-border-dark focus-within:border-blue-action">
 
@@ -122,7 +122,7 @@ function Step4({ userInfo, setUserInfo }) {
 
         {/* phone number */}
         <div>
-            <label className="text-2xl text-white">Phone No :</label>
+            <label className="text-lg lg:text-2xl text-white">Phone No :</label>
 
             <label className="input validator border-border-dark focus-within:border-blue-action">
 
