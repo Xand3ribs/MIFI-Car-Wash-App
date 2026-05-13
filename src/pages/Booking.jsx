@@ -7,7 +7,7 @@ import Step4 from '../components/booking/step4';
 import Step5 from '../components/booking/step5';
 
 function Booking() {
-  const [currentStep, setCurrentStep] = useState(5);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const nextStep = () => {
     if (currentStep < 5) {

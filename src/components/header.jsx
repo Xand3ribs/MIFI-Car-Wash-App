@@ -1,14 +1,21 @@
+import { Link } from "react-router-dom";
+
 function Header() {
   return (
     <div className="navbar bg-white lg:pt-5 lg:pb-4 lg:px-3 pt-3 pb-3 px-2">
       <div className="container flex flex-row w-full justify-between ">
         {/* logo */}
-        <h1 className="text-[2rem] lg:text-[2.5rem]">MiFai Wash</h1>
-
+        <a href="/" className="flex items-center">
+          <img 
+            src="src\assets\mifai-logo.png" 
+            alt="MiFai Wash - Home" 
+            className="h-[100px] w-auto" 
+          />
+        </a>
         {/* Log in */}
-        <div className="hidden btn bg-blue-action text-white rounded-field w-auto lg:flex">
+       <Link to="/login" className="hidden btn bg-blue-action text-white rounded-field w-auto lg:flex">
           Log In
-        </div>
+        </Link>
 
         <div className="btn btn-circle btn-ghost lg:hidden">
           <svg
