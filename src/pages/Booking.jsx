@@ -4,9 +4,10 @@ import Step1 from '../components/booking/step1';
 import Step2 from '../components/booking/step2';
 import Step3 from '../components/booking/step3';
 import Step4 from '../components/booking/step4';
+import Step5 from '../components/booking/step5';
 
 function Booking() {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(5);
 
   const nextStep = () => {
     if (currentStep < 5) {
@@ -38,6 +39,16 @@ function Booking() {
     email: '',
     phone: ''
   });
+
+  const handleFinalSubmit = () => {
+  // Here is where you would normally do your API call/Database save
+  console.log("Final Data:", { selectedVehicle, address, selectedDate, userInfo });
+  
+  // Show the success modal
+  setIsSuccess(true);
+};
+
+  const [isSuccess, setIsSuccess] = useState(false);
 
   // btn continue disabled state logic
   const isContinueDisabled = (() => {
@@ -123,7 +134,14 @@ function Booking() {
           setUserInfo={setUserInfo}
         />)}
 
-        {currentStep === 5 && <Step5 />}
+        {currentStep === 5 && <Step5 
+          selectedVehicle={selectedVehicle}
+          selectedService={selectedService}
+          address={address}
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
+          userInfo={userInfo}
+          /> }
       </div>
 
       {/* Footer */}
@@ -144,17 +162,46 @@ function Booking() {
         </button>
 
         <button
-          onClick={nextStep}
+          onClick={currentStep === 5 ? handleFinalSubmit : nextStep}
           disabled={isContinueDisabled}
-          className={`btn bg-blue-action text-navy-deep ${
-            isContinueDisabled ? 'brightness-50 cursor-not-allowed' : ''
-          }`}
+          className={`btn bg-blue-action text-navy-deep ${isContinueDisabled ? 'brightness-2' : ''}`}
         >
-          Continue
+          {currentStep === 5 ? 'Confirm Booking' : 'Continue'}
         </button>
       </div>
+
+        {isSuccess && (
+
+          <div className="modal modal-open">
+            <div className="modal-box bg-gray-dark border border-border-dark text-center py-10">
+
+              {/* Big Green Checkmark */}
+              <div className="flex justify-center mb-4">
+                <div className="bg-green-500/20 p-4 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </div>
+              
+              <h3 className="font-bold text-3xl text-white">Booking Confirmed!</h3>
+
+              <p className="py-4 text-text-secondary text-lg">
+                Thank you, {userInfo.firstName}. We've sent a confirmation email to {userInfo.email}.
+              </p>
+              
+              <div className="modal-action justify-center">
+                <Link to="/" className="btn bg-blue-action text-navy-deep w-full max-w-xs">
+                  Return Home
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
+
+
 }
 
 export default Booking;
