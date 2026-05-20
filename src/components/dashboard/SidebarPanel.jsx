@@ -6,9 +6,11 @@ import {
   UserRoundPen,
   Headphones,
   LogOut,
+  ChartNoAxesCombined,
+  UserCog,
 } from 'lucide-react';
 
-function SidebarPanel() {
+function SidebarPanel({ user }) {
   const baseStyle =
     'flex gap-2 text-xl items-center transition-all duration-200 p-4 border rounded-xl cursor-pointer';
 
@@ -26,10 +28,41 @@ function SidebarPanel() {
           Home
         </NavLink>
 
-        <NavLink to="/account/history" className={getNavLinkStyle}>
-          <History />
-          History
-        </NavLink>
+        {user?.role === 'admin' && (
+          <>
+            <NavLink to="/account/analytics" className={getNavLinkStyle}>
+              <ChartNoAxesCombined />
+              Analytics
+            </NavLink>
+
+            <NavLink to="/account/manage-washers" className={getNavLinkStyle}>
+              <UserCog />
+              Manage Washers
+            </NavLink>
+
+            <NavLink to="/account/manage-users" className={getNavLinkStyle}>
+              <UserCog />
+              Manage Users
+            </NavLink>
+          </>
+
+        )}
+
+        {user?.role === 'user' && (
+
+          <>
+
+            <NavLink to="/account/contact" className={getNavLinkStyle}>
+              <Headphones />
+              Support
+            </NavLink>
+
+             <NavLink to="/account/history" className={getNavLinkStyle}>
+              <History />
+              History
+            </NavLink>
+          </>
+        )}
 
         <NavLink to="/account/profile" className={getNavLinkStyle}>
           <UserRoundPen />
@@ -41,10 +74,7 @@ function SidebarPanel() {
           Settings
         </NavLink>
 
-        <NavLink to="/account/contact" className={getNavLinkStyle}>
-          <Headphones />
-          Support
-        </NavLink>
+        
       </div>
 
       <div className="mt-auto">

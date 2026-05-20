@@ -1,13 +1,16 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Booking from './pages/Booking';
-import Home from './pages/Home';
+import { BrowserRouter } from 'react-router-dom';
 import AppRoutes from './routes';
-import Login from './pages/Login';
+
+const currentUser = {
+  name: "jojoi",
+  role: "admin", 
+  slug: "mifai-boss"
+};
 
 function App() {
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <AppRoutes user={currentUser} />
     </BrowserRouter>
   );
 }
