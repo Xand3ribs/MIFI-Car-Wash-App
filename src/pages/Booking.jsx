@@ -37,16 +37,21 @@ function Booking() {
     firstName: '',
     lastName: '',
     email: '',
-    phone: ''
+    phone: '',
   });
 
   const handleFinalSubmit = () => {
-  // Here is where you would normally do your API call/Database save
-  console.log("Final Data:", { selectedVehicle, address, selectedDate, userInfo });
-  
-  // Show the success modal
-  setIsSuccess(true);
-};
+    // Here is where you would normally do your API call/Database save
+    console.log('Final Data:', {
+      selectedVehicle,
+      address,
+      selectedDate,
+      userInfo,
+    });
+
+    // Show the success modal
+    setIsSuccess(true);
+  };
 
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -62,7 +67,12 @@ function Booking() {
       return !selectedDate || !selectedTime;
     }
     if (currentStep === 4) {
-      return !userInfo.firstName || !userInfo.lastName || !userInfo.email || userInfo.phone.length < 10;
+      return (
+        !userInfo.firstName ||
+        !userInfo.lastName ||
+        !userInfo.email ||
+        userInfo.phone.length < 10
+      );
     }
     return false;
   })();
@@ -105,7 +115,6 @@ function Booking() {
 
       {/* booking content */}
       <div className="px-10 py-8 flex-1 overflow-y-auto">
-
         {currentStep === 1 && (
           <Step1
             selectedVehicle={selectedVehicle}
@@ -115,33 +124,33 @@ function Booking() {
           />
         )}
 
-        {currentStep === 2 &&  (<Step2 
+        {currentStep === 2 && (
+          <Step2 address={address} setAddress={setAddress} />
+        )}
 
-          address={address}
-          setAddress={setAddress}
-        /> )}
+        {currentStep === 3 && (
+          <Step3
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            selectedTime={selectedTime}
+            setSelectedTime={setSelectedTime}
+          />
+        )}
 
-        {currentStep === 3 &&  (<Step3 
+        {currentStep === 4 && (
+          <Step4 userInfo={userInfo} setUserInfo={setUserInfo} />
+        )}
 
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          selectedTime={selectedTime}
-          setSelectedTime={setSelectedTime}
-        />)}
-
-        {currentStep === 4 &&  (<Step4 
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-        />)}
-
-        {currentStep === 5 && <Step5 
-          selectedVehicle={selectedVehicle}
-          selectedService={selectedService}
-          address={address}
-          selectedDate={selectedDate}
-          selectedTime={selectedTime}
-          userInfo={userInfo}
-          /> }
+        {currentStep === 5 && (
+          <Step5
+            selectedVehicle={selectedVehicle}
+            selectedService={selectedService}
+            address={address}
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+            userInfo={userInfo}
+          />
+        )}
       </div>
 
       {/* Footer */}
@@ -170,38 +179,51 @@ function Booking() {
         </button>
       </div>
 
-        {isSuccess && (
-
-          <div className="modal modal-open">
-            <div className="modal-box bg-gray-dark border border-border-dark text-center py-10">
-
-              {/* Big Green Checkmark */}
-              <div className="flex justify-center mb-4">
-                <div className="bg-green-500/20 p-4 rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-              </div>
-              
-              <h3 className="font-bold text-3xl text-white">Booking Confirmed!</h3>
-
-              <p className="py-4 text-text-secondary text-lg">
-                Thank you, {userInfo.firstName}. We've sent a confirmation email to {userInfo.email}.
-              </p>
-              
-              <div className="modal-action justify-center">
-                <Link to="/" className="btn bg-blue-action text-navy-deep w-full max-w-xs">
-                  Return Home
-                </Link>
+      {isSuccess && (
+        <div className="modal modal-open">
+          <div className="modal-box bg-gray-dark border border-border-dark text-center py-10">
+            {/* Big Green Checkmark */}
+            <div className="flex justify-center mb-4">
+              <div className="bg-green-500/20 p-4 rounded-full">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-16 w-16 text-green-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
               </div>
             </div>
+
+            <h3 className="font-bold text-3xl text-white">
+              Booking Confirmed!
+            </h3>
+
+            <p className="py-4 text-text-secondary text-lg">
+              Thank you, {userInfo.firstName}. We've sent a confirmation email
+              to {userInfo.email}.
+            </p>
+
+            <div className="modal-action justify-center">
+              <Link
+                to="/account/dashboard"
+                className="btn bg-blue-action text-navy-deep w-full max-w-xs"
+              >
+                Go to Dashboard
+              </Link>
+            </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
-
-
 }
 
 export default Booking;
