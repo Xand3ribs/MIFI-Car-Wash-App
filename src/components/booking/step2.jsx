@@ -23,7 +23,6 @@ function ChangeView({ center }) {
 }
 
 function Step2({ address, setAddress }) {
- 
   const [manualDetails, setManualDetails] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);

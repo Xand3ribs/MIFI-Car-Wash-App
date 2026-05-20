@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 function Header() {
   return (
@@ -6,14 +6,17 @@ function Header() {
       <div className="container flex flex-row w-full justify-between ">
         {/* logo */}
         <Link to="/" className="flex items-center">
-          <img 
-            src="src\assets\mifai-logo.png" 
-            alt="MiFai Wash - Home" 
-            className="h-16 lg:h-[100px] w-auto" 
+          <img
+            src="src\assets\mifai-logo.png"
+            alt="MiFai Wash - Home"
+            className="h-16 lg:h-[100px] w-auto"
           />
         </Link>
         {/* Log in */}
-       <Link to="/login" className="hidden btn bg-blue-action text-white rounded-field w-auto lg:flex">
+        <Link
+          to="/login"
+          className="hidden btn bg-blue-action text-white rounded-field w-auto lg:flex"
+        >
           Log In
         </Link>
 
