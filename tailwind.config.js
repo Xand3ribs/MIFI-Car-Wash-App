@@ -23,6 +23,7 @@ module.exports = {
         'green-success': '#22C55E',
         'border-dark': '#1F2937',
         'border-hover': '#374151',
+      
       }
     }
   }

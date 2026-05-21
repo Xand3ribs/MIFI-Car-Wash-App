@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 
-function DashboardNav() {
+function DashboardNav({user}) {
   return (
     <div className="navbar bg-navy-deep shadow-sm border-b border-border-dark fixed top-0 left-0 w-full z-[40] flex-shrink-0">
       <div className="container flex justify-between">
         {/* Hamburger menu */}
-        <div className="flex-none lg:hidden">
+        <div className="flex-none xl:hidden">
           <label
             htmlFor="sidebar-drawer"
             aria-label="open sidebar"
@@ -41,12 +41,14 @@ function DashboardNav() {
             />
           </Link>
 
-          <Link
-            to="/booking"
-            className="btn bg-blue-action  text-navy-deep btn-sm rounded-field w-auto hidden lg:flex"
-          >
-            Book New Wash
-          </Link>
+          {user?.role === 'user' && (
+            <Link
+              to="/booking"
+              className="btn bg-blue-action  text-navy-deep btn-sm rounded-field w-auto hidden lg:flex"
+            >
+              Book New Wash
+            </Link>
+          )}
         </div>
 
         {/* notification dropdown */}
