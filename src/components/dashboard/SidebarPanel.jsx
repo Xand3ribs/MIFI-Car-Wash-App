@@ -8,6 +8,10 @@ import {
   LogOut,
   ChartNoAxesCombined,
   UserCog,
+  ClipboardClock, 
+  Calendar,
+  HandCoins,
+
 } from 'lucide-react';
 
 function SidebarPanel({ user }) {
@@ -63,6 +67,28 @@ function SidebarPanel({ user }) {
             </NavLink>
           </>
         )}
+
+        {user?.role === 'washer' && (
+
+          <>
+
+            <NavLink to="/account/profile" className={getNavLinkStyle}>
+              <HandCoins />
+              Earnings Ledger
+            </NavLink>
+
+            <NavLink to="/account/profile" className={getNavLinkStyle}>
+              <Calendar />
+              My Schedule
+            </NavLink>
+
+            <NavLink to="/account/profile" className={getNavLinkStyle}>
+              <ClipboardClock />
+              Past Washes
+            </NavLink>
+
+          </>
+         )}
 
         <NavLink to="/account/profile" className={getNavLinkStyle}>
           <UserRoundPen />

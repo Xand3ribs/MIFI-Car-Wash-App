@@ -5,11 +5,7 @@ import Login from './pages/Login';
 import DashboardLayout from './layouts/DashboardLayout'; 
 import UserDashboard from './components/dashboard/UserDashboard';
 import AdminDashboardView from './components/dashboard/adminDashboard';
-
-// Quick placeholder for washer view
-function WasherDashboardView() {
-  return <div className="p-6 text-white text-xl font-bold">Washer Jobs Panel coming soon...</div>;
-}
+import WasherDashboardView from './components/dashboard/WasherDashboard';
 
 export default function AppRoutes({ user }) { // <-- Accept the user prop here
   return (
