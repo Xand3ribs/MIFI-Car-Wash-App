@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import BookingHub from './BookingHub';
-import FleetRoster from './FleetRoster';
+import BookingHub from './admin/BookingHub';
+import FleetRoster from './admin/FleetRoster';
 
 const INITIAL_BOOKINGS = [
   { id: 1, name: "John Doe", number: "BK001", car: "Honda Civic (Sedan)", time: "Thu, 10:30 AM", address: "123 Main St", status: "Pending" },

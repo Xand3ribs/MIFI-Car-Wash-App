@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Step1 from '../components/booking/step1';
 import Step2 from '../components/booking/step2';
 import Step3 from '../components/booking/step3';
@@ -41,18 +42,19 @@ function Booking() {
   });
 
   const handleFinalSubmit = () => {
-    // Here is where you would normally do your API call/Database save
+    // Keep your API/Database logic here
     console.log('Final Data:', {
       selectedVehicle,
+      selectedService,
       address,
       selectedDate,
+      selectedTime,
       userInfo,
     });
 
     // Show the success modal
     setIsSuccess(true);
   };
-
   const [isSuccess, setIsSuccess] = useState(false);
 
   // btn continue disabled state logic
@@ -214,6 +216,15 @@ function Booking() {
             <div className="modal-action justify-center">
               <Link
                 to="/account/dashboard"
+                state={{
+                  firstName: userInfo.firstName,
+                  vehicle: selectedVehicle,
+                  service: selectedService,
+                  address: address,
+                  date: selectedDate,
+                  time: selectedTime,
+                  hasActiveBooking: true 
+                }}
                 className="btn bg-blue-action text-navy-deep w-full max-w-xs"
               >
                 Go to Dashboard

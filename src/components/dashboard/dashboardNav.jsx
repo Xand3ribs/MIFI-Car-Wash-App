@@ -40,15 +40,6 @@ function DashboardNav({user}) {
               }}
             />
           </Link>
-
-          {user?.role === 'user' && (
-            <Link
-              to="/booking"
-              className="btn bg-blue-action  text-navy-deep btn-sm rounded-field w-auto hidden lg:flex"
-            >
-              Book New Wash
-            </Link>
-          )}
         </div>
 
         {/* notification dropdown */}

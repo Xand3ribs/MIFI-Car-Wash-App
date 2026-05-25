@@ -56,14 +56,14 @@ function SidebarPanel({ user }) {
 
           <>
 
-            <NavLink to="/account/contact" className={getNavLinkStyle}>
-              <Headphones />
-              Support
-            </NavLink>
-
              <NavLink to="/account/history" className={getNavLinkStyle}>
               <History />
               History
+            </NavLink>
+
+            <NavLink to="/account/contact" className={getNavLinkStyle}>
+              <Headphones />
+              Support
             </NavLink>
           </>
         )}
@@ -100,7 +100,6 @@ function SidebarPanel({ user }) {
           Settings
         </NavLink>
 
-        
       </div>
 
       <div className="mt-auto">
