@@ -6,8 +6,9 @@ import DashboardLayout from './layouts/DashboardLayout';
 import UserDashboard from './components/dashboard/UserDashboard';
 import AdminDashboardView from './components/dashboard/adminDashboard';
 import WasherDashboardView from './components/dashboard/WasherDashboard';
+import HistoryView from './components/dashboard/user/HistoryView';
 
-export default function AppRoutes({ user }) { // <-- Accept the user prop here
+export default function AppRoutes({ user }) { 
   return (
     <Routes>
       {/* Public Routes */}
@@ -17,36 +18,41 @@ export default function AppRoutes({ user }) { // <-- Accept the user prop here
 
       {/* Grouped Account Routes */}
       <Route path="/account" element={<DashboardLayout user={user}/>}>
-        {/* Redirect /account to /account/dashboard automatically */}
+       
         <Route index element={<Navigate to="/account/dashboard" replace />} />
 
-        {/* DASHBOARD ROUTE GATEWAY:
-          When navigating to /account/dashboard, we check the user role.
-          - If 'user', load Client Dashboard.
-          - Otherwise, kick them to their role-specific path (/dashboard/admin or /dashboard/washer)
-        */}
         <Route path="dashboard" element={
           user.role === 'user' 
             ? <UserDashboard /> 
-            : <Navigate to={`/account/dashboard/${user.role}`} replace />
+            : <Navigate to={`/account/${user.role}/dashboard`} replace />
         } />
 
-        {/* Admin Dashboard Control Room */}
-        <Route path="dashboard/admin" element={
+        <Route path="admin/dashboard" element={
           user.role === 'admin' 
             ? <AdminDashboardView /> 
             : <Navigate to="/account/dashboard" replace />
         } />
 
-        {/* Washer Dashboard Job Board */}
-        <Route path="dashboard/washer" element={
+        <Route path="washer/dashboard" element={
           user.role === 'washer' 
             ? <WasherDashboardView /> 
             : <Navigate to="/account/dashboard" replace />
         } />
 
-        {/* Shared Utilities Panels */}
-        <Route path="history" element={<div>History Page coming soon...</div>} />
+        {/* 1. Dedicated Customer History Page */}
+        <Route path="history" element={
+          user.role === 'user' 
+            ? <HistoryView /> 
+            : <Navigate to="/account/dashboard" replace />
+        } />
+
+       
+        <Route path="washer/history" element={
+          user.role === 'washer' 
+            ? <WasherHistoryView /> 
+            : <Navigate to="/account/dashboard" replace />
+        } />
+
         <Route path="settings" element={<div>Settings Page coming soon...</div>} />
       </Route>
 
