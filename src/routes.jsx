@@ -8,6 +8,7 @@ import AdminDashboardView from './components/dashboard/adminDashboard';
 import WasherDashboardView from './components/dashboard/WasherDashboard';
 import HistoryView from './components/dashboard/user/HistoryView';
 import WasherHistoryView from './components/dashboard/washer/WasherHistoryView';
+import ProfileView from './pages/ProfileView';
 
 export default function AppRoutes({ user }) { 
   return (
@@ -53,6 +54,8 @@ export default function AppRoutes({ user }) {
             ? <WasherHistoryView /> 
             : <Navigate to="/account/dashboard" replace />
         } />
+
+        <Route path="profile" element={<ProfileView user={user} />} />
 
         <Route path="settings" element={<div>Settings Page coming soon...</div>} />
       </Route>

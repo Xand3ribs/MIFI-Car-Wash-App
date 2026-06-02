@@ -3,7 +3,7 @@ import AppRoutes from './routes';
 
 const currentUser = {
   name: "jojoi",
-  role: "washer", 
+  role: "user", 
   slug: "mifai-boss"
 };
 

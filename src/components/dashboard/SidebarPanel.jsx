@@ -72,12 +72,12 @@ function SidebarPanel({ user }) {
 
           <>
 
-            <NavLink to="/account/profile" className={getNavLinkStyle}>
+            <NavLink to="/account/earnings" className={getNavLinkStyle}>
               <HandCoins />
               Earnings Ledger
             </NavLink>
 
-            <NavLink to="/account/profile" className={getNavLinkStyle}>
+            <NavLink to="/account/my-schedule" className={getNavLinkStyle}>
               <Calendar />
               My Schedule
             </NavLink>
