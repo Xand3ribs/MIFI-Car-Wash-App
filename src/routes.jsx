@@ -7,6 +7,7 @@ import UserDashboard from './components/dashboard/UserDashboard';
 import AdminDashboardView from './components/dashboard/adminDashboard';
 import WasherDashboardView from './components/dashboard/WasherDashboard';
 import HistoryView from './components/dashboard/user/HistoryView';
+import WasherHistoryView from './components/dashboard/washer/WasherHistoryView';
 
 export default function AppRoutes({ user }) { 
   return (

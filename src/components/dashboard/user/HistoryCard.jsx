@@ -43,7 +43,7 @@ function HistoryCard({ log, role, onCardClick }) {
       <div className="flex items-center md:flex-col justify-between md:items-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-slate-800/80">
         <div>
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider text-left md:text-right">
-            {role === 'user' ? 'Invoice Amount' : 'Earnings Split'}
+            {role === 'user' ? 'Invoice Amount' : 'Amount Earned'}
           </p>
           <p className="text-lg font-black text-slate-200 mt-0.5">
             ₦{log.price.toLocaleString()}
