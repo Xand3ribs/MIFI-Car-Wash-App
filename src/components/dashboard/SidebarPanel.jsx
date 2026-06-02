@@ -82,7 +82,7 @@ function SidebarPanel({ user }) {
               My Schedule
             </NavLink>
 
-            <NavLink to="/account/profile" className={getNavLinkStyle}>
+            <NavLink to="/account/washer/history" className={getNavLinkStyle}>
               <ClipboardClock />
               Past Washes
             </NavLink>
