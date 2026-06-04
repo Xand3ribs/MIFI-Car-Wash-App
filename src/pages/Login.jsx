@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import mifaiNavLogo from '/src/assets/mifai-navlogo.png';
 
 function Login() {
   // Phase 1: 'id' (Email/Phone), Phase 2: 'otp' (6-digit code)
@@ -13,7 +14,7 @@ function Login() {
         <div className="flex flex-col items-center  text-center mb-2">
           <a href="/" className="flex items-center">
             <img
-              src="src\assets\mifai-navlogo.png"
+              src={mifaiNavLogo}
               alt="MiFai Wash - Login"
               className="h-[125px] w-auto"
             />

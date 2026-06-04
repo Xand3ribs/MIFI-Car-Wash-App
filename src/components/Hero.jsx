@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
+import heroBg from '/src/assets/hero-bg.jpg';
 
 function Hero() {
   return (
     <div
       className="relative h-full  bg-cover bg-center bg-no-repeat rounded-xl"
-      style={{ backgroundImage: "url('/src/assets/hero-bg.jpg')" }}
+      style={{ backgroundImage: `url(${heroBg})` }}
     >
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/30 rounded-xl"></div>
 
