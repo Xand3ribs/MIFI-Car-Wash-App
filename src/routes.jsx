@@ -9,6 +9,11 @@ import WasherDashboardView from './components/dashboard/WasherDashboard';
 import HistoryView from './components/dashboard/user/HistoryView';
 import WasherHistoryView from './components/dashboard/washer/WasherHistoryView';
 import ProfileView from './pages/ProfileView';
+import SettingsView from './pages/SettingsView';
+import ProfileForm from './components/dashboard/settings/ProfileForm';
+import AddressLedger from './components/dashboard/settings/AddressLedger';
+import SubscriptionManager from './components/dashboard/settings/SubscriptionManager';
+import SecurityTiers from './components/dashboard/settings/SecurityTiers';
 
 export default function AppRoutes({ user }) { 
   return (
@@ -57,7 +62,14 @@ export default function AppRoutes({ user }) {
 
         <Route path="profile" element={<ProfileView user={user} />} />
 
-        <Route path="settings" element={<div>Settings Page coming soon...</div>} />
+      <Route path="settings/*" element={<SettingsView user={user} />}>
+        {/* Leave the index path empty or handle it contextually inside the view */}
+        <Route index element={<ProfileForm user={user} />} />
+        <Route path="profile" element={<ProfileForm user={user} />} />
+        <Route path="address" element={<AddressLedger />} />
+        <Route path="subscription" element={<SubscriptionManager />} />
+        <Route path="security" element={<SecurityTiers />} />
+      </Route>
       </Route>
 
       {/* Fallback for 404s */}

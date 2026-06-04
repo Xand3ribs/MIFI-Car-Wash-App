@@ -90,10 +90,10 @@ function SidebarPanel({ user }) {
           </>
          )}
 
-        <NavLink to="/account/profile" className={getNavLinkStyle}>
+        {/* <NavLink to="/account/profile" className={getNavLinkStyle}>
           <UserRoundPen />
           Profile
-        </NavLink>
+        </NavLink> */}
 
         <NavLink to="/account/settings" className={getNavLinkStyle}>
           <Bolt />
