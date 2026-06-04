@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import mifaiLogo from '/src/assets/mifai-logo.jpg';
+import mifaiLogo from '/src/assets/mifai-logo.png';
 
 function Header() {
   return (
