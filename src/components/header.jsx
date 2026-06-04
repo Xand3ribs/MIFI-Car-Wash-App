@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import mifaiLogo from '/src/assets/mifai-logo.jpg';
 
 function Header() {
   return (
@@ -7,7 +8,7 @@ function Header() {
         {/* logo */}
         <Link to="/" className="flex items-center">
           <img
-            src="src\assets\mifai-logo.png"
+            src={mifaiLogo}
             alt="MiFai Wash - Home"
             className="h-16 lg:h-[100px] w-auto"
           />
