@@ -1,6 +1,6 @@
-// src/components/dashboards/user/SupportCard.jsx
 import React from 'react';
 import { ShieldQuestion } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 function SupportCard() {
   return (
@@ -15,9 +15,9 @@ function SupportCard() {
         <p className="text-xs text-slate-400 mt-1 leading-relaxed">
           Have questions about your current service package or custom requirements? Message dispatch immediately.
         </p>
-        <button className="text-xs text-blue-400 font-extrabold hover:underline mt-2.5 block">
+        <Link to="/account/contact" className="text-xs text-blue-400 font-extrabold hover:underline mt-2.5 block">
           Open Support Window ↗
-        </button>
+        </Link >
       </div>
     </div>
   );

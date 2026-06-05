@@ -1,6 +1,7 @@
 // src/components/dashboards/user/SubscriptionCard.jsx
 import React from 'react';
 import { ShieldCheck, Zap, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 function SubscriptionCard() {
   // Mock subscription context variables
@@ -78,9 +79,9 @@ function SubscriptionCard() {
       </div>
 
       {/* Manage Action Navigation Anchors */}
-      <button className="text-center text-xs text-blue-action font-bold hover:underline py-1 mt-1 block">
+      <Link to="/account/settings/subscription" className="text-center text-xs text-blue-action font-bold hover:underline py-1 mt-1 block">
         Manage Subscription Billing ➔
-      </button>
+      </Link>
     </div>
   );
 }

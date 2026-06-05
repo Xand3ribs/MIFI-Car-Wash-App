@@ -34,8 +34,8 @@ function UserDashboardView() {
   const currentWashStatus = activeMilestone ? activeMilestone.label : 'Completed';
 
   const history = [
-    { id: 1, date: 'May 10, 2026', vehicle: 'Tesla Model 3', service: 'Deep Clean', status: 'Completed' },
-    { id: 2, date: 'April 15, 2026', vehicle: 'Tesla Model 3', service: 'Quick Wash', status: 'Completed' },
+    { id: 1, date: 'May 10, 2026', vehicle: 'Tesla Model 3', service: 'Deep Clean', status: 'Completed', amount: '15,000' },
+    { id: 2, date: 'April 15, 2026', vehicle: 'Tesla Model 3', service: 'Quick Wash', status: 'Completed', amount: '15,000' },
   ];
 
   return (
