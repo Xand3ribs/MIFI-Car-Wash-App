@@ -61,10 +61,6 @@ function SidebarPanel({ user }) {
               History
             </NavLink>
 
-            <NavLink to="/account/contact" className={getNavLinkStyle}>
-              <Headphones />
-              Support
-            </NavLink>
           </>
         )}
 
@@ -94,6 +90,11 @@ function SidebarPanel({ user }) {
           <UserRoundPen />
           Profile
         </NavLink> */}
+
+        <NavLink to="/account/contact" className={getNavLinkStyle}>
+          <Headphones />
+          Support
+        </NavLink>
 
         <NavLink to="/account/settings" className={getNavLinkStyle}>
           <Bolt />

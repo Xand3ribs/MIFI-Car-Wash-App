@@ -14,6 +14,7 @@ import ProfileForm from './components/dashboard/settings/ProfileForm';
 import AddressLedger from './components/dashboard/settings/AddressLedger';
 import SubscriptionManager from './components/dashboard/settings/SubscriptionManager';
 import SecurityTiers from './components/dashboard/settings/SecurityTiers';
+import SupportView from './pages/SupportView';
 
 export default function AppRoutes({ user }) { 
   return (
@@ -26,6 +27,7 @@ export default function AppRoutes({ user }) {
       {/* Grouped Account Routes */}
       <Route path="/account" element={<DashboardLayout user={user}/>}>
        
+       {/* dashboard */}
         <Route index element={<Navigate to="/account/dashboard" replace />} />
 
         <Route path="dashboard" element={
@@ -46,6 +48,8 @@ export default function AppRoutes({ user }) {
             : <Navigate to="/account/dashboard" replace />
         } />
 
+        {/* history */}
+
         {/* 1. Dedicated Customer History Page */}
         <Route path="history" element={
           user.role === 'user' 
@@ -53,23 +57,27 @@ export default function AppRoutes({ user }) {
             : <Navigate to="/account/dashboard" replace />
         } />
 
-       
         <Route path="washer/history" element={
           user.role === 'washer' 
             ? <WasherHistoryView /> 
             : <Navigate to="/account/dashboard" replace />
         } />
 
-        <Route path="profile" element={<ProfileView user={user} />} />
+        
+        {/* settings */}
+        <Route path="settings/*" element={<SettingsView user={user} />}>
+          {/* Leave the index path empty or handle it contextually inside the view */}
+          <Route index element={<ProfileForm user={user} />} />
+          <Route path="profile" element={<ProfileForm user={user} />} />
+          <Route path="address" element={<AddressLedger />} />
+          <Route path="subscription" element={<SubscriptionManager />} />
+          <Route path="security" element={<SecurityTiers />} />
+        </Route>
 
-      <Route path="settings/*" element={<SettingsView user={user} />}>
-        {/* Leave the index path empty or handle it contextually inside the view */}
-        <Route index element={<ProfileForm user={user} />} />
-        <Route path="profile" element={<ProfileForm user={user} />} />
-        <Route path="address" element={<AddressLedger />} />
-        <Route path="subscription" element={<SubscriptionManager />} />
-        <Route path="security" element={<SecurityTiers />} />
-      </Route>
+        {/* support */}
+        <Route path="contact" element={<SupportView />} />  
+
+        
       </Route>
 
       {/* Fallback for 404s */}

@@ -23,7 +23,9 @@ function QuickHistoryCard({ historyData }) {
               <p className="text-xs text-slate-500 mt-0.5">{item.date} • {item.vehicle}</p>
             </div>
           </div>
-          <ChevronRight size={16} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
+          <div className="text-xs font-bold text-slate-200">
+            ₦{item.amount}
+          </div>
         </div>
       ))}
 

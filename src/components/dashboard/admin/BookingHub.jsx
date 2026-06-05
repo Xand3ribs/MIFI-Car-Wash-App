@@ -81,7 +81,7 @@ function BookingHub({ mockBookings, availableWashers, onAssignWasher }) {
               return b.name.toLowerCase().includes(q) || b.number.toLowerCase().includes(q) || b.car.toLowerCase().includes(q);
             })
             .map((booking) => (
-              <div key={booking.id} className={`flex flex-row items-center justify-between p-4 bg-gray-dark border border-border-dark border-l-4 ${STATUS_BORDERS[booking.status] || 'border-l-slate-600'} rounded-xl gap-4`}>
+              <div key={booking.id} className={`flex flex-col lg:flex-row lg:items-center justify-between p-4 bg-gray-dark border border-border-dark border-l-4 ${STATUS_BORDERS[booking.status] || 'border-l-slate-600'} rounded-xl gap-4`}>
                 <div>
 
                   <div className="flex items-center gap-2">
@@ -122,44 +122,44 @@ function BookingHub({ mockBookings, availableWashers, onAssignWasher }) {
 
                 </div>
                {booking.status === 'Pending' && (
-  <div className="dropdown dropdown-end shrink-0">
-    {/* The Dropdown Button Trigger */}
-    <div 
-      tabIndex={0} 
-      role="button" 
-      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-slate-950 font-bold text-xs sm:text-sm rounded-lg transition-colors whitespace-nowrap"
-    >
-      Assign Washer ▼
-    </div>
+                  <div className="dropdown dropdown-end shrink-0">
+                    {/* The Dropdown Button Trigger */}
+                    <div 
+                      tabIndex={0} 
+                      role="button" 
+                      className="text-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-slate-950 font-bold text-xs sm:text-sm rounded-lg transition-colors whitespace-nowrap"
+                    >
+                      Assign Washer ▼
+                    </div>
 
-    {/* The Dropdown Dropdown List Content */}
-    <ul 
-      tabIndex={0} 
-      className="dropdown-content menu p-2 shadow-xl bg-slate-800 border border-border-dark rounded-xl w-52 z-[100] mt-1 text-slate-200"
-    >
-      <li className="menu-title text-[10px] text-slate-500 uppercase tracking-wider font-bold p-2">
-        Available Crew
-      </li>
-      
-      {/* Map out available washers */}
-      {availableWashers.length > 0 ? (
-        availableWashers.map((washer) => (
-          <li key={washer.id}>
-            <button 
-              type="button"
-              onClick={() => onAssignWasher(booking.id, washer.id)}
-              className="hover:bg-blue-500 hover:text-slate-950 text-sm py-2 rounded-lg transition-colors"
-            >
-              {washer.name}
-            </button>
-          </li>
-        ))
-      ) : (
-        <li className="text-slate-500 text-xs p-2 italic">No available washers</li>
-      )}
-    </ul>
-  </div>
-)}
+                    {/* The Dropdown Dropdown List Content */}
+                    <ul 
+                      tabIndex={0} 
+                      className="dropdown-content menu p-2 shadow-xl bg-slate-800 border border-border-dark rounded-xl w-52 z-[100] mt-1 text-slate-200"
+                    >
+                      <li className="menu-title text-[10px] text-slate-500 uppercase tracking-wider font-bold p-2">
+                        Available Crew
+                      </li>
+                      
+                      {/* Map out available washers */}
+                      {availableWashers.length > 0 ? (
+                        availableWashers.map((washer) => (
+                          <li key={washer.id}>
+                            <button 
+                              type="button"
+                              onClick={() => onAssignWasher(booking.id, washer.id)}
+                              className="hover:bg-blue-500 hover:text-slate-950 text-sm py-2 rounded-lg transition-colors"
+                            >
+                              {washer.name}
+                            </button>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-slate-500 text-xs p-2 italic">No available washers</li>
+                      )}
+                    </ul>
+                  </div>
+                )}
               </div>
             ))}
 
