@@ -26,7 +26,7 @@ export default function SubscriptionManager() {
       {/* Subscription Action Utilities */}
       <div className="flex items-center gap-3 mt-2">
         <button className="bg-blue-action text-navy-deep px-5 py-2.5 rounded-xl font-black text-xs shadow-md hover:brightness-110 transition-all">
-          Upgrade Subscription
+          Change Subscription
         </button>
         <button className="border border-slate-800 text-slate-400 hover:text-rose-400 hover:border-rose-900/50 px-5 py-2.5 rounded-xl font-black text-xs transition-all">
           Cancel Plan

@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom';
-import mifaiLogo from '/src/assets/mifai-logo.png';
+import mifaiLogo from '../assets/mifai-logo.png';
 
 function Header() {
   return (
-    <div className="navbar bg-white lg:pt-5 lg:pb-4 lg:px-3 pt-3 pb-3 px-2">
+    <div className="navbar bg-white">
+      
       <div className="container flex flex-row w-full justify-between ">
+
         {/* logo */}
         <Link to="/" className="flex items-center">
           <img
@@ -13,6 +15,8 @@ function Header() {
             className="h-16 lg:h-[100px] w-auto"
           />
         </Link>
+
+
         {/* Log in */}
         <Link
           to="/login"

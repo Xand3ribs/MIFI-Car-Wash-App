@@ -15,7 +15,7 @@ function Login() {
           <a href="/" className="flex items-center">
             <img
               src={mifaiNavLogo}
-              alt="MiFai Wash - Login"
+              alt="MiFai Wash "
               className="h-[125px] w-auto"
             />
           </a>

@@ -4,7 +4,7 @@ import Hero from '../components/Hero';
 
 function Home() {
   return (
-    <div className="container flex flex-col h-screen w-screen">
+    <div className="flex flex-col h-screen w-screen">
       <Header />
 
       <main className="flex-grow">

@@ -4,7 +4,7 @@ import heroBg from '/src/assets/hero-bg.jpg';
 function Hero() {
   return (
     <div
-      className="relative h-full  bg-cover bg-center bg-no-repeat rounded-xl"
+      className="relative h-full  bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${heroBg})` }}
     >
       <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-black/30 rounded-xl"></div>

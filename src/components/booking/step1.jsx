@@ -5,15 +5,15 @@ function Step1({
   setSelectedService,
 }) {
   const vehicles = [
-    { name: 'Sedan', price: '$25', icon: '🚗' },
-    { name: 'SUV', price: '$35', icon: '🚙' },
-    { name: 'Truck', price: '$45', icon: '🛻' },
+    { name: 'Sedan', price: '25', icon: '🚗' },
+    { name: 'SUV', price: '35', icon: '🚙' },
+    { name: 'Truck', price: '45', icon: '🛻' },
   ];
 
   const services = [
-    { name: 'Basic Wash', time: '20 min', price: '$25' },
-    { name: 'Premium Wash', time: '45 min', price: '$45' },
-    { name: 'Deluxe Wash', time: '60 min', price: '$65' },
+    { name: 'Basic Wash', time: '20 min', price: '25' },
+    { name: 'Premium Wash', time: '45 min', price: '45' },
+    { name: 'Deluxe Wash', time: '60 min', price: '65' },
   ];
 
   return (
@@ -74,7 +74,7 @@ function Step1({
                   <p>{vehicle.name}</p>
                 </div>
 
-                <p>{vehicle.price}</p>
+                <p>₦{vehicle.price}</p>
               </div>
             ))}
           </div>
@@ -109,7 +109,7 @@ function Step1({
                 </div>
 
                 <div>
-                  <p>{service.time}</p>
+                  <p>₦{service.price}</p>
                 </div>
               </div>
             ))}
