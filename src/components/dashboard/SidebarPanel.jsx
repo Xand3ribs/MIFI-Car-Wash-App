@@ -68,15 +68,15 @@ function SidebarPanel({ user }) {
 
           <>
 
-            <NavLink to="/account/earnings" className={getNavLinkStyle}>
+            <NavLink to="/account/washer/earnings" className={getNavLinkStyle}>
               <HandCoins />
               Earnings Ledger
             </NavLink>
 
-            <NavLink to="/account/my-schedule" className={getNavLinkStyle}>
+            {/* <NavLink to="/account/my-schedule" className={getNavLinkStyle}>
               <Calendar />
               My Schedule
-            </NavLink>
+            </NavLink> */}
 
             <NavLink to="/account/washer/history" className={getNavLinkStyle}>
               <ClipboardClock />
@@ -86,15 +86,13 @@ function SidebarPanel({ user }) {
           </>
          )}
 
-        {/* <NavLink to="/account/profile" className={getNavLinkStyle}>
-          <UserRoundPen />
-          Profile
-        </NavLink> */}
 
-        <NavLink to="/account/contact" className={getNavLinkStyle}>
-          <Headphones />
-          Support
-        </NavLink>
+        {user?.role !== 'admin' && (
+                <NavLink to="/account/contact" className={getNavLinkStyle}>
+                  <Headphones />
+                  Support
+                </NavLink>
+        )}
 
         <NavLink to="/account/settings" className={getNavLinkStyle}>
           <Bolt />

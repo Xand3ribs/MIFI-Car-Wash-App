@@ -36,7 +36,7 @@ function HistoryDetailModal({ log, role, onClose }) {
               log.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
             }`}>
               {log.status === 'Completed' ? <ShieldCheck size={16} /> : <XCircle size={16} />}
-              Service Order State: {log.status}
+              STATUS:  {log.status}
             </div>
 
             {/* Core Details Stack */}
