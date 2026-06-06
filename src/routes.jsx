@@ -15,6 +15,8 @@ import AddressLedger from './components/dashboard/settings/AddressLedger';
 import SubscriptionManager from './components/dashboard/settings/SubscriptionManager';
 import SecurityTiers from './components/dashboard/settings/SecurityTiers';
 import SupportView from './pages/SupportView';
+import EarningsLedger from './components/dashboard/washer/EarningsLedger';  
+import PayoutDetails from './components/dashboard/settings/PayoutDetails';
 
 export default function AppRoutes({ user }) { 
   return (
@@ -22,7 +24,7 @@ export default function AppRoutes({ user }) {
       {/* Public Routes */}
       <Route path="/" element={<Home />} />
       <Route path="/booking" element={<Booking />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={<Login />} />å
 
       {/* Grouped Account Routes */}
       <Route path="/account" element={<DashboardLayout user={user}/>}>
@@ -70,12 +72,19 @@ export default function AppRoutes({ user }) {
           <Route index element={<ProfileForm user={user} />} />
           <Route path="profile" element={<ProfileForm user={user} />} />
           <Route path="address" element={<AddressLedger />} />
-          <Route path="subscription" element={<SubscriptionManager />} />
+          <Route path="subscription" element={
+            user?.role === 'washer' ? <PayoutDetails /> : <SubscriptionManager />
+          } />
           <Route path="security" element={<SecurityTiers />} />
         </Route>
 
         {/* support */}
-        <Route path="contact" element={<SupportView />} />  
+        <Route path="contact" element={<SupportView role={user?.role} />} />  
+
+        {/* earning ledger */}
+        <Route path="washer/earnings" element={
+          user?.role === 'washer' ? <EarningsLedger /> : <Navigate to="/account/dashboard" replace />
+        } />
 
         
       </Route>

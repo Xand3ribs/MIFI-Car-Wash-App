@@ -2,9 +2,10 @@ import React from 'react';
 import { useParams, useNavigate, Outlet, Link } from 'react-router-dom';
 import { User, Home, Shield, CreditCard, ChevronRight, ArrowLeft } from 'lucide-react';
 
-export default function SettingsView() {
+export default function SettingsView({ user }) {
   const { '*': subRoute } = useParams();
   const navigate = useNavigate();
+  const isWasher = user?.role === 'washer';
 
   // Clean up trailing/leading slashes from the wildcard parameter
   const cleanSubRoute = subRoute?.replace(/^\/|\/$/g, '') || '';
@@ -16,102 +17,84 @@ export default function SettingsView() {
     navigate(`/account/settings/${pathKey}`);
   };
 
+  // 1. Build dynamic menu based on the user's role context
   const menuItems = [
-    { id: 'profile', label: 'Profile Identity Controls', shorthand: 'Profile', path: 'profile', icon: User },
-    { id: 'address', label: 'Dispatch Location Ledger', shorthand: 'Addresses', path: 'address', icon: Home },
-    { id: 'subscription', label: 'Manage Subscription Plan', shorthand: 'Subscription', path: 'subscription', icon: CreditCard },
-    { id: 'security', label: 'Account Security Tiers', shorthand: 'Security', path: 'security', icon: Shield },
+    { 
+      id: 'profile', 
+      label: isWasher ? 'Partner Status & Contact' : 'Profile Identity Controls', 
+      shorthand: 'Profile', 
+      path: 'profile', 
+      icon: User 
+    },
+    // Hide entirely for washers since admins manage their location dispatching manually
+    ...(!isWasher ? [{ 
+      id: 'address', 
+      label: 'Dispatch Location Ledger', 
+      shorthand: 'Addresses', 
+      path: 'address', 
+      icon: Home 
+    }] : []),
+    { 
+      id: 'subscription', 
+      label: isWasher ? 'Bank Payout Methods' : 'Manage Subscription Plan', 
+      shorthand: isWasher ? 'Payout Details' : 'Subscription', 
+      path: 'subscription', 
+      icon: CreditCard 
+    },
+    { 
+      id: 'security', 
+      label: isWasher ? 'Security & Compliance' : 'Account Security Tiers', 
+      shorthand: 'Security', 
+      path: 'security', 
+      icon: Shield 
+    },
   ];
 
   // Mobile navigation trigger check against clean route token
   const showingMobileSubPage = menuItems.some(item => item.path === cleanSubRoute);
 
   return (
-    <div className="p-6 bg-navy-dark min-h-screen text-white">
+    <div className="p-4 md:p-6 bg-navy-dark min-h-screen text-white">
 
       {/* SECTION HEADER */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-black tracking-tight text-slate-100">Account Settings</h2>
-        <p className="text-sm text-slate-400 mt-1">
-          
+      <div className="mb-6 md:mb-8">
+        <h2 className="text-xl md:text-2xl font-black tracking-tight text-slate-100">Account Settings</h2>
+        <p className="text-xs md:text-sm text-slate-400 mt-1">
+          {isWasher 
+            ? 'Manage your operational availability, linked bank settlement hubs, and compliance security settings.'
+            : 'Configure your profile identity, personal addresses, subscription options, and credential security layers.'
+          }
         </p>
       </div>
 
-    
-      {/* DESKTOP VIEWPORT FRAMEWORK (DaisyUI Radio Tabs)       */}
-    
+      {/* DESKTOP VIEWPORT FRAMEWORK (DaisyUI Radio Tabs) */}
       <div className="hidden lg:block">
+        <div className="tabs tabs-lifted w-full">
+          
+          {menuItems.map((item) => (
+            <React.Fragment key={item.id}>
+              <input 
+                type="radio" 
+                name="settings_tabs" 
+                className="tab text-xs text-slate-200 font-black uppercase tracking-wider h-12 [--tab-bg:#111827] [--tab-border-color:#1e293b]" 
+                aria-label={item.shorthand}
+                checked={activeTab === item.id}
+                onChange={() => handleTabChange(item.path)}
+              />
+              <div className="tab-content bg-gray-dark border-slate-800 max-w-full rounded-3xl p-8 shadow-xl">
+                <Outlet />
+              </div>
+            </React.Fragment>
+          ))}
 
-        {/* <div className="overflow-x-auto max-w-full"> */}
-
-          <div className="tabs tabs-lifted w-full">
-            
-            {/* PROFILE TAB */}
-            <input 
-              type="radio" 
-              name="settings_tabs" 
-              className="tab text-slate-200 text-xs font-black uppercase tracking-wider  h-12 [--tab-bg:#111827] [--tab-border-color:#1e293b]" 
-              aria-label="Profile"
-              checked={activeTab === 'profile'}
-              onChange={() => handleTabChange('profile')}
-            />
-            <div className="tab-content bg-gray-dark border-slate-800 max-w-full rounded-3xl p-8 shadow-xl">
-              <Outlet />
-            </div>
-
-            {/* ADDRESSES TAB */}
-            <input 
-              type="radio" 
-              name="settings_tabs" 
-              className="tab text-xs text-slate-200 font-black uppercase tracking-wider h-12 [--tab-bg:#111827] [--tab-border-color:#1e293b]" 
-              aria-label="Addresses" 
-              checked={activeTab === 'address'}
-              onChange={() => handleTabChange('address')}
-            />
-            <div className="tab-content bg-gray-dark border-slate-800 max-w-full rounded-3xl p-8 shadow-xl">
-              <Outlet />
-            </div>
-
-            {/* SUBSCRIPTION TAB */}
-            <input 
-              type="radio" 
-              name="settings_tabs" 
-              className="tab text-xs text-slate-200 font-black uppercase tracking-wider h-12 [--tab-bg:#111827] [--tab-border-color:#1e293b]" 
-              aria-label="Subscription" 
-              checked={activeTab === 'subscription'}
-              onChange={() => handleTabChange('subscription')}
-            />
-            <div className="tab-content bg-gray-dark border-slate-800 max-w-full rounded-3xl p-8 shadow-xl">
-              <Outlet />
-            </div>
-
-            {/* SECURITY TAB */}
-            <input 
-              type="radio" 
-              name="settings_tabs" 
-              className="tab text-xs text-slate-200 font-black uppercase tracking-wider h-12 [--tab-bg:#111827] [--tab-border-color:#1e293b]" 
-              aria-label="Security" 
-              checked={activeTab === 'security'}
-              onChange={() => handleTabChange('security')}
-            />
-            <div className="tab-content bg-gray-dark border-slate-800 max-w-full rounded-3xl p-8 shadow-xl">
-              <Outlet />
-            </div>
-
-          </div>
-        {/* </div> */}
+        </div>
       </div>
 
-     
       {/* MOBILE VIEWPORT FRAMEWORK */}
-     
       <div className="lg:hidden">
-
         {!showingMobileSubPage ? (
-
           /* ROOT MOBILE MENU SELECTION INDEX */
           <div className="bg-gray-dark border border-slate-800 rounded-3xl overflow-hidden divide-y divide-slate-800/60 shadow-xl">
-
             {menuItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -120,21 +103,18 @@ export default function SettingsView() {
                   to={`/account/settings/${item.path}`} 
                   className="w-full px-5 py-4 flex items-center justify-between text-left active:bg-navy-deep/40 transition-colors"
                 >
-
                   <div className="flex items-center gap-3">
                     <Icon size={18} className="text-blue-action" />
                     <span className="text-sm font-bold text-slate-200">{item.label}</span>
                   </div>
-
                   <ChevronRight size={16} className="text-slate-500" />
                 </Link>
               );
             })}
           </div>
-
         ) : (
           /* ACTIVE PAGE SUB-ROUTE SCREEN CONTAINER */
-          <div className="bg-gray-dark border border-slate-800 rounded-3xl p-6 shadow-xl">
+          <div className="bg-gray-dark border border-slate-800 rounded-3xl p-5 md:p-6 shadow-xl">
             <button 
               onClick={() => navigate('/account/settings')}
               className="flex items-center gap-1.5 text-xs font-black text-blue-action uppercase tracking-wider mb-6 pb-3 border-b border-slate-800/80 w-full text-left"
