@@ -15,7 +15,7 @@ const STATUS_BADGES = {
   'Completed': 'bg-green-500 bg-opacity-20 text-green-400'
 };
 
-function BookingHub({ mockBookings, availableWashers, onAssignWasher }) {
+function BookingHub({ mockBookings, onSelectBooking }) {
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const filters = ['All', 'Pending', 'Assigned', 'In Progress', 'Completed'];
@@ -78,12 +78,15 @@ function BookingHub({ mockBookings, availableWashers, onAssignWasher }) {
             .filter(b => activeFilter === 'All' || b.status === activeFilter)
             .filter(b => {
               const q = searchQuery.toLowerCase();
-              return b.name.toLowerCase().includes(q) || b.number.toLowerCase().includes(q) || b.car.toLowerCase().includes(q);
+              return b.name.toLowerCase().includes(q) || b.number.toLowerCase().includes(q) || b.car.toLowerCase().includes(q) || b.address.toLowerCase().includes(q);
             })
             .map((booking) => (
-              <div key={booking.id} className={`flex flex-col lg:flex-row lg:items-center justify-between p-4 bg-gray-dark border border-border-dark border-l-4 ${STATUS_BORDERS[booking.status] || 'border-l-slate-600'} rounded-xl gap-4`}>
+              <div 
+                key={booking.id} 
+                onClick={() => onSelectBooking(booking.id)}
+                className={`flex flex-col lg:flex-row lg:items-center justify-between p-4 bg-gray-dark border border-border-dark border-l-4 ${STATUS_BORDERS[booking.status] || 'border-l-slate-600'} rounded-xl gap-4 cursor-pointer hover:border-gray-700 active:scale-[0.995] transition-all`}
+              >
                 <div>
-
                   <div className="flex items-center gap-2">
                     <h4 className="text-white font-semibold text-base sm:text-lg">{booking.name}</h4>
                     <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${STATUS_BADGES[booking.status]}`}>
@@ -93,14 +96,13 @@ function BookingHub({ mockBookings, availableWashers, onAssignWasher }) {
 
                   <p className="text-slate-500 text-sm mt-1">#{booking.number}</p>
 
-                  <p className="text-slate-300 text-sm mt-1 flex items-center gap-2">
+                  <div className="text-slate-300 text-sm mt-1 flex items-center gap-2">
                     <Calendar size={16} />
-                    
                     <div className="flex flex-col xl:flex-row">
                       <span className="text-sm">{booking.car} ,</span>
-                      <span className=" text-sm">{booking.time}</span>
+                      <span className="text-sm">{booking.time}</span>
                     </div>
-                  </p>
+                  </div>
 
                   <p className="text-slate-300 text-sm mt-1 flex items-center gap-2">
                     <MapPin size={16} />
@@ -108,58 +110,17 @@ function BookingHub({ mockBookings, availableWashers, onAssignWasher }) {
                   </p>
 
                   {/* Display the Assigned Washer Name if it exists */}
-                    {booking.status !== 'Pending' && (
+                  {booking.status !== 'Pending' && (
                     <div className="mt-2 inline-flex items-center gap-1.5 bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-lg">
-                        {/* A small user profile circle icon using standard Tailwind */}
-                        <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-slate-950 font-black">
+                      <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-slate-950 font-black">
                         W
-                        </div>
-                        <p className="text-slate-300 text-xs font-medium">
+                      </div>
+                      <p className="text-slate-300 text-xs font-medium">
                         Washer: <span className="text-white font-semibold">{booking.assignedWasher || "Marcus Kruse"}</span>
-                        </p>
+                      </p>
                     </div>
-                    )}
-
+                  )}
                 </div>
-               {booking.status === 'Pending' && (
-                  <div className="dropdown dropdown-end shrink-0">
-                    {/* The Dropdown Button Trigger */}
-                    <div 
-                      tabIndex={0} 
-                      role="button" 
-                      className="text-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-slate-950 font-bold text-xs sm:text-sm rounded-lg transition-colors whitespace-nowrap"
-                    >
-                      Assign Washer ▼
-                    </div>
-
-                    {/* The Dropdown Dropdown List Content */}
-                    <ul 
-                      tabIndex={0} 
-                      className="dropdown-content menu p-2 shadow-xl bg-slate-800 border border-border-dark rounded-xl w-52 z-[100] mt-1 text-slate-200"
-                    >
-                      <li className="menu-title text-[10px] text-slate-500 uppercase tracking-wider font-bold p-2">
-                        Available Crew
-                      </li>
-                      
-                      {/* Map out available washers */}
-                      {availableWashers.length > 0 ? (
-                        availableWashers.map((washer) => (
-                          <li key={washer.id}>
-                            <button 
-                              type="button"
-                              onClick={() => onAssignWasher(booking.id, washer.id)}
-                              className="hover:bg-blue-500 hover:text-slate-950 text-sm py-2 rounded-lg transition-colors"
-                            >
-                              {washer.name}
-                            </button>
-                          </li>
-                        ))
-                      ) : (
-                        <li className="text-slate-500 text-xs p-2 italic">No available washers</li>
-                      )}
-                    </ul>
-                  </div>
-                )}
               </div>
             ))}
 

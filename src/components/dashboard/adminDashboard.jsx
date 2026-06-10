@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import BookingHub from './admin/BookingHub';
+import AdminBookingManager from './admin/AdminBookingManager';
 import FleetRoster from './admin/FleetRoster';
 
 const INITIAL_BOOKINGS = [
@@ -39,29 +39,43 @@ function AdminDashboardView() {
 
   // The function that connects a booking to a specific washer
   const handleAssignWasher = (bookingId, washerId) => {
-    // 1. Find the specific washer's name from our list
-    const selectedWasher = washers.find(w => w.id === washerId);
-    const washerName = selectedWasher ? selectedWasher.name : "Assigned Crew";
+    // 1. Find the booking we are about to change
+    const targetBooking = bookings.find(b => b.id === bookingId);
+    const oldWasherName = targetBooking ? targetBooking.assignedWasher : null;
 
-    // 2. Update the booking status AND save their name onto the card
+    // 2. Find the new washer's name from our list
+    const selectedWasher = washers.find(w => w.id === washerId);
+    const newWasherName = selectedWasher ? selectedWasher.name : "Assigned Crew";
+
+    // 3. Update the booking status AND save the new name onto the card
     setBookings(prevBookings =>
       prevBookings.map(b => 
         b.id === bookingId 
-          ? { ...b, status: 'Assigned', assignedWasher: washerName } 
+          ? { ...b, status: 'Assigned', assignedWasher: newWasherName } 
           : b
       )
     );
 
-    // 3. Update the chosen washer's status to "Busy"
+    // 4. Update the washers' states (Free up the old one, lock down the new one)
     setWashers(prevWashers =>
-      prevWashers.map(w => w.id === washerId ? { ...w, status: 'Busy' } : w)
+      prevWashers.map(w => {
+        // If this was the old washer, make them Available again!
+        if (oldWasherName && w.name === oldWasherName) {
+          return { ...w, status: 'Available' };
+        }
+        // If this is the newly selected washer, mark them as Busy
+        if (w.id === washerId) {
+          return { ...w, status: 'Busy' };
+        }
+        return w;
+      })
     );
   };
 
   return (
     <div className="flex flex-col lg:flex-row h-full min-h-0 w-full p-3">
       {/* Pass the dynamic state lists and our dispatch action down as props */}
-      <BookingHub 
+      <AdminBookingManager 
         mockBookings={bookings} 
         availableWashers={washers.filter(w => w.status === 'Available')} 
         onAssignWasher={handleAssignWasher}
