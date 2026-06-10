@@ -17,6 +17,10 @@ import SecurityTiers from './components/dashboard/settings/SecurityTiers';
 import SupportView from './pages/SupportView';
 import EarningsLedger from './components/dashboard/washer/EarningsLedger';  
 import PayoutDetails from './components/dashboard/settings/PayoutDetails';
+import AnalyticsView from './components/dashboard/admin/AnalyticsView';
+import ManageWashers from './components/dashboard/settings/ManageWashers';
+import ManageUsers from './components/dashboard/settings/ManageUsers';
+
 
 export default function AppRoutes({ user }) { 
   return (
@@ -50,6 +54,13 @@ export default function AppRoutes({ user }) {
             : <Navigate to="/account/dashboard" replace />
         } />
 
+        {/* analytics */}
+        <Route path="admin/analytics" element={
+          user.role === 'admin' 
+            ? <AnalyticsView /> 
+            : <Navigate to="/account/dashboard" replace />
+        } />
+
         {/* history */}
 
         {/* 1. Dedicated Customer History Page */}
@@ -68,13 +79,16 @@ export default function AppRoutes({ user }) {
         
         {/* settings */}
         <Route path="settings/*" element={<SettingsView user={user} />}>
-          {/* Leave the index path empty or handle it contextually inside the view */}
           <Route index element={<ProfileForm user={user} />} />
           <Route path="profile" element={<ProfileForm user={user} />} />
+
+          {/* * * CHANGE MADE HERE: Point path cleanly to the matching component * * */}
+          <Route path="washers" element={<ManageWashers />} />
+
+          <Route path="users" element={<ManageUsers />} />
+          
           <Route path="address" element={<AddressLedger />} />
-          <Route path="subscription" element={
-            user?.role === 'washer' ? <PayoutDetails /> : <SubscriptionManager />
-          } />
+          <Route path="subscription" element={user?.role === 'washer' ? <PayoutDetails /> : <SubscriptionManager />} />
           <Route path="security" element={<SecurityTiers />} />
         </Route>
 

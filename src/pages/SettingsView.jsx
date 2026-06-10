@@ -1,11 +1,13 @@
 import React from 'react';
 import { useParams, useNavigate, Outlet, Link } from 'react-router-dom';
-import { User, Home, Shield, CreditCard, ChevronRight, ArrowLeft } from 'lucide-react';
+import { User, Home, Shield, CreditCard, ChevronRight, ArrowLeft, Users, UserPlus } from 'lucide-react';
 
 export default function SettingsView({ user }) {
   const { '*': subRoute } = useParams();
   const navigate = useNavigate();
+  
   const isWasher = user?.role === 'washer';
+  const isAdmin = user?.role === 'admin';
 
   // Clean up trailing/leading slashes from the wildcard parameter
   const cleanSubRoute = subRoute?.replace(/^\/|\/$/g, '') || '';
@@ -17,38 +19,49 @@ export default function SettingsView({ user }) {
     navigate(`/account/settings/${pathKey}`);
   };
 
-  // 1. Build dynamic menu based on the user's role context
-  const menuItems = [
-    { 
-      id: 'profile', 
-      label: isWasher ? 'Partner Status & Contact' : 'Profile Identity Controls', 
-      shorthand: 'Profile', 
-      path: 'profile', 
-      icon: User 
-    },
-    // Hide entirely for washers since admins manage their location dispatching manually
-    ...(!isWasher ? [{ 
-      id: 'address', 
-      label: 'Dispatch Location Ledger', 
-      shorthand: 'Addresses', 
-      path: 'address', 
-      icon: Home 
-    }] : []),
-    { 
-      id: 'subscription', 
-      label: isWasher ? 'Bank Payout Methods' : 'Manage Subscription Plan', 
-      shorthand: isWasher ? 'Payout Details' : 'Subscription', 
-      path: 'subscription', 
-      icon: CreditCard 
-    },
-    { 
-      id: 'security', 
-      label: isWasher ? 'Security & Compliance' : 'Account Security Tiers', 
-      shorthand: 'Security', 
-      path: 'security', 
-      icon: Shield 
-    },
-  ];
+  const getMenuItems = () => {
+    if (isAdmin) {
+      return [
+        { id: 'profile', label: 'Admin Identity Controls', shorthand: 'Profile', path: 'profile', icon: User },
+        { id: 'users', label: 'Customer Registry Log', shorthand: 'Customers', path: 'users', icon: Users },
+        { id: 'washers', label: 'Register Washer Crew', shorthand: 'Washer Crew', path: 'washers', icon: UserPlus },
+        { id: 'security', label: 'Account Security Tiers', shorthand: 'Security', path: 'security', icon: Shield },
+      ];
+    }
+
+    return [
+      { 
+        id: 'profile', 
+        label: isWasher ? 'Partner Status & Contact' : 'Profile Identity Controls', 
+        shorthand: 'Profile', 
+        path: 'profile', 
+        icon: User 
+      },
+      ...(!isWasher ? [{ 
+        id: 'address', 
+        label: 'Dispatch Location Ledger', 
+        shorthand: 'Addresses', 
+        path: 'address', 
+        icon: Home 
+      }] : []),
+      { 
+        id: 'subscription', 
+        label: isWasher ? 'Bank Payout Methods' : 'Manage Subscription Plan', 
+        shorthand: isWasher ? 'Payout Details' : 'Subscription', 
+        path: 'subscription', 
+        icon: CreditCard 
+      },
+      { 
+        id: 'security', 
+        label: isWasher ? 'Security & Compliance' : 'Account Security Tiers', 
+        shorthand: 'Security', 
+        path: 'security', 
+        icon: Shield 
+      },
+    ];
+  };
+
+  const menuItems = getMenuItems();
 
   // Mobile navigation trigger check against clean route token
   const showingMobileSubPage = menuItems.some(item => item.path === cleanSubRoute);
@@ -60,9 +73,12 @@ export default function SettingsView({ user }) {
       <div className="mb-6 md:mb-8">
         <h2 className="text-xl md:text-2xl font-black tracking-tight text-slate-100">Account Settings</h2>
         <p className="text-xs md:text-sm text-slate-400 mt-1">
-          {isWasher 
-            ? 'Manage your operational availability, linked bank settlement hubs, and compliance security settings.'
-            : 'Configure your profile identity, personal addresses, subscription options, and credential security layers.'
+          {/* * * CHANGE MADE HERE: Added contextual dynamic text for Admin role header subtitle * * */}
+          {isAdmin 
+            ? 'Manage your administrative identity profile, audit registered customer files, onboard your laundry service crew, and verify internal security protocols.'
+            : isWasher 
+              ? 'Manage your operational availability, linked bank settlement hubs, and compliance security settings.'
+              : 'Configure your profile identity, personal addresses, subscription options, and credential security layers.'
           }
         </p>
       </div>
