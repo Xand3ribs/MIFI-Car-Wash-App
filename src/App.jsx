@@ -1,17 +1,17 @@
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import AppRoutes from './routes';
 
 const currentUser = {
   name: "jojoi",
-  role: "admin", 
+  role: "user", 
   slug: "mifai-boss"
 };
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AppRoutes user={currentUser} />
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
