@@ -1,14 +1,14 @@
 // components/home/Services.jsx
-import { Link }      from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Check, Sparkles } from 'lucide-react';
 import { useInView } from '../../hooks/useInView';
 
 const SERVICES = [
   {
-    name:     'Basic Wash',
-    price:    25,
+    name: 'Basic Wash',
+    price: 25,
     duration: '20 min',
-    tagline:  'Everyday clean, done fast.',
+    tagline: 'Everyday clean, done fast.',
     features: [
       'Full exterior rinse',
       'Foam wash & rinse',
@@ -18,10 +18,10 @@ const SERVICES = [
     featured: false,
   },
   {
-    name:     'Premium Wash',
-    price:    45,
+    name: 'Premium Wash',
+    price: 45,
     duration: '45 min',
-    tagline:  'Our most popular service.',
+    tagline: 'Our most popular service.',
     features: [
       'Everything in Basic',
       'Interior vacuum & wipe',
@@ -32,10 +32,10 @@ const SERVICES = [
     featured: true,
   },
   {
-    name:     'Deluxe Detail',
-    price:    65,
+    name: 'Deluxe Detail',
+    price: 65,
     duration: '60 min',
-    tagline:  'Showroom condition, at your door.',
+    tagline: 'Showroom condition, at your door.',
     features: [
       'Everything in Premium',
       'Deep seat cleaning',
@@ -56,14 +56,12 @@ function ServiceCard({ service, index, isVisible }) {
       className={`
         relative flex flex-col rounded-3xl border p-7 lg:p-8
         transition-all duration-700
-        ${isVisible
-          ? 'opacity-100 translate-y-0'
-          : 'opacity-0 translate-y-8'
-        }
-        ${featured
-          // Featured card: elevated, glowing, slightly larger
-          ? 'bg-[#1565C0]/15 border-[#1565C0]/50 shadow-[0_0_48px_rgba(21,101,192,0.2)] lg:scale-[1.04] lg:-translate-y-2 z-10'
-          : 'bg-white/4 border-white/10 hover:border-white/20'
+        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}
+        ${
+          featured
+            ? // Featured card: elevated, glowing, slightly larger
+              'bg-[#1565C0]/15 border-[#1565C0]/50 shadow-[0_0_48px_rgba(21,101,192,0.2)] lg:scale-[1.04] lg:-translate-y-2 z-10'
+            : 'bg-white/4 border-white/10 hover:border-white/20'
         }
       `}
       style={{ transitionDelay: `${index * 120}ms` }}
@@ -71,9 +69,11 @@ function ServiceCard({ service, index, isVisible }) {
       {/* Featured badge */}
       {featured && (
         <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full
+          <span
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full
             bg-[#1565C0] text-white text-xs font-bold tracking-wide uppercase
-            shadow-[0_4px_14px_rgba(21,101,192,0.5)]">
+            shadow-[0_4px_14px_rgba(21,101,192,0.5)]"
+          >
             <Sparkles size={10} />
             Most Popular
           </span>
@@ -94,8 +94,10 @@ function ServiceCard({ service, index, isVisible }) {
       {/* Price */}
       <div className="mb-6 pb-6 border-b border-white/10">
         <div className="flex items-end gap-1">
-          <span className="text-4xl font-extrabold text-white"
-            style={{ fontFamily: "'Sora', sans-serif" }}>
+          <span
+            className="text-4xl font-extrabold text-white"
+            style={{ fontFamily: "'Sora', sans-serif" }}
+          >
             ₦{price}
           </span>
           <span className="text-white/40 text-sm mb-1.5">/ wash</span>
@@ -105,7 +107,7 @@ function ServiceCard({ service, index, isVisible }) {
 
       {/* Feature list */}
       <ul className="flex flex-col gap-3 mb-8 flex-1">
-        {features.map(f => (
+        {features.map((f) => (
           <li key={f} className="flex items-start gap-3 text-sm text-white/70">
             <Check
               size={14}
@@ -124,14 +126,18 @@ function ServiceCard({ service, index, isVisible }) {
           group flex items-center justify-center gap-2
           w-full py-3.5 rounded-2xl text-sm font-bold
           transition-all duration-200 active:scale-[0.97]
-          ${featured
-            ? 'bg-[#1565C0] text-white shadow-[0_4px_20px_rgba(21,101,192,0.4)] hover:brightness-110'
-            : 'bg-white/8 text-white hover:bg-white/14 border border-white/10'
+          ${
+            featured
+              ? 'bg-[#1565C0] text-white shadow-[0_4px_20px_rgba(21,101,192,0.4)] hover:brightness-110'
+              : 'bg-white/8 text-white hover:bg-white/14 border border-white/10'
           }
         `}
       >
         Book Now
-        <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-0.5" />
+        <ArrowRight
+          size={14}
+          className="transition-transform duration-200 group-hover:translate-x-0.5"
+        />
       </Link>
     </div>
   );
@@ -147,7 +153,6 @@ function Services() {
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
       <div className="max-w-6xl mx-auto">
-
         {/* Section header */}
         <div
           ref={sectionRef}
@@ -170,7 +175,8 @@ function Services() {
             </span>
           </h2>
           <p className="text-white/50 text-lg max-w-md mx-auto leading-relaxed">
-            Every tier includes our licensed, insured professionals arriving at your location.
+            Every tier includes our licensed, insured professionals arriving at
+            your location.
           </p>
         </div>
 
@@ -188,7 +194,8 @@ function Services() {
 
         {/* Fine print */}
         <p className="text-center text-white/25 text-xs mt-10">
-          All prices are per vehicle. SUV/Truck pricing may vary slightly — confirm at booking.
+          All prices are per vehicle. SUV/Truck pricing may vary slightly —
+          confirm at booking.
         </p>
       </div>
     </div>

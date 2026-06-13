@@ -10,7 +10,7 @@ function DashboardLayout({ user }) {
   return (
     <div className="flex flex-col h-screen pt-20">
       {/* Navbar */}
-      <DashboardNav user={user}/>
+      <DashboardNav user={user} />
 
       {/* Page content here */}
       <div className="drawer flex-1 min-h-0">
@@ -22,7 +22,7 @@ function DashboardLayout({ user }) {
           </aside>
 
           <main className="flex-1 h-full overflow-y-auto bg-navy-deep min-h-0">
-            <Outlet context={user}/>
+            <Outlet context={user} />
           </main>
         </div>
 
@@ -33,7 +33,7 @@ function DashboardLayout({ user }) {
             className="drawer-overlay"
           ></label>
 
-          <SidebarPanel user={user}/>
+          <SidebarPanel user={user} />
         </div>
       </div>
 

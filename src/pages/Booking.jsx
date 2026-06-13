@@ -26,36 +26,47 @@ function Booking() {
   // Form State Configurations
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
-  const [address,         setAddress]         = useState('');
-  const [selectedDate,    setSelectedDate]    = useState(getLocalTodayString());
-  const [selectedTime,    setSelectedTime]    = useState(null);
-  const [userInfo, setUserInfo] = useState({ firstName: '', lastName: '', email: '', phone: '', password: '' });
+  const [address, setAddress] = useState('');
+  const [selectedDate, setSelectedDate] = useState(getLocalTodayString());
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [userInfo, setUserInfo] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+  });
 
   useEffect(() => {
     const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) { setIsLoggedIn(true); setActiveUser(user); }
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        setIsLoggedIn(true);
+        setActiveUser(user);
+      }
     };
     checkUser();
   }, []);
 
   const nextStep = () => {
     if (currentStep === 3 && isLoggedIn) setCurrentStep(5);
-    else if (currentStep < 5) setCurrentStep(s => s + 1);
+    else if (currentStep < 5) setCurrentStep((s) => s + 1);
   };
-  
+
   const prevStep = () => {
     if (currentStep === 5 && isLoggedIn) setCurrentStep(3);
-    else if (currentStep > 1) setCurrentStep(s => s - 1);
+    else if (currentStep > 1) setCurrentStep((s) => s - 1);
   };
+
+  const [isStep4Valid, setIsStep4Valid] = useState(false);
 
   const isContinueDisabled = (() => {
     if (currentStep === 1) return !selectedVehicle || !selectedService;
     if (currentStep === 2) return !address;
     if (currentStep === 3) return !selectedDate || !selectedTime;
-    if (currentStep === 4 && !isLoggedIn) {
-      return !userInfo.firstName || !userInfo.lastName || !userInfo.email || userInfo.phone.length < 10 || userInfo.password.length < 8;
-    }
+    if (currentStep === 4 && !isLoggedIn) return !isStep4Valid; // Direct, clean evaluation
     return false;
   })();
 
@@ -65,21 +76,36 @@ function Booking() {
       let targetUserId = activeUser?.id;
 
       if (!isLoggedIn) {
-        const { data: authData, error: signUpError } = await supabase.auth.signUp({
-          email: userInfo.email.trim(),
-          password: userInfo.password,
-          options: { data: { first_name: userInfo.firstName, last_name: userInfo.lastName, phone: userInfo.phone } }
-        });
+        const { data: authData, error: signUpError } =
+          await supabase.auth.signUp({
+            email: userInfo.email.trim(),
+            password: userInfo.password,
+            options: {
+              data: {
+                first_name: userInfo.firstName,
+                last_name: userInfo.lastName,
+                phone: userInfo.phone,
+              },
+            },
+          });
         if (signUpError) throw signUpError;
         targetUserId = authData?.user?.id;
       }
 
-      if (!targetUserId) throw new Error("User validation failed. Register or log back in.");
+      if (!targetUserId)
+        throw new Error('User validation failed. Register or log back in.');
 
-      const { error: bookingError } = await supabase.from('bookings').insert([{
-        user_id: targetUserId, selected_vehicle: selectedVehicle, selected_service: selectedService, address, selected_date: selectedDate, selected_time: selectedTime
-      }]);
-      
+      const { error: bookingError } = await supabase.from('bookings').insert([
+        {
+          user_id: targetUserId,
+          selected_vehicle: selectedVehicle,
+          selected_service: selectedService,
+          address,
+          selected_date: selectedDate,
+          selected_time: selectedTime,
+        },
+      ]);
+
       if (bookingError) throw bookingError;
       setIsLoggedIn(true);
       setIsSuccess(true);
@@ -91,27 +117,68 @@ function Booking() {
   };
 
   const stepContent = {
-    1: <Step1 selectedVehicle={selectedVehicle} setSelectedVehicle={setSelectedVehicle} selectedService={selectedService} setSelectedService={setSelectedService} />,
+    1: (
+      <Step1
+        selectedVehicle={selectedVehicle}
+        setSelectedVehicle={setSelectedVehicle}
+        selectedService={selectedService}
+        setSelectedService={setSelectedService}
+      />
+    ),
     2: <Step2 address={address} setAddress={setAddress} />,
-    3: <Step3 selectedDate={selectedDate} setSelectedDate={setSelectedDate} selectedTime={selectedTime} setSelectedTime={setSelectedTime} />,
-    4: <Step4 userInfo={userInfo} setUserInfo={setUserInfo} />,
-    5: <Step5 selectedVehicle={selectedVehicle} selectedService={selectedService} address={address} selectedDate={selectedDate} selectedTime={selectedTime} userInfo={userInfo} isLoggedIn={isLoggedIn} />,
+    3: (
+      <Step3
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        selectedTime={selectedTime}
+        setSelectedTime={setSelectedTime}
+      />
+    ),
+    4: (
+      <Step4
+        userInfo={userInfo}
+        setUserInfo={setUserInfo}
+        setIsStepValid={setIsStep4Valid}
+      />
+    ),
+    5: (
+      <Step5
+        selectedVehicle={selectedVehicle}
+        selectedService={selectedService}
+        address={address}
+        selectedDate={selectedDate}
+        selectedTime={selectedTime}
+        userInfo={userInfo}
+        isLoggedIn={isLoggedIn}
+        activeUser={activeUser}
+      />
+    ),
   };
 
   return (
     <div className="flex flex-col justify-between h-screen bg-navy-deep overflow-hidden">
       <BookingHeader currentStep={currentStep} isLoggedIn={isLoggedIn} />
-      
+
       <main className="flex-1 overflow-y-auto px-6 sm:px-10 py-8">
         {stepContent[currentStep]}
       </main>
 
-      <BookingFooter 
-        currentStep={currentStep} prevStep={prevStep} nextStep={nextStep} 
-        handleFinalSubmit={handleFinalSubmit} isSubmitting={isSubmitting} isContinueDisabled={isContinueDisabled} 
+      <BookingFooter
+        currentStep={currentStep}
+        prevStep={prevStep}
+        nextStep={nextStep}
+        handleFinalSubmit={handleFinalSubmit}
+        isSubmitting={isSubmitting}
+        isContinueDisabled={isContinueDisabled}
       />
 
-      {isSuccess && <SuccessModal isLoggedIn={isLoggedIn} activeUser={activeUser} userInfo={userInfo} />}
+      {isSuccess && (
+        <SuccessModal
+          isLoggedIn={isLoggedIn}
+          activeUser={activeUser}
+          userInfo={userInfo}
+        />
+      )}
     </div>
   );
 }

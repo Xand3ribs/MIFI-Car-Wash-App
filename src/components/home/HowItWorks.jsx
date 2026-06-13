@@ -4,28 +4,28 @@ import { useInView } from '../../hooks/useInView';
 
 const STEPS = [
   {
-    icon:    MapPin,
-    number:  '01',
-    title:   'Enter Your Location',
-    body:    'Drop a pin or type your address. We come to you — at home, the office, wherever your car is parked.',
+    icon: MapPin,
+    number: '01',
+    title: 'Enter Your Location',
+    body: 'Drop a pin or type your address. We come to you — at home, the office, wherever your car is parked.',
   },
   {
-    icon:    CalendarCheck,
-    number:  '02',
-    title:   'Pick a Time',
-    body:    'Choose a date and time slot that fits your schedule. Same-day bookings available.',
+    icon: CalendarCheck,
+    number: '02',
+    title: 'Pick a Time',
+    body: 'Choose a date and time slot that fits your schedule. Same-day bookings available.',
   },
   {
-    icon:    Truck,
-    number:  '03',
-    title:   'We Arrive & Wash',
-    body:    'Our licensed pro arrives with all equipment. Zero effort on your end — not even moving the car.',
+    icon: Truck,
+    number: '03',
+    title: 'We Arrive & Wash',
+    body: 'Our licensed pro arrives with all equipment. Zero effort on your end — not even moving the car.',
   },
   {
-    icon:    Star,
-    number:  '04',
-    title:   'Drive Away Spotless',
-    body:    'Inspect your car, rate the wash in the app, and repeat whenever you need us.',
+    icon: Star,
+    number: '04',
+    title: 'Drive Away Spotless',
+    body: 'Inspect your car, rate the wash in the app, and repeat whenever you need us.',
   },
 ];
 
@@ -114,11 +114,11 @@ function HowItWorks() {
       className="w-full py-24 lg:py-32 px-4 sm:px-6 lg:px-8"
       style={{
         fontFamily: "'Inter', sans-serif",
-        background: 'linear-gradient(180deg, #0D1B2A 0%, #0D2240 50%, #0D1B2A 100%)',
+        background:
+          'linear-gradient(180deg, #0D1B2A 0%, #0D2240 50%, #0D1B2A 100%)',
       }}
     >
       <div className="max-w-6xl mx-auto">
-
         {/* Section header */}
         <div
           ref={sectionRef}
@@ -141,7 +141,8 @@ function HowItWorks() {
             </span>
           </h2>
           <p className="text-white/50 text-lg max-w-md mx-auto">
-            The whole process takes under two minutes to book and we handle everything else.
+            The whole process takes under two minutes to book and we handle
+            everything else.
           </p>
         </div>
 
@@ -172,8 +173,10 @@ function HowItWorks() {
             '✓ Licensed & insured professionals',
             '✓ Eco-friendly products',
             '✓ 30-minute booking guarantee',
-          ].map(txt => (
-            <span key={txt} className="text-sm text-white/40 font-medium">{txt}</span>
+          ].map((txt) => (
+            <span key={txt} className="text-sm text-white/40 font-medium">
+              {txt}
+            </span>
           ))}
         </div>
       </div>

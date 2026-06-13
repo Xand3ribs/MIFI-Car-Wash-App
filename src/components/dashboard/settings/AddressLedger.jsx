@@ -6,7 +6,7 @@ export default function AddressLedger() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setAddresses(prev => ({ ...prev, [name]: value }));
+    setAddresses((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
@@ -15,12 +15,15 @@ export default function AddressLedger() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5 text-slate-200">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-5 text-slate-200"
+    >
       <div className="flex flex-col gap-1.5">
         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1">
           <Home size={12} className="text-blue-action" /> Home Dispatch Station
         </label>
-        <input 
+        <input
           type="text"
           name="home"
           value={addresses.home}
@@ -32,9 +35,10 @@ export default function AddressLedger() {
 
       <div className="flex flex-col gap-1.5">
         <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1">
-          <Briefcase size={12} className="text-blue-action" /> Office / Corporate Hub
+          <Briefcase size={12} className="text-blue-action" /> Office /
+          Corporate Hub
         </label>
-        <input 
+        <input
           type="text"
           name="work"
           value={addresses.work}
@@ -44,7 +48,10 @@ export default function AddressLedger() {
         />
       </div>
 
-      <button type="submit" className="mt-2 self-start bg-blue-action text-navy-deep px-6 py-3 rounded-xl font-black text-xs shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2">
+      <button
+        type="submit"
+        className="mt-2 self-start bg-blue-action text-navy-deep px-6 py-3 rounded-xl font-black text-xs shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2"
+      >
         <Save size={14} /> Update Dispatch Ledger
       </button>
     </form>

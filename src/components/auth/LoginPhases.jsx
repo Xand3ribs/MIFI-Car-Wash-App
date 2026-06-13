@@ -1,7 +1,19 @@
 import { Mail, KeyRound, Eye, EyeOff, Send, ArrowLeft } from 'lucide-react';
 import InputField from './InputField';
 
-export function LoginPhase({ identifier, setIdentifier, password, setPassword, showPassword, setShowPassword, goToForgot, handleLogin, isLoading, errors, setErrors }) {
+export function LoginPhase({
+  identifier,
+  setIdentifier,
+  password,
+  setPassword,
+  showPassword,
+  setShowPassword,
+  goToForgot,
+  handleLogin,
+  isLoading,
+  errors,
+  setErrors,
+}) {
   return (
     <div className="flex flex-col gap-5 animate-[fadeSlideUp_0.35s_ease_both]">
       <InputField label="Email" icon={Mail} error={errors.identifier}>
@@ -11,7 +23,8 @@ export function LoginPhase({ identifier, setIdentifier, password, setPassword, s
           value={identifier}
           onChange={(e) => {
             setIdentifier(e.target.value);
-            if (errors.identifier) setErrors(p => ({ ...p, identifier: null }));
+            if (errors.identifier)
+              setErrors((p) => ({ ...p, identifier: null }));
           }}
           className="flex-1 bg-transparent outline-none text-white text-lg placeholder:text-white/20 placeholder:italic"
         />
@@ -24,13 +37,13 @@ export function LoginPhase({ identifier, setIdentifier, password, setPassword, s
           value={password}
           onChange={(e) => {
             setPassword(e.target.value);
-            if (errors.password) setErrors(p => ({ ...p, password: null }));
+            if (errors.password) setErrors((p) => ({ ...p, password: null }));
           }}
           className="flex-1 bg-transparent outline-none text-white text-lg placeholder:text-white/20 placeholder:italic"
         />
         <button
           type="button"
-          onClick={() => setShowPassword(v => !v)}
+          onClick={() => setShowPassword((v) => !v)}
           className="text-white/30 hover:text-blue-action transition-colors shrink-0 p-0.5 rounded-lg focus:outline-none"
         >
           {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -38,7 +51,11 @@ export function LoginPhase({ identifier, setIdentifier, password, setPassword, s
       </InputField>
 
       <div className="flex justify-end -mt-2">
-        <button type="button" onClick={goToForgot} className="text-sm text-white/40 hover:text-blue-action transition-colors font-medium">
+        <button
+          type="button"
+          onClick={goToForgot}
+          className="text-sm text-white/40 hover:text-blue-action transition-colors font-medium"
+        >
           Forgot password?
         </button>
       </div>
@@ -54,7 +71,15 @@ export function LoginPhase({ identifier, setIdentifier, password, setPassword, s
   );
 }
 
-export function ForgotPhase({ recoveryEmail, setRecoveryEmail, handleRecovery, goToLogin, isLoading, errors, setErrors }) {
+export function ForgotPhase({
+  recoveryEmail,
+  setRecoveryEmail,
+  handleRecovery,
+  goToLogin,
+  isLoading,
+  errors,
+  setErrors,
+}) {
   return (
     <div className="flex flex-col gap-5 animate-[fadeSlideUp_0.35s_ease_both]">
       <InputField label="Recovery Email" icon={Mail} error={errors.recovery}>
@@ -64,7 +89,7 @@ export function ForgotPhase({ recoveryEmail, setRecoveryEmail, handleRecovery, g
           value={recoveryEmail}
           onChange={(e) => {
             setRecoveryEmail(e.target.value);
-            if (errors.recovery) setErrors(p => ({ ...p, recovery: null }));
+            if (errors.recovery) setErrors((p) => ({ ...p, recovery: null }));
           }}
           className="flex-1 bg-transparent outline-none text-white text-lg placeholder:text-white/20 placeholder:italic"
         />
@@ -75,10 +100,20 @@ export function ForgotPhase({ recoveryEmail, setRecoveryEmail, handleRecovery, g
         disabled={isLoading}
         className="flex items-center justify-center gap-2 w-full py-5 rounded-2xl bg-blue-action text-navy-deep text-lg font-extrabold tracking-wide active:scale-95 transition-all shadow-[0_0_24px_rgba(0,200,255,0.2)] hover:shadow-[0_0_36px_rgba(0,200,255,0.38)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {isLoading ? 'Sending…' : <><Send size={16} strokeWidth={2.5} /> Send Recovery Link</>}
+        {isLoading ? (
+          'Sending…'
+        ) : (
+          <>
+            <Send size={16} strokeWidth={2.5} /> Send Recovery Link
+          </>
+        )}
       </button>
 
-      <button type="button" onClick={goToLogin} className="flex items-center justify-center gap-1.5 text-sm text-white/40 hover:text-blue-action transition-colors font-medium mx-auto">
+      <button
+        type="button"
+        onClick={goToLogin}
+        className="flex items-center justify-center gap-1.5 text-sm text-white/40 hover:text-blue-action transition-colors font-medium mx-auto"
+      >
         <ArrowLeft size={13} strokeWidth={2.5} /> Back to sign in
       </button>
     </div>
@@ -95,9 +130,14 @@ export function ForgotSentPhase({ recoveryEmail, goToLogin }) {
         </div>
       </div>
       <p className="text-text-secondary text-sm leading-relaxed max-w-xs">
-        Follow the link in your email to set a new password. Check your spam folder if it doesn't arrive within a minute.
+        Follow the link in your email to set a new password. Check your spam
+        folder if it doesn't arrive within a minute.
       </p>
-      <button type="button" onClick={goToLogin} className="flex items-center gap-1.5 text-sm text-white/40 hover:text-blue-action transition-colors font-medium">
+      <button
+        type="button"
+        onClick={goToLogin}
+        className="flex items-center gap-1.5 text-sm text-white/40 hover:text-blue-action transition-colors font-medium"
+      >
         <ArrowLeft size={13} strokeWidth={2.5} /> Back to sign in
       </button>
     </div>

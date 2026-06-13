@@ -2,15 +2,15 @@ import { useMemo } from 'react';
 import { Calendar, Clock, Ban } from 'lucide-react';
 
 const TIME_SLOTS = [
-  { label: '9:00 AM',  hour: 9  },
+  { label: '9:00 AM', hour: 9 },
   { label: '10:00 AM', hour: 10 },
   { label: '11:00 AM', hour: 11 },
   { label: '12:00 PM', hour: 12 },
-  { label: '1:00 PM',  hour: 13 },
-  { label: '2:00 PM',  hour: 14 },
-  { label: '3:00 PM',  hour: 15 },
-  { label: '4:00 PM',  hour: 16 },
-  { label: '5:00 PM',  hour: 17 },
+  { label: '1:00 PM', hour: 13 },
+  { label: '2:00 PM', hour: 14 },
+  { label: '3:00 PM', hour: 15 },
+  { label: '4:00 PM', hour: 16 },
+  { label: '5:00 PM', hour: 17 },
 ];
 
 function getTodayString() {
@@ -21,7 +21,12 @@ function getTodayString() {
   return `${year}-${month}-${day}`;
 }
 
-function Step3({ selectedDate, setSelectedDate, selectedTime, setSelectedTime }) {
+function Step3({
+  selectedDate,
+  setSelectedDate,
+  selectedTime,
+  setSelectedTime,
+}) {
   const today = getTodayString();
   const minDate = today;
 
@@ -44,7 +49,7 @@ function Step3({ selectedDate, setSelectedDate, selectedTime, setSelectedTime })
     setSelectedDate(newDate);
 
     if (newDate === today && selectedTime) {
-      const slot = TIME_SLOTS.find(s => s.label === selectedTime);
+      const slot = TIME_SLOTS.find((s) => s.label === selectedTime);
       const currentHour = new Date().getHours();
       if (slot && slot.hour <= currentHour) {
         setSelectedTime(null);
@@ -112,25 +117,32 @@ function Step3({ selectedDate, setSelectedDate, selectedTime, setSelectedTime })
                     relative flex items-center justify-center gap-2
                     px-4 py-4 rounded-2xl border text-base font-medium
                     transition-all duration-200
-                    ${disabled
-                      ? // FIXED: Proper arbitrary Tailwind transparency syntax and global pointer block
-                        'bg-white/[0.02] border-white/5 text-white/20 opacity-40 cursor-not-allowed pointer-events-none'
-                      : isSelected
-                      ? 'bg-blue-action border-blue-action text-navy-deep font-bold shadow-[0_0_18px_rgba(0,200,255,0.25)]'
-                      : 'bg-gray-dark border-border-dark text-white hover:border-blue-action/60 hover:bg-white/5 active:scale-95 cursor-pointer'
+                    ${
+                      disabled
+                        ? // FIXED: Proper arbitrary Tailwind transparency syntax and global pointer block
+                          'bg-white/[0.02] border-white/5 text-white/20 opacity-40 cursor-not-allowed pointer-events-none'
+                        : isSelected
+                          ? 'bg-blue-action border-blue-action text-navy-deep font-bold shadow-[0_0_18px_rgba(0,200,255,0.25)]'
+                          : 'bg-gray-dark border-border-dark text-white hover:border-blue-action/60 hover:bg-white/5 active:scale-95 cursor-pointer'
                     }
                   `}
                 >
                   {disabled && (
                     <Ban size={12} className="text-white/40 shrink-0" />
                   )}
-                  <span className={disabled ? 'line-through decoration-white/20' : ''}>{label}</span>
+                  <span
+                    className={
+                      disabled ? 'line-through decoration-white/20' : ''
+                    }
+                  >
+                    {label}
+                  </span>
                 </button>
               );
             })}
           </div>
 
-          {selectedDate === today && slotStates.every(s => s.disabled) && (
+          {selectedDate === today && slotStates.every((s) => s.disabled) && (
             <div className="flex items-center gap-3 px-4 py-3.5 mt-1 rounded-2xl bg-amber-500/10 border border-amber-500/20 animate-[fadeIn_0.25s_ease_both]">
               <Ban size={15} className="text-amber-400 shrink-0" />
               <p className="text-sm text-amber-400/80">

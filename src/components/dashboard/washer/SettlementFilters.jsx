@@ -1,13 +1,13 @@
 import React from 'react';
 import { Filter } from 'lucide-react';
 
-export default function SettlementFilters({ 
-  selectedMonth, 
-  setSelectedMonth, 
-  selectedYear, 
-  setSelectedYear, 
-  months, 
-  years 
+export default function SettlementFilters({
+  selectedMonth,
+  setSelectedMonth,
+  selectedYear,
+  setSelectedYear,
+  months,
+  years,
 }) {
   return (
     <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -23,7 +23,9 @@ export default function SettlementFilters({
       >
         <option value="all">All Months</option>
         {months.map((m) => (
-          <option key={m.value} value={m.value}>{m.label}</option>
+          <option key={m.value} value={m.value}>
+            {m.label}
+          </option>
         ))}
       </select>
 
@@ -34,7 +36,9 @@ export default function SettlementFilters({
       >
         <option value="all">All Years</option>
         {years.map((y) => (
-          <option key={y} value={y}>{y}</option>
+          <option key={y} value={y}>
+            {y}
+          </option>
         ))}
       </select>
     </div>

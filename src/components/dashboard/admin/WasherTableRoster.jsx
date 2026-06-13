@@ -16,13 +16,19 @@ export default function WasherTableRoster({ crewList, onToggleDuty }) {
         </thead>
         <tbody className="divide-y divide-slate-800/40 font-medium text-slate-300">
           {crewList.map((washer) => (
-            <tr key={washer.id} className="hover:bg-slate-900/30 transition-colors group">
-              
+            <tr
+              key={washer.id}
+              className="hover:bg-slate-900/30 transition-colors group"
+            >
               {/* Profile Details */}
               <td className="py-4 px-2">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-white font-bold text-sm">{washer.name}</span>
-                  <span className="text-slate-500 font-mono tracking-tight text-[11px]">{washer.id} &bull; {washer.phone}</span>
+                  <span className="text-white font-bold text-sm">
+                    {washer.name}
+                  </span>
+                  <span className="text-slate-500 font-mono tracking-tight text-[11px]">
+                    {washer.id} &bull; {washer.phone}
+                  </span>
                 </div>
               </td>
 
@@ -37,8 +43,12 @@ export default function WasherTableRoster({ crewList, onToggleDuty }) {
               {/* Metrics Performance Stats */}
               <td className="py-4 px-2">
                 <div className="flex flex-col">
-                  <span className="text-slate-200 font-semibold">{washer.washes} Completed</span>
-                  <span className="text-emerald-500 font-bold">₦{washer.earnings.toLocaleString()}</span>
+                  <span className="text-slate-200 font-semibold">
+                    {washer.washes} Completed
+                  </span>
+                  <span className="text-emerald-500 font-bold">
+                    ₦{washer.earnings.toLocaleString()}
+                  </span>
                 </div>
               </td>
 
@@ -48,7 +58,7 @@ export default function WasherTableRoster({ crewList, onToggleDuty }) {
                   type="button"
                   onClick={() => onToggleDuty(washer.id)}
                   className="focus:outline-none inline-flex items-center justify-center transition-transform active:scale-90"
-                  title={washer.isOnDuty ? "Mark Off-Duty" : "Mark On-Duty"}
+                  title={washer.isOnDuty ? 'Mark Off-Duty' : 'Mark On-Duty'}
                 >
                   {washer.isOnDuty ? (
                     <div className="flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full font-bold text-[10px] uppercase border border-emerald-500/20">
@@ -67,14 +77,14 @@ export default function WasherTableRoster({ crewList, onToggleDuty }) {
               {/* Quick utility tools */}
               <td className="py-4 px-2 text-right">
                 <div className="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                  <button 
+                  <button
                     type="button"
                     className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-blue-400 rounded-lg transition-colors"
                     title="Reset Password Credentials"
                   >
                     <Key size={14} />
                   </button>
-                  <button 
+                  <button
                     type="button"
                     className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-rose-400 rounded-lg transition-colors"
                     title="Deactivate Account"
@@ -83,7 +93,6 @@ export default function WasherTableRoster({ crewList, onToggleDuty }) {
                   </button>
                 </div>
               </td>
-
             </tr>
           ))}
         </tbody>

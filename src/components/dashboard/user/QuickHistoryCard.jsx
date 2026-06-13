@@ -6,8 +6,9 @@ import { CheckCircle2, ChevronRight } from 'lucide-react';
 function QuickHistoryCard({ historyData }) {
   return (
     <div className="flex-1 bg-gray-dark border border-border-dark rounded-3xl p-5 flex flex-col gap-3 shadow-xl">
-
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 pl-1">Recent History</h2>
+      <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 pl-1">
+        Recent History
+      </h2>
 
       {historyData.map((item) => (
         <div
@@ -19,13 +20,15 @@ function QuickHistoryCard({ historyData }) {
               <CheckCircle2 size={16} />
             </div>
             <div>
-              <h4 className="font-bold text-sm group-hover:text-blue-400 transition-colors">{item.service}</h4>
-              <p className="text-xs text-slate-500 mt-0.5">{item.date} • {item.vehicle}</p>
+              <h4 className="font-bold text-sm group-hover:text-blue-400 transition-colors">
+                {item.service}
+              </h4>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {item.date} • {item.vehicle}
+              </p>
             </div>
           </div>
-          <div className="text-xs font-bold text-slate-200">
-            ₦{item.amount}
-          </div>
+          <div className="text-xs font-bold text-slate-200">₦{item.amount}</div>
         </div>
       ))}
 

@@ -1,144 +1,137 @@
+// components/SidebarPanel.jsx
+import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard,
   History,
   Bolt,
-  UserRoundPen,
   Headphones,
   LogOut,
   ChartNoAxesCombined,
-  UserCog,
-  ClipboardClock, 
-  Calendar,
+  ClipboardClock,
   HandCoins,
-
 } from 'lucide-react';
 
+import LogoutModal from './LogoutModal'; // ← import the modal
+
 function SidebarPanel({ user }) {
-
   const location = useLocation();
+  const { signOut } = useAuth();
 
+  // Single boolean drives the entire modal lifecycle — no extra state needed
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  // ── Nav link style helpers (unchanged) ─────────────────────────────────────
   const baseStyle =
-    'flex gap-2 text-xl items-center transition-all duration-200 p-4 border rounded-xl cursor-pointer';
+    'flex w-full gap-2 text-xl items-center transition-all duration-200 p-4 border rounded-xl cursor-pointer';
 
-  const getNavLinkStyle = ({ isActive }) => {
-    return isActive
+  const getNavLinkStyle = ({ isActive }) =>
+    isActive
       ? `${baseStyle} bg-blue-action text-navy-deep border-blue-action shadow-lg`
       : `${baseStyle} border-transparent text-gray-400 hover:border-blue-action hover:text-white`;
-  };
 
   const getHomeLinkStyle = () => {
-    const currentPath = location.pathname;
-    
     const dashboardPaths = [
       '/account/dashboard',
       '/account/admin/dashboard',
-      '/account/washer/dashboard'
+      '/account/washer/dashboard',
     ];
-
-    const isDashboardActive = dashboardPaths.includes(currentPath);
-    
-    return isDashboardActive
+    return dashboardPaths.includes(location.pathname)
       ? `${baseStyle} bg-blue-action text-navy-deep border-blue-action shadow-lg`
       : `${baseStyle} border-transparent text-gray-400 hover:border-blue-action hover:text-white`;
   };
 
-  
   const getHomeRedirectPath = () => {
     if (user?.role === 'admin') return '/account/admin/dashboard';
     if (user?.role === 'washer') return '/account/washer/dashboard';
     return '/account/dashboard';
   };
 
-  return (
-    <div className="h-full w-64 text-white px-4 py-8 flex flex-col justify-between overflow-y-auto bg-navy-deep">
-      <div className="flex flex-col gap-4">
-        <NavLink to={getHomeRedirectPath()} className={getHomeLinkStyle}>
-          <LayoutDashboard />
-          Home
-        </NavLink>
+  // ── Logout handlers ─────────────────────────────────────────────────────────
+  const handleLogoutRequest = () => setIsLogoutModalOpen(true);
+  const handleLogoutCancel = () => setIsLogoutModalOpen(false);
+  const handleLogoutConfirm = () => {
+    setIsLogoutModalOpen(false);
+    signOut(); // Calls the real sign-out from AuthContext
+  };
 
-        {user?.role === 'admin' && (
-          <>
+  return (
+    <>
+      {/* ── Sidebar ──────────────────────────────────────────────────────── */}
+      <div className="h-full w-64 text-white px-4 py-8 flex flex-col justify-between overflow-y-auto bg-navy-deep">
+        <div className="flex flex-col gap-4">
+          <NavLink to={getHomeRedirectPath()} className={getHomeLinkStyle}>
+            <LayoutDashboard />
+            Home
+          </NavLink>
+
+          {user?.role === 'admin' && (
             <NavLink to="/account/admin/analytics" className={getNavLinkStyle}>
               <ChartNoAxesCombined />
               Analytics
             </NavLink>
+          )}
 
-            {/* <NavLink to="/account/admin/manage-washers" className={getNavLinkStyle}>
-              <UserCog />
-              Manage Washers
-            </NavLink> */}
-
-            {/* <NavLink to="/account/admin/manage-users" className={getNavLinkStyle}>
-              <UserCog />
-              Manage Users
-            </NavLink> */}
-          </>
-
-        )}
-
-        {user?.role === 'user' && (
-
-          <>
-
-             <NavLink to="/account/history" className={getNavLinkStyle}>
+          {user?.role === 'user' && (
+            <NavLink to="/account/history" className={getNavLinkStyle}>
               <History />
               History
             </NavLink>
+          )}
 
-          </>
-        )}
+          {user?.role === 'washer' && (
+            <>
+              <NavLink
+                to="/account/washer/earnings"
+                className={getNavLinkStyle}
+              >
+                <HandCoins />
+                Earnings Ledger
+              </NavLink>
+              <NavLink to="/account/washer/history" className={getNavLinkStyle}>
+                <ClipboardClock />
+                Past Washes
+              </NavLink>
+            </>
+          )}
 
-        {user?.role === 'washer' && (
-
-          <>
-
-            <NavLink to="/account/washer/earnings" className={getNavLinkStyle}>
-              <HandCoins />
-              Earnings Ledger
+          {user?.role !== 'admin' && (
+            <NavLink to="/account/contact" className={getNavLinkStyle}>
+              <Headphones />
+              Support
             </NavLink>
+          )}
 
-            {/* <NavLink to="/account/my-schedule" className={getNavLinkStyle}>
-              <Calendar />
-              My Schedule
-            </NavLink> */}
+          <NavLink to="/account/settings" className={getNavLinkStyle}>
+            <Bolt />
+            Settings
+          </NavLink>
+        </div>
 
-            <NavLink to="/account/washer/history" className={getNavLinkStyle}>
-              <ClipboardClock />
-              Past Washes
-            </NavLink>
+        <div className="mt-auto">
+          <div className="h-px w-full bg-border-dark opacity-20 my-4" />
 
-          </>
-         )}
-
-
-        {user?.role !== 'admin' && (
-                <NavLink to="/account/contact" className={getNavLinkStyle}>
-                  <Headphones />
-                  Support
-                </NavLink>
-        )}
-
-        <NavLink to="/account/settings" className={getNavLinkStyle}>
-          <Bolt />
-          Settings
-        </NavLink>
-
+          {/* Opens the confirmation modal — does NOT call signOut directly */}
+          <button
+            onClick={handleLogoutRequest}
+            className="flex w-full gap-2 text-lg items-center bg-blue-action
+              text-navy-deep rounded-xl p-4 cursor-pointer font-bold
+              hover:bg-opacity-90 transition-all shadow-md border border-transparent"
+          >
+            <LogOut size={20} />
+            Log Out
+          </button>
+        </div>
       </div>
 
-      <div className="mt-auto">
-        <div className="divider divider-neutral"></div>
-
-        <NavLink
-          to="/account/logout"
-          className="flex gap-2 text-lg items-center bg-blue-action text-navy-deep rounded-xl p-4 cursor-pointer"
-        >
-          <LogOut />
-          LogOut
-        </NavLink>
-      </div>
-    </div>
+      {/* ── Modal — rendered outside the sidebar div to avoid stacking context issues */}
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={handleLogoutCancel}
+        onConfirm={handleLogoutConfirm}
+      />
+    </>
   );
 }
 
