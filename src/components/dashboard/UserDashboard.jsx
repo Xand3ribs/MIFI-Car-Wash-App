@@ -1,69 +1,128 @@
-// src/components/dashboards/UserDashboardView.jsx
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom'; // <-- Captures your submission data safely
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { supabase } from '../../supabaseClient'; // Make sure this path correctly points to your supabase client file
+
 import LiveProgressTracker from './user/LiveProgressTracker';
 import QuickHistoryCard from './user/QuickHistoryCard';
 import SupportCard from './user/SupportCard';
 import NoActiveBookingCard from './user/NoActiveBookingCard';
 import SubscriptionCard from './user/SubscriptionCard';
 
-function UserDashboardView() {
-  const location = useLocation();
+function UserDashboard() {
+  const [loading, setLoading] = useState(true);
+  const [activeUser, setActiveUser] = useState(null);
+  const [activeBooking, setActiveBooking] = useState(null);
 
-  // Extract data passed from your Confirm Booking success modal link
-  const routeState = location.state || {};
-
-  const userInfo = { firstName: routeState.firstName || 'User' };
-  const selectedVehicle = routeState.vehicle || '';
-  const selectedService = routeState.service || '';
-  const address = routeState.address || '';
-  const selectedDate = routeState.date || '';
-  const selectedTime = routeState.time || '';
-
-  // Flag to check if a booking transaction just took place
-  const hasActiveBooking = routeState.hasActiveBooking || !!selectedService;
-
+  // States representing our horizontal progress tracker bar indices
   const [washTimeline, setWashTimeline] = useState([
-    { step: 'Confirmed', label: 'Booked', done: hasActiveBooking },
+    { step: 'Confirmed', label: 'Confirmed', done: false },
     { step: 'En Route', label: 'En Route', done: false },
     { step: 'Washing', label: 'Washing', done: false },
     { step: 'Done', label: 'Completed', done: false },
   ]);
 
-  const activeMilestone = [...washTimeline]
-    .reverse()
-    .find((phase) => phase.done);
-  const currentWashStatus = activeMilestone
-    ? activeMilestone.label
-    : 'Completed';
+  // Maps backend text status strings directly to true/false bubble glows
+  const updateTimelineState = (statusString) => {
+    const states = ['Confirmed', 'En Route', 'Washing', 'Completed'];
+    const activeIndex = states.indexOf(statusString || 'Confirmed');
+
+    setWashTimeline([
+      { step: 'Confirmed', label: 'Confirmed', done: activeIndex >= 0 },
+      { step: 'En Route', label: 'En Route', done: activeIndex >= 1 },
+      { step: 'Washing', label: 'Washing', done: activeIndex >= 2 },
+      { step: 'Done', label: 'Completed', done: activeIndex >= 3 },
+    ]);
+  };
+
+  useEffect(() => {
+  let userRefId = null;
+
+  const fetchDashboardContext = async () => {
+    try {
+      // 1. Grab currently logged in user context
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      
+      setActiveUser(user);
+      userRefId = user.id; // Store local reference immediately for the listener
+
+      // 2. Query active bookings (Exclude BOTH Completed and Cancelled rows)
+      const { data: bookings, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .not('status', 'in', '("Completed","Cancelled")')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (error) throw error;
+
+      if (bookings && bookings.length > 0) {
+        const liveWash = bookings[0];
+        setActiveBooking(liveWash);
+        updateTimelineState(liveWash.status);
+      }
+    } catch (err) {
+      console.error('Error hydrating user dashboard:', err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchDashboardContext();
+
+  // 3. Setup real-time listener bound to the active channel stream
+  const channel = supabase
+    .channel('live-booking-status-feed')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'bookings' },
+      (payload) => {
+        // Fallback to payload data or state tracking safely
+        const rowData = payload.new || payload.old;
+        const currentUserId = userRefId || activeUser?.id;
+
+        if (rowData && rowData.user_id === currentUserId) {
+          if (rowData.status === 'Completed' || rowData.status === 'Cancelled') {
+            setActiveBooking(null); 
+          } else {
+            setActiveBooking(rowData);
+            updateTimelineState(rowData.status);
+          }
+        }
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, [activeUser?.id]);
+
+  const firstName = activeUser?.user_metadata?.first_name || 'Client';
 
   const history = [
-    {
-      id: 1,
-      date: 'May 10, 2026',
-      vehicle: 'Tesla Model 3',
-      service: 'Deep Clean',
-      status: 'Completed',
-      amount: '15,000',
-    },
-    {
-      id: 2,
-      date: 'April 15, 2026',
-      vehicle: 'Tesla Model 3',
-      service: 'Quick Wash',
-      status: 'Completed',
-      amount: '15,000',
-    },
+    { id: 1, date: 'May 10, 2026', vehicle: 'Tesla Model 3', service: 'Deep Clean', status: 'Completed', amount: '15,000' },
+    { id: 2, date: 'April 15, 2026', vehicle: 'Tesla Model 3', service: 'Quick Wash', status: 'Completed', amount: '15,000' },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-navy-deep flex items-center justify-center text-white">
+        <span className="loading loading-spinner text-blue-action w-12"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-navy-deep text-white p-6 md:p-8 lg:p-12">
       <div className="max-w-6xl mx-auto flex flex-col gap-8">
-        {/* PREMIUM HUB WELCOME HEADER */}
+        
+        {/* WELCOME HEADER */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b border-border-dark/40 pb-6">
-          <div className="max-w-sm 2xl:max-w-lg">
+          <div>
             <h1 className="text-3xl lg:text-5xl font-black tracking-tight">
-              Hello, {userInfo.firstName}
+              Hello, {firstName}
             </h1>
             <p className="text-slate-400 mt-1.5 text-sm lg:text-base font-medium">
               Welcome back to your premium car care headquarters.
@@ -78,36 +137,35 @@ function UserDashboardView() {
           </Link>
         </div>
 
-        {/* YOUR ORIGINAL VERTICAL STACK LAYOUT CONTAINER */}
+        {/* WORKSPACE ZONE */}
         <div className="flex flex-col gap-8">
-          {/* TOP ZONE: ACTIVE TRACKING SYSTEM OR EMPTY STATE STATE TRIGGER */}
           <div className="flex flex-col gap-4">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 pl-1">
               Live Appointment Tracking
             </h2>
 
-            {!hasActiveBooking ? (
+            {!activeBooking ? (
               <NoActiveBookingCard />
             ) : (
+              /* Mapping our snake_case database object attributes cleanly */
               <LiveProgressTracker
-                selectedService={selectedService}
-                selectedVehicle={selectedVehicle}
-                currentWashStatus={currentWashStatus}
+                bookingId={activeBooking.id}
+                selectedService={activeBooking.selected_service}
+                selectedVehicle={activeBooking.selected_vehicle}
+                currentWashStatus={activeBooking.status}
                 timelineSteps={washTimeline}
-                selectedDate={selectedDate}
-                selectedTime={selectedTime}
-                address={address}
+                selectedDate={activeBooking.selected_date}
+                selectedTime={activeBooking.selected_time}
+                address={activeBooking.address}
               />
             )}
           </div>
 
-          {/* BOTTOM ZONE: DASHBOARD UTILITY SUB-CONTAINERS */}
           <div className="flex flex-col items-center gap-4 lg:gap-6">
-            <div className="flex flex-col lg:flex-row gap-4 lg:justify-between w-full ">
+            <div className="flex flex-col lg:flex-row gap-4 lg:justify-between w-full">
               <QuickHistoryCard historyData={history} />
               <SubscriptionCard />
             </div>
-
             <SupportCard />
           </div>
         </div>
@@ -116,4 +174,4 @@ function UserDashboardView() {
   );
 }
 
-export default UserDashboardView;
+export default UserDashboard;
