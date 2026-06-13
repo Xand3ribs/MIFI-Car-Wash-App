@@ -12,7 +12,7 @@ export default function ActiveJobCard({ job, onClick }) {
   }
 
   return (
-    <div 
+    <div
       onClick={onClick}
       className="bg-gray-dark border border-blue-action rounded-2xl p-4 shadow-xl flex flex-col gap-3 cursor-pointer
        transition-all active:scale-[0.99] group"
@@ -22,7 +22,9 @@ export default function ActiveJobCard({ job, onClick }) {
           <span className="text-[10px] font-bold text-blue-400 tracking-wide uppercase bg-blue-500/10 px-2 py-0.5 rounded-md">
             {job.service}
           </span>
-          <h4 className="text-lg text-white font-bold mt-2 group-hover:text-blue-400 transition-colors">{job.name}</h4>
+          <h4 className="text-lg text-white font-bold mt-2 group-hover:text-blue-400 transition-colors">
+            {job.name}
+          </h4>
           <p className="text-white text-xs mt-0.5">{job.car}</p>
         </div>
 
@@ -32,13 +34,13 @@ export default function ActiveJobCard({ job, onClick }) {
           </span>
 
           {/* ONE-TAP PHONE DIALER BUTTON */}
-            <a 
-                href={`tel:${job.phone || '+234800000000'}`}
-                onClick={(e) => e.stopPropagation()} // Stops the card from opening the detail screen when just trying to call!
-                className="mt-2 p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl border border-slate-700 flex items-center justify-center transition-colors"
-            >
-                <Phone size={14} />
-            </a>
+          <a
+            href={`tel:${job.phone || '+234800000000'}`}
+            onClick={(e) => e.stopPropagation()} // Stops the card from opening the detail screen when just trying to call!
+            className="mt-2 p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl border border-slate-700 flex items-center justify-center transition-colors"
+          >
+            <Phone size={14} />
+          </a>
         </div>
       </div>
 

@@ -1,7 +1,14 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { STEP_LABELS } from '../../config/bookingConfig';
 
-export default function BookingFooter({ currentStep, prevStep, nextStep, handleFinalSubmit, isSubmitting, isContinueDisabled }) {
+export default function BookingFooter({
+  currentStep,
+  prevStep,
+  nextStep,
+  handleFinalSubmit,
+  isSubmitting,
+  isContinueDisabled,
+}) {
   return (
     <footer className="flex-shrink-0 bg-gray-dark border-t border-border-dark">
       <div className="flex items-center justify-between h-20 px-6 sm:px-10 lg:px-16 xl:px-36 gap-4">
@@ -25,7 +32,11 @@ export default function BookingFooter({ currentStep, prevStep, nextStep, handleF
           className={`flex items-center gap-2 px-6 sm:px-10 lg:px-14 py-3 rounded-2xl font-semibold text-base lg:text-lg h-12 lg:h-14 transition-all duration-200
             ${isContinueDisabled || isSubmitting ? 'bg-blue-action/30 text-navy-deep/40 cursor-not-allowed' : 'bg-blue-action text-navy-deep hover:brightness-110 active:scale-95 shadow-[0_0_20px_rgba(0,200,255,0.25)]'}`}
         >
-          {isSubmitting ? 'Processing…' : currentStep === 5 ? 'Confirm Booking' : 'Continue'}
+          {isSubmitting
+            ? 'Processing…'
+            : currentStep === 5
+              ? 'Confirm Booking'
+              : 'Continue'}
           {!isSubmitting && <ChevronRight size={18} strokeWidth={2.5} />}
         </button>
       </div>

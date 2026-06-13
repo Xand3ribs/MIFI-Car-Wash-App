@@ -57,7 +57,8 @@ function Hero() {
           className="text-base lg:text-lg text-slate-400 leading-relaxed max-w-sm mb-10"
           style={{ opacity: 0, animation: 'slideUp 0.6s ease forwards 0.32s' }}
         >
-          Professional mobile detailing delivered to your home, office, or wherever life takes you. No queues. No hassle.
+          Professional mobile detailing delivered to your home, office, or
+          wherever life takes you. No queues. No hassle.
         </p>
 
         {/* CTA group */}
@@ -65,7 +66,6 @@ function Hero() {
           className="flex flex-col xl:flex-row items-start xl:items-center gap-6"
           style={{ opacity: 0, animation: 'slideUp 0.6s ease forwards 0.44s' }}
         >
-
           <Link
             to="/booking"
             className="group inline-flex items-center gap-2
@@ -99,8 +99,8 @@ function Hero() {
           className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6"
           style={{ opacity: 0, animation: 'slideUp 0.6s ease forwards 0.56s' }}
         > */}
-          {/* Stars + rating */}
-          {/* <div className="flex items-center gap-2.5 pl-3 pr-4 py-2.5 rounded-2xl bg-white/5 border border-white/10">
+        {/* Stars + rating */}
+        {/* <div className="flex items-center gap-2.5 pl-3 pr-4 py-2.5 rounded-2xl bg-white/5 border border-white/10">
             <div className="flex items-center gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
@@ -110,11 +110,11 @@ function Hero() {
             <span className="text-xs text-slate-400">from 500+ washes</span>
           </div> */}
 
-          {/* Divider (desktop) */}
-          {/* <div className="hidden sm:block w-px h-8 bg-white/10" /> */}
+        {/* Divider (desktop) */}
+        {/* <div className="hidden sm:block w-px h-8 bg-white/10" /> */}
 
-          {/* Badges */}
-          {/* <div className="flex items-center gap-4">
+        {/* Badges */}
+        {/* <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5 text-xs text-slate-400">
               <ShieldCheck size={14} className="text-[#1565C0] shrink-0" />
               Insured & Vetted
@@ -135,7 +135,6 @@ function Hero() {
             transform: 'translateX(100%)',
           }}
         />
-
       </div>
 
       {/* ── RIGHT PANEL (photo) ── */}
@@ -165,7 +164,11 @@ function Hero() {
       <div
         className="lg:hidden absolute inset-0 z-0"
         aria-hidden="true"
-        style={{ backgroundImage: `url(${heroBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+        style={{
+          backgroundImage: `url(${heroBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
       >
         <div className="absolute inset-0 bg-[#0D1B2A]/80" />
       </div>

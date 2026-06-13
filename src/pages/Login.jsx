@@ -1,24 +1,29 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import mifaiNavLogo from '/src/assets/mifai-navlogo.png';
-import { LoginPhase, ForgotPhase, ForgotSentPhase } from '../components/auth/LoginPhases';
+import {
+  LoginPhase,
+  ForgotPhase,
+  ForgotSentPhase,
+} from '../components/auth/LoginPhases';
 
 function Login() {
   const navigate = useNavigate();
-  const [phase, setPhase]                 = useState('login');
-  const [identifier, setIdentifier]     = useState('');
-  const [password, setPassword]         = useState('');
+  const [phase, setPhase] = useState('login');
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
   const [recoveryEmail, setRecoveryEmail] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading]       = useState(false);
-  const [errors, setErrors]             = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const validateLogin = () => {
     const next = {};
     if (!identifier.trim()) next.identifier = 'Email is required.';
-    if (!password)           next.password   = 'Password is required.';
-    else if (password.length < 8) next.password = 'Password must be at least 8 characters.';
+    if (!password) next.password = 'Password is required.';
+    else if (password.length < 8)
+      next.password = 'Password must be at least 8 characters.';
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -28,13 +33,36 @@ function Login() {
     setIsLoading(true);
     setErrors({});
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: identifier.trim(),
-        password,
-      });
-      if (error) throw error;
-      navigate('/account/dashboard'); 
+      // 1. Authenticate credentials via Supabase Auth
+      const { data, error: authError } = await supabase.auth.signInWithPassword(
+        {
+          email: identifier.trim(),
+          password,
+        }
+      );
+
+      if (authError) throw authError;
+
+      // 2. Fetch the newly logged-in user's custom role from public.profiles
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      // 3. Smart routing based on the exact user role
+      const userRole = profile?.role;
+      if (userRole === 'admin') {
+        navigate('/account/admin/dashboard');
+      } else if (userRole === 'washer') {
+        navigate('/account/washer/dashboard');
+      } else {
+        navigate('/account/dashboard'); // Fallback for standard customers
+      }
     } catch (error) {
+      // Catch bad passwords or missing tables gracefully
       setErrors({ identifier: error.message });
     } finally {
       setIsLoading(false);
@@ -47,7 +75,9 @@ function Login() {
     }
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(recoveryEmail.trim());
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        recoveryEmail.trim()
+      );
       if (error) throw error;
       setPhase('forgot-sent');
     } catch (error) {
@@ -60,45 +90,101 @@ function Login() {
   return (
     <div className="min-h-screen bg-navy-deep flex items-center justify-center px-5">
       <div className="relative w-full max-w-md bg-gray-dark border border-border-dark rounded-[2.5rem] p-8 lg:p-12 shadow-[0_0_60px_rgba(0,0,0,0.5),0_0_30px_rgba(0,200,255,0.06)] overflow-hidden">
-        
         <div className="absolute top-0 left-[10%] right-[10%] h-[2px] rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-transparent via-blue-action to-transparent animate-[chargeBar_1.2s_ease_both]" style={{ opacity: 0.8 }} />
+          <div
+            className="h-full bg-gradient-to-r from-transparent via-blue-action to-transparent animate-[chargeBar_1.2s_ease_both]"
+            style={{ opacity: 0.8 }}
+          />
         </div>
 
         <div className="flex flex-col items-center mb-8">
-          <Link to="/"><img src={mifaiNavLogo} alt="MiFai Wash" className="h-[100px] w-auto mb-1 hover:opacity-90 transition-opacity" /></Link>
+          <Link to="/">
+            <img
+              src={mifaiNavLogo}
+              alt="MiFai Wash"
+              className="h-[100px] w-auto mb-1 hover:opacity-90 transition-opacity"
+            />
+          </Link>
           <div className="text-center" key={phase}>
             <h1 className="text-3xl lg:text-4xl font-extrabold text-white tracking-tight animate-[fadeSlideUp_0.3s_ease_both]">
-              {phase === 'login' ? 'Welcome back' : phase === 'forgot' ? 'Reset password' : 'Check your inbox'}
+              {phase === 'login'
+                ? 'Welcome back'
+                : phase === 'forgot'
+                  ? 'Reset password'
+                  : 'Check your inbox'}
             </h1>
             <p className="text-text-secondary text-sm mt-2 animate-[fadeSlideUp_0.35s_ease_both]">
-              {phase === 'login' ? 'Sign in to manage your bookings' : phase === 'forgot' ? "We'll email you a recovery link" : <>A link was sent to <span className="text-blue-action font-semibold">{recoveryEmail}</span></>}
+              {phase === 'login' ? (
+                'Sign in to manage your bookings'
+              ) : phase === 'forgot' ? (
+                "We'll email you a recovery link"
+              ) : (
+                <>
+                  A link was sent to{' '}
+                  <span className="text-blue-action font-semibold">
+                    {recoveryEmail}
+                  </span>
+                </>
+              )}
             </p>
           </div>
         </div>
 
         {/* Phase Router Strategy */}
         {phase === 'login' && (
-          <LoginPhase 
-            identifier={identifier} setIdentifier={setIdentifier} password={password} setPassword={setPassword}
-            showPassword={showPassword} setShowPassword={setShowPassword} isLoading={isLoading} errors={errors} setErrors={setErrors}
-            goToForgot={() => { setErrors({}); setRecoveryEmail(identifier.includes('@') ? identifier : ''); setPhase('forgot'); }}
+          <LoginPhase
+            identifier={identifier}
+            setIdentifier={setIdentifier}
+            password={password}
+            setPassword={setPassword}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
+            isLoading={isLoading}
+            errors={errors}
+            setErrors={setErrors}
+            goToForgot={() => {
+              setErrors({});
+              setRecoveryEmail(identifier.includes('@') ? identifier : '');
+              setPhase('forgot');
+            }}
             handleLogin={handleLogin}
           />
         )}
 
         {phase === 'forgot' && (
-          <ForgotPhase 
-            recoveryEmail={recoveryEmail} setRecoveryEmail={setRecoveryEmail} isLoading={isLoading} errors={errors} setErrors={setErrors}
-            handleRecovery={handleRecovery} goToLogin={() => { setErrors({}); setPhase('login'); }}
+          <ForgotPhase
+            recoveryEmail={recoveryEmail}
+            setRecoveryEmail={setRecoveryEmail}
+            isLoading={isLoading}
+            errors={errors}
+            setErrors={setErrors}
+            handleRecovery={handleRecovery}
+            goToLogin={() => {
+              setErrors({});
+              setPhase('login');
+            }}
           />
         )}
 
-        {phase === 'forgot-sent' && <ForgotSentPhase recoveryEmail={recoveryEmail} goToLogin={() => { setErrors({}); setPhase('login'); }} />}
+        {phase === 'forgot-sent' && (
+          <ForgotSentPhase
+            recoveryEmail={recoveryEmail}
+            goToLogin={() => {
+              setErrors({});
+              setPhase('login');
+            }}
+          />
+        )}
 
         <div className="mt-10 pt-6 border-t border-border-dark text-center">
           <p className="text-text-secondary text-sm">
-            New to MiFai Wash? <Link to="/booking" className="text-blue-action hover:text-white font-bold transition-colors">Book your first wash</Link>
+            New to MiFai Wash?{' '}
+            <Link
+              to="/booking"
+              className="text-blue-action hover:text-white font-bold transition-colors"
+            >
+              Book your first wash
+            </Link>
           </p>
         </div>
       </div>

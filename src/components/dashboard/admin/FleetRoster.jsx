@@ -1,9 +1,21 @@
 import React from 'react';
 
 const ROSTER_STATUS = {
-  'Available': { dot: 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]', badge: 'bg-green-500 bg-opacity-10 text-green-400', label: 'Available' },
-  'Busy': { dot: 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.5)]', badge: 'bg-yellow-500 bg-opacity-10 text-yellow-400', label: 'On a Wash' },
-  'Offline': { dot: 'bg-red-500', badge: 'bg-red-500 bg-opacity-10 text-red-400', label: 'Offline' }
+  Available: {
+    dot: 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]',
+    badge: 'bg-green-500 bg-opacity-10 text-green-400',
+    label: 'Available',
+  },
+  Busy: {
+    dot: 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.5)]',
+    badge: 'bg-yellow-500 bg-opacity-10 text-yellow-400',
+    label: 'On a Wash',
+  },
+  Offline: {
+    dot: 'bg-red-500',
+    badge: 'bg-red-500 bg-opacity-10 text-red-400',
+    label: 'Offline',
+  },
 };
 
 function FleetRoster({ mockWashers }) {
@@ -16,15 +28,23 @@ function FleetRoster({ mockWashers }) {
 
       <div className="flex flex-col gap-3 mt-2">
         {mockWashers.map((washer) => {
-          const currentConfig = ROSTER_STATUS[washer.status] || ROSTER_STATUS['Offline'];
+          const currentConfig =
+            ROSTER_STATUS[washer.status] || ROSTER_STATUS['Offline'];
           return (
-            <div key={washer.id} className="p-4 bg-gray-dark border border-border-dark rounded-xl flex items-center justify-between gap-3">
+            <div
+              key={washer.id}
+              className="p-4 bg-gray-dark border border-border-dark rounded-xl flex items-center justify-between gap-3"
+            >
               <div>
-                <h4 className="text-white font-medium text-sm sm:text-base">{washer.name}</h4>
+                <h4 className="text-white font-medium text-sm sm:text-base">
+                  {washer.name}
+                </h4>
                 {/* <p className="text-slate-400 text-xs mt-0.5">Shift: {washer.shift}</p> */}
               </div>
               <div className="flex flex-col items-end gap-1.5 shrink-0">
-                <span className={`text-[10px] px-2 py-0.5 rounded-md font-semibold ${currentConfig.badge}`}>
+                <span
+                  className={`text-[10px] px-2 py-0.5 rounded-md font-semibold ${currentConfig.badge}`}
+                >
                   {currentConfig.label}
                 </span>
                 {/* <div className="flex items-center gap-1.5">

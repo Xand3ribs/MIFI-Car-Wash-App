@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-function DashboardNav({user}) {
+function DashboardNav({ user }) {
   return (
     <div className="navbar bg-navy-deep shadow-sm border-b border-border-dark fixed top-0 left-0 w-full z-[40] flex-shrink-0">
       <div className="container flex justify-between">

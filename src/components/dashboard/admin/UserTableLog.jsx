@@ -16,18 +16,25 @@ export default function UserTableLog({ users, onToggleStatus }) {
         <tbody className="divide-y divide-slate-800/40 font-medium text-slate-300">
           {users.length === 0 ? (
             <tr>
-              <td colSpan="4" className="py-8 text-center text-slate-600 font-bold tracking-wide uppercase">
+              <td
+                colSpan="4"
+                className="py-8 text-center text-slate-600 font-bold tracking-wide uppercase"
+              >
                 No matching customer files discovered
               </td>
             </tr>
           ) : (
             users.map((user) => (
-              <tr key={user.id} className="hover:bg-slate-900/30 transition-colors group">
-                
+              <tr
+                key={user.id}
+                className="hover:bg-slate-900/30 transition-colors group"
+              >
                 {/* Identity Cluster Stack */}
                 <td className="py-4 px-2">
                   <div className="flex flex-col gap-0.5">
-                    <span className="text-white font-bold text-sm">{user.name}</span>
+                    <span className="text-white font-bold text-sm">
+                      {user.name}
+                    </span>
                     <span className="text-slate-500 font-mono tracking-tight text-[11px]">
                       {user.id} &bull; {user.email} &bull; {user.phone}
                     </span>
@@ -68,9 +75,11 @@ export default function UserTableLog({ users, onToggleStatus }) {
 
                 {/* Dropdown Action Wrapper */}
                 <td className="py-4 px-2 text-right vertical-middle">
-                  <UserActionsDropdown user={user} onToggleStatus={onToggleStatus} />
+                  <UserActionsDropdown
+                    user={user}
+                    onToggleStatus={onToggleStatus}
+                  />
                 </td>
-
               </tr>
             ))
           )}

@@ -1,11 +1,11 @@
 import { useRef } from 'react';
 import Header from '../components/Header';
-import Hero   from '../components/Hero';
+import Hero from '../components/Hero';
 import Footer from '../components/Footer';
 
-import Services    from '../components/home/Services';
-import HowItWorks  from '../components/home/HowItWorks';
-import ContactUs     from '../components/home/ContactUs';
+import Services from '../components/home/Services';
+import HowItWorks from '../components/home/HowItWorks';
+import ContactUs from '../components/home/ContactUs';
 
 function Home() {
   // Create solid references to your DOM elements

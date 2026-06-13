@@ -11,14 +11,19 @@ export default function SubscriptionManager() {
             <CreditCard size={24} />
           </div>
           <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Active Account Plan</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+              Active Account Plan
+            </span>
             <h4 className="text-lg font-black text-slate-100 flex items-center gap-1.5">
-              MiFai Standard Tier <Sparkles size={14} className="text-blue-action" />
+              MiFai Standard Tier{' '}
+              <Sparkles size={14} className="text-blue-action" />
             </h4>
           </div>
         </div>
         <div className="text-left md:text-right">
-          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Next Renewal Token</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+            Next Renewal Token
+          </span>
           <p className="text-sm font-bold text-slate-300">June 28, 2026</p>
         </div>
       </div>

@@ -1,20 +1,35 @@
 import React from 'react';
-import { Calendar, Car, ArrowRightLeft, FileText, CheckCircle2, XCircle } from 'lucide-react';
+import {
+  Calendar,
+  Car,
+  ArrowRightLeft,
+  FileText,
+  CheckCircle2,
+  XCircle,
+} from 'lucide-react';
 
 function HistoryCard({ log, role, onCardClick }) {
   return (
-    <div 
+    <div
       onClick={() => onCardClick(log)}
       className="bg-gray-dark border border-border-dark rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:border-slate-700/80 hover:bg-slate-900/40 cursor-pointer group"
     >
       {/* Left Core Data Container Block */}
       <div className="flex items-start gap-4">
-        <div className={`p-3 rounded-xl mt-1 shrink-0 ${
-          log.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
-        }`}>
-          {log.status === 'Completed' ? <CheckCircle2 size={20} /> : <XCircle size={20} />}
+        <div
+          className={`p-3 rounded-xl mt-1 shrink-0 ${
+            log.status === 'Completed'
+              ? 'bg-emerald-500/10 text-emerald-400'
+              : 'bg-red-500/10 text-red-400'
+          }`}
+        >
+          {log.status === 'Completed' ? (
+            <CheckCircle2 size={20} />
+          ) : (
+            <XCircle size={20} />
+          )}
         </div>
-        
+
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-700/40">
@@ -25,11 +40,11 @@ function HistoryCard({ log, role, onCardClick }) {
               <Calendar size={12} /> {log.date}
             </span>
           </div>
-          
+
           <h4 className="text-lg font-black text-slate-100 mt-0.5 flex items-center gap-2 group-hover:text-blue-action transition-colors">
             <Car size={18} className="text-blue-action" /> {log.vehicle}
           </h4>
-          
+
           <p className="text-xs text-slate-400 leading-normal mt-0.5">
             <span className="font-bold text-slate-500">
               {role === 'user' ? 'Assigned Operator: ' : 'Client Name: '}
@@ -51,8 +66,11 @@ function HistoryCard({ log, role, onCardClick }) {
         </div>
 
         {role === 'user' ? (
-          <button 
-            onClick={(e) => { e.stopPropagation(); alert("Rebooking system running..."); }}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              alert('Rebooking system running...');
+            }}
             className="bg-blue-action text-navy-deep px-4 py-2 rounded-xl font-extrabold text-xs shadow-md hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-1.5"
           >
             <ArrowRightLeft size={12} /> Rebook Wash

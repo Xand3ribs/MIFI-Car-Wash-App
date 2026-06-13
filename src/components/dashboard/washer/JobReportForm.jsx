@@ -7,12 +7,12 @@ export default function JobReportForm({ onSubmit }) {
     heavyDirt: false,
     scratches: false,
     stubbornStains: false,
-    damagesNoted: false
+    damagesNoted: false,
   });
-  const [washerNotes, setWasherNotes] = useState("");
+  const [washerNotes, setWasherNotes] = useState('');
 
   const handleCheckboxChange = (field) => {
-    setIssues(prev => ({ ...prev, [field]: !prev[field] }));
+    setIssues((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
   return (
@@ -21,7 +21,9 @@ export default function JobReportForm({ onSubmit }) {
         <h3 className="text-base font-bold text-amber-400 flex items-center gap-1.5">
           <ShieldAlert size={18} /> Post-Wash Field Report
         </h3>
-        <p className="text-xs text-slate-400 mt-0.5">Document any workspace flags or pre-existing conditions.</p>
+        <p className="text-xs text-slate-400 mt-0.5">
+          Document any workspace flags or pre-existing conditions.
+        </p>
       </div>
 
       {/* Grid Checkbox Options */}
@@ -30,14 +32,17 @@ export default function JobReportForm({ onSubmit }) {
           { id: 'heavyDirt', label: 'Heavy Mud/Dirt' },
           { id: 'scratches', label: 'Pre-existing Scratches' },
           { id: 'stubbornStains', label: 'Stubborn Stains' },
-          { id: 'damagesNoted', label: 'Prior Damages' }
-        ].map(item => (
-          <label key={item.id} className="flex items-center gap-2 p-2.5 bg-slate-900 bg-opacity-50 border border-slate-800 rounded-xl cursor-pointer">
-            <input 
-              type="checkbox" 
-              checked={issues[item.id]} 
+          { id: 'damagesNoted', label: 'Prior Damages' },
+        ].map((item) => (
+          <label
+            key={item.id}
+            className="flex items-center gap-2 p-2.5 bg-slate-900 bg-opacity-50 border border-slate-800 rounded-xl cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              checked={issues[item.id]}
               onChange={() => handleCheckboxChange(item.id)}
-              className="checkbox checkbox-primary checkbox-sm rounded-md" 
+              className="checkbox checkbox-primary checkbox-sm rounded-md"
             />
             <span className="text-xs text-slate-300">{item.label}</span>
           </label>
@@ -46,18 +51,26 @@ export default function JobReportForm({ onSubmit }) {
 
       {/* Proof of Work Media Section */}
       <div>
-        <span className="text-xs font-bold uppercase text-slate-500 block mb-1.5">Proof of Work (Images)</span>
+        <span className="text-xs font-bold uppercase text-slate-500 block mb-1.5">
+          Proof of Work (Images)
+        </span>
         <div className="border border-dashed border-slate-700 bg-slate-900/30 rounded-xl p-4 text-center flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-slate-900/50 transition-colors">
           <ImageIcon size={20} className="text-blue-400" />
-          <span className="text-xs text-slate-300 font-semibold">Upload Images</span>
-          <span className="text-[10px] text-slate-500">Before & After conditions</span>
+          <span className="text-xs text-slate-300 font-semibold">
+            Upload Images
+          </span>
+          <span className="text-[10px] text-slate-500">
+            Before & After conditions
+          </span>
         </div>
       </div>
 
       {/* Field Notes Area */}
       <div>
-        <span className="text-xs font-bold uppercase text-slate-500 block mb-1.5">Operational Notes</span>
-        <textarea 
+        <span className="text-xs font-bold uppercase text-slate-500 block mb-1.5">
+          Operational Notes
+        </span>
+        <textarea
           rows="3"
           value={washerNotes}
           onChange={(e) => setWasherNotes(e.target.value)}

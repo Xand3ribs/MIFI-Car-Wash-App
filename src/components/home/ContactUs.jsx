@@ -1,7 +1,6 @@
-import { useState }   from 'react';
-import { useInView }  from '../../hooks/useInView';
+import { useState } from 'react';
+import { useInView } from '../../hooks/useInView';
 import { ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
-
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -35,24 +34,24 @@ function TextInput({ type = 'text', placeholder, value, onChange, required }) {
 // ─── Quote form ───────────────────────────────────────────────────────────────
 
 const INITIAL_FORM = {
-  name:        '',
-  email:       '',
-  phone:       '',
-  message:     '',
+  name: '',
+  email: '',
+  phone: '',
+  message: '',
 };
 
 function QuoteForm({ isVisible }) {
-  const [form,        setForm]        = useState(INITIAL_FORM);
-  const [isLoading,   setIsLoading]   = useState(false);
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const set = (field) => (e) =>
-    setForm(prev => ({ ...prev, [field]: e.target.value }));
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    await new Promise(r => setTimeout(r, 1400)); // placeholder
+    await new Promise((r) => setTimeout(r, 1400)); // placeholder
     setIsLoading(false);
     setIsSubmitted(true);
   };
@@ -76,12 +75,21 @@ function QuoteForm({ isVisible }) {
         "
       >
         {/* Corner accents — same pattern used in Hero and Login */}
-        <div className="absolute top-0 left-0 w-12 h-12 border-t border-l border-[#1565C0]/30 rounded-tl-3xl pointer-events-none" aria-hidden />
-        <div className="absolute bottom-0 right-0 w-12 h-12 border-b border-r border-[#1565C0]/30 rounded-br-3xl pointer-events-none" aria-hidden />
+        <div
+          className="absolute top-0 left-0 w-12 h-12 border-t border-l border-[#1565C0]/30 rounded-tl-3xl pointer-events-none"
+          aria-hidden
+        />
+        <div
+          className="absolute bottom-0 right-0 w-12 h-12 border-b border-r border-[#1565C0]/30 rounded-br-3xl pointer-events-none"
+          aria-hidden
+        />
 
         {!isSubmitted ? (
-          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className="flex flex-col gap-5"
+          >
             <div className="mb-1">
               <h3
                 className="text-xl font-bold text-white mb-1"
@@ -181,31 +189,50 @@ function QuoteForm({ isVisible }) {
               No commitment required. We'll respond within 24 hours.
             </p>
           </form>
-
         ) : (
           /* Success state — same card dimensions, no layout jump */
-          <div className="flex flex-col items-center justify-center text-center py-8 gap-5
-            animate-[fadeSlideUp_0.4s_ease_both]">
+          <div
+            className="flex flex-col items-center justify-center text-center py-8 gap-5
+            animate-[fadeSlideUp_0.4s_ease_both]"
+          >
             <div className="relative">
-              <div className="absolute inset-0 rounded-full bg-green-500/15 blur-xl scale-[2]" aria-hidden />
-              <div className="relative w-16 h-16 rounded-full bg-green-500/10 border border-green-500/25
-                flex items-center justify-center">
-                <CheckCircle2 size={28} className="text-green-400" strokeWidth={1.75} />
+              <div
+                className="absolute inset-0 rounded-full bg-green-500/15 blur-xl scale-[2]"
+                aria-hidden
+              />
+              <div
+                className="relative w-16 h-16 rounded-full bg-green-500/10 border border-green-500/25
+                flex items-center justify-center"
+              >
+                <CheckCircle2
+                  size={28}
+                  className="text-green-400"
+                  strokeWidth={1.75}
+                />
               </div>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white mb-2"
-                style={{ fontFamily: "'Sora', sans-serif" }}>
+              <h3
+                className="text-xl font-bold text-white mb-2"
+                style={{ fontFamily: "'Sora', sans-serif" }}
+              >
                 Quote request sent!
               </h3>
               <p className="text-sm text-white/50 max-w-xs mx-auto leading-relaxed">
-                Thanks, <span className="text-white font-medium">{form.name.split(' ')[0]}</span>.
-                We'll review your request and reach out to{' '}
-                <span className="text-[#42A5F5]">{form.email}</span> within one business day.
+                Thanks,{' '}
+                <span className="text-white font-medium">
+                  {form.name.split(' ')[0]}
+                </span>
+                . We'll review your request and reach out to{' '}
+                <span className="text-[#42A5F5]">{form.email}</span> within one
+                business day.
               </p>
             </div>
             <button
-              onClick={() => { setForm(INITIAL_FORM); setIsSubmitted(false); }}
+              onClick={() => {
+                setForm(INITIAL_FORM);
+                setIsSubmitted(false);
+              }}
               className="text-xs text-white/30 hover:text-white/60 transition-colors duration-200 underline underline-offset-2 cursor-pointer"
             >
               Submit another request
@@ -228,14 +255,17 @@ function ContactUs() {
       className="relative w-full py-24 lg:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
       style={{
         fontFamily: "'Inter', sans-serif",
-        background: 'linear-gradient(180deg, #0D1B2A 0%, #0A1628 50%, #0D1B2A 100%)',
+        background:
+          'linear-gradient(180deg, #0D1B2A 0%, #0A1628 50%, #0D1B2A 100%)',
       }}
     >
       {/* Ambient glow — decorative, non-interactive */}
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
           w-[500px] h-[500px] rounded-full opacity-[0.07] blur-3xl"
-        style={{ background: 'radial-gradient(circle, #1565C0, transparent 70%)' }}
+        style={{
+          background: 'radial-gradient(circle, #1565C0, transparent 70%)',
+        }}
         aria-hidden
       />
 

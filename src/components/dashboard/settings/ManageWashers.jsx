@@ -5,19 +5,41 @@ import WasherTableRoster from '../admin/WasherTableRoster';
 import WasherOnboardModal from '../admin/WasherOnboardModal';
 
 const INITIAL_WASHER_CREW = [
-  { id: 'WSH-001', name: 'Alex Rivera', phone: '+234 801 234 5678', location: 'Surulere, Lagos', washes: 14, earnings: 45000, isOnDuty: true },
-  { id: 'WSH-002', name: 'Marcus Kruse', phone: '+234 809 876 5432', location: 'Yaba, Lagos', washes: 8, earnings: 22500, isOnDuty: false },
+  {
+    id: 'WSH-001',
+    name: 'Alex Rivera',
+    phone: '+234 801 234 5678',
+    location: 'Surulere, Lagos',
+    washes: 14,
+    earnings: 45000,
+    isOnDuty: true,
+  },
+  {
+    id: 'WSH-002',
+    name: 'Marcus Kruse',
+    phone: '+234 809 876 5432',
+    location: 'Yaba, Lagos',
+    washes: 8,
+    earnings: 22500,
+    isOnDuty: false,
+  },
 ];
 
 export default function ManageWashers() {
   const [crewList, setCrewList] = useState(INITIAL_WASHER_CREW);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', phone: '', location: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    location: '',
+  });
 
   const handleToggleDuty = (id) => {
-    setCrewList(prev => prev.map(washer => 
-      washer.id === id ? { ...washer, isOnDuty: !washer.isOnDuty } : washer
-    ));
+    setCrewList((prev) =>
+      prev.map((washer) =>
+        washer.id === id ? { ...washer, isOnDuty: !washer.isOnDuty } : washer
+      )
+    );
   };
 
   const handleOnboardSubmit = (e) => {
@@ -31,24 +53,28 @@ export default function ManageWashers() {
       location: formData.location,
       washes: 0,
       earnings: 0,
-      isOnDuty: true
+      isOnDuty: true,
     };
 
-    setCrewList(prev => [...prev, newWasher]);
+    setCrewList((prev) => [...prev, newWasher]);
     setFormData({ name: '', phone: '', location: '' });
     setIsModalOpen(false);
   };
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
         <div>
-          <h3 className="text-lg font-bold text-slate-100">Washer Crew Roster</h3>
-          <p className="text-xs text-slate-500">Manage team operational metrics, duty logs, and account creation access.</p>
+          <h3 className="text-lg font-bold text-slate-100">
+            Washer Crew Roster
+          </h3>
+          <p className="text-xs text-slate-500">
+            Manage team operational metrics, duty logs, and account creation
+            access.
+          </p>
         </div>
-        
+
         <button
           type="button"
           onClick={() => setIsModalOpen(true)}
@@ -64,14 +90,13 @@ export default function ManageWashers() {
 
       {/* Rendered Sub-Component Overlay Form Modal */}
       {isModalOpen && (
-        <WasherOnboardModal 
+        <WasherOnboardModal
           formData={formData}
           setFormData={setFormData}
           onClose={() => setIsModalOpen(false)}
           onSubmit={handleOnboardSubmit}
         />
       )}
-
     </div>
   );
 }

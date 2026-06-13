@@ -4,20 +4,21 @@ import { Menu, X, UserCircle2 } from 'lucide-react';
 import mifaiLogo from '../assets/mifai-logo.png';
 
 const NAV_ITEMS = [
-  { label: 'Services',     anchor: 'services'     },
+  { label: 'Services', anchor: 'services' },
   { label: 'How It Works', anchor: 'how-it-works' },
-  { label: 'Contact Us',      anchor: 'contact-us'       },
+  { label: 'Contact Us', anchor: 'contact-us' },
 ];
 
 function Header({ sectionRefs }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [scrolled,     setScrolled]     = useState(false);
-  const [menuOpen,     setMenuOpen]     = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [activeAnchor, setActiveAnchor] = useState('');
 
   const scrollToAnchor = (anchor) => {
-    const el = sectionRefs?.[anchor]?.current || document.getElementById(anchor);
+    const el =
+      sectionRefs?.[anchor]?.current || document.getElementById(anchor);
     if (!el) return false;
 
     const headerH = document.querySelector('header')?.offsetHeight ?? 80;
@@ -28,8 +29,9 @@ function Header({ sectionRefs }) {
   };
 
   const isHomeRoute = () => {
-    return location.pathname === '/' && (
-      location.hash === '' || location.hash === '#' || location.hash === '#/'
+    return (
+      location.pathname === '/' &&
+      (location.hash === '' || location.hash === '#' || location.hash === '#/')
     );
   };
 
@@ -72,7 +74,7 @@ function Header({ sectionRefs }) {
       observers.push(obs);
     });
 
-    return () => observers.forEach(o => o.disconnect());
+    return () => observers.forEach((o) => o.disconnect());
   }, [sectionRefs]);
 
   useEffect(() => {
@@ -94,13 +96,19 @@ function Header({ sectionRefs }) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-
           <Link to="/" className="flex items-center group shrink-0">
-            <img src={mifaiLogo} alt="MiFai Wash" className="h-10 lg:h-14 w-auto transition-transform duration-200 group-hover:scale-[1.03]" />
+            <img
+              src={mifaiLogo}
+              alt="MiFai Wash"
+              className="h-10 lg:h-14 w-auto transition-transform duration-200 group-hover:scale-[1.03]"
+            />
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-8" aria-label="Main navigation">
+          <nav
+            className="hidden lg:flex items-center gap-8"
+            aria-label="Main navigation"
+          >
             {NAV_ITEMS.map(({ label, anchor }) => {
               const isActive = activeAnchor === anchor;
               return (
@@ -111,7 +119,9 @@ function Header({ sectionRefs }) {
                     ${isActive ? 'text-white' : 'text-white/60 hover:text-white'}`}
                 >
                   {label}
-                  <span className={`absolute -bottom-1 left-0 right-0 h-[2px] rounded-full bg-[#1565C0] transition-all duration-300 ${isActive ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'}`} />
+                  <span
+                    className={`absolute -bottom-1 left-0 right-0 h-[2px] rounded-full bg-[#1565C0] transition-all duration-300 ${isActive ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'}`}
+                  />
                 </button>
               );
             })}
@@ -119,21 +129,40 @@ function Header({ sectionRefs }) {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link to="/login" className="text-sm font-semibold px-5 py-2.5 rounded-xl bg-[#1565C0] text-white shadow-[0_4px_14px_rgba(21,101,192,0.4)] hover:bg-[#1251A3] hover:scale-[1.03] active:scale-[0.98] transition-all duration-200">Log In</Link>
+            <Link
+              to="/login"
+              className="text-sm font-semibold px-5 py-2.5 rounded-xl bg-[#1565C0] text-white shadow-[0_4px_14px_rgba(21,101,192,0.4)] hover:bg-[#1251A3] hover:scale-[1.03] active:scale-[0.98] transition-all duration-200"
+            >
+              Log In
+            </Link>
           </div>
 
           {/* Mobile controls */}
           <div className="flex lg:hidden items-center gap-2">
-            <Link to="/login" className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/8 transition-colors duration-200"><UserCircle2 size={24} strokeWidth={1.75} /></Link>
-            <button onClick={() => setMenuOpen(v => !v)} className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/8 transition-colors duration-200">
-              {menuOpen ? <X size={24} strokeWidth={1.75} /> : <Menu size={24} strokeWidth={1.75} />}
+            <Link
+              to="/login"
+              className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/8 transition-colors duration-200"
+            >
+              <UserCircle2 size={24} strokeWidth={1.75} />
+            </Link>
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/8 transition-colors duration-200"
+            >
+              {menuOpen ? (
+                <X size={24} strokeWidth={1.75} />
+              ) : (
+                <Menu size={24} strokeWidth={1.75} />
+              )}
             </button>
           </div>
         </div>
       </div>
 
       {/* Mobile drawer */}
-      <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${menuOpen ? 'max-h-72 opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div
+        className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${menuOpen ? 'max-h-72 opacity-100' : 'max-h-0 opacity-0'}`}
+      >
         <div className="bg-[#0D1B2A]/95 backdrop-blur-xl border-t border-white/8 px-4 pt-2 pb-4 space-y-1">
           {NAV_ITEMS.map(({ label, anchor }) => (
             <button
@@ -146,7 +175,13 @@ function Header({ sectionRefs }) {
             </button>
           ))}
           <div className="pt-2 border-t border-white/8 mt-2">
-            <Link to="/booking" onClick={() => setMenuOpen(false)} className="block text-center text-sm font-semibold text-white bg-[#1565C0] px-4 py-3 rounded-xl shadow-[0_4px_14px_rgba(21,101,192,0.35)] hover:bg-[#1251A3] transition-colors duration-200">Book a Wash</Link>
+            <Link
+              to="/booking"
+              onClick={() => setMenuOpen(false)}
+              className="block text-center text-sm font-semibold text-white bg-[#1565C0] px-4 py-3 rounded-xl shadow-[0_4px_14px_rgba(21,101,192,0.35)] hover:bg-[#1251A3] transition-colors duration-200"
+            >
+              Book a Wash
+            </Link>
           </div>
         </div>
       </div>
