@@ -1,121 +1,190 @@
-function Step1({
-  selectedVehicle,
-  setSelectedVehicle,
-  selectedService,
-  setSelectedService,
-}) {
-  const vehicles = [
-    { name: 'Sedan', price: '25', icon: '🚗' },
-    { name: 'SUV', price: '35', icon: '🚙' },
-    { name: 'Truck', price: '45', icon: '🛻' },
-  ];
+import { VEHICLES, SERVICES } from '../../config/bookingConfig';
 
-  const services = [
-    { name: 'Basic Wash', time: '20 min', price: '25' },
-    { name: 'Premium Wash', time: '45 min', price: '45' },
-    { name: 'Deluxe Wash', time: '60 min', price: '65' },
-  ];
-
+// ─── Vehicle card ─────────────────────────────────────────────────────────────
+function VehicleCard({ vehicle, isSelected, onSelect }) {
   return (
-    <div className="flex flex-col gap-10">
-      <div className="mb-8 lg:mb-10">
-        <h1 className="text-[2rem] lg:text-[3rem] text-white">
+    <button
+      type="button"
+      onClick={() => onSelect(vehicle.name)}
+      className={`
+        group relative flex h-full min-h-[90px] items-center justify-between w-full
+        px-5 py-4 rounded-2xl border text-left
+        transition-all duration-200 cursor-pointer
+        ${isSelected
+          ? 'bg-blue-action border-blue-action text-navy-deep shadow-[0_0_20px_rgba(0,200,255,0.2)]'
+          : 'bg-gray-dark border-border-dark text-white hover:border-blue-action/60 hover:bg-white/5'
+        }
+      `}
+    >
+      <div className="flex items-center gap-4">
+        <span
+          className={`text-2xl w-10 h-10 flex items-center justify-center rounded-xl
+            transition-colors duration-200
+            ${isSelected ? 'bg-navy-deep/20' : 'bg-white/5'}`}
+        >
+          {vehicle.icon}
+        </span>
+        <span className="text-lg font-semibold">{vehicle.name}</span>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <span className="text-lg font-bold">₦{vehicle.price}</span>
+        <div
+          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
+            transition-all duration-200 shrink-0
+            ${isSelected
+              ? 'border-navy-deep bg-navy-deep'
+              : 'border-white/30 group-hover:border-blue-action/60'
+            }`}
+        >
+          {isSelected && (
+            <div className="w-2 h-2 rounded-full bg-blue-action" />
+          )}
+        </div>
+      </div>
+    </button>
+  );
+}
+
+// ─── Service card ─────────────────────────────────────────────────────────────
+function ServiceCard({ service, isSelected, onSelect }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(service.name)}
+      className={`
+        group relative flex h-full min-h-[90px] flex-col justify-between w-full
+        px-5 py-4 rounded-2xl border text-left gap-1
+        transition-all duration-200 cursor-pointer
+        ${isSelected
+          ? 'bg-blue-action border-blue-action text-navy-deep shadow-[0_0_20px_rgba(0,200,255,0.2)]'
+          : 'bg-gray-dark border-border-dark text-white hover:border-blue-action/60 hover:bg-white/5'
+        }
+      `}
+    >
+      <div className="flex items-center justify-between w-full">
+        <span className="text-lg font-semibold">{service.name}</span>
+        <div className="flex items-center gap-3">
+          <span className="text-lg font-bold">₦{service.price}</span>
+          <div
+            className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
+              transition-all duration-200 shrink-0
+              ${isSelected
+                ? 'border-navy-deep bg-navy-deep'
+                : 'border-white/30 group-hover:border-blue-action/60'
+              }`}
+          >
+            {isSelected && <div className="w-2 h-2 rounded-full bg-blue-action" />}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <span
+          className={`text-sm font-medium px-2 py-0.5 rounded-lg
+            ${isSelected ? 'bg-navy-deep/20 text-navy-deep' : 'bg-white/8 text-white/50'}`}
+        >
+          ⏱ {service.time}
+        </span>
+        <span className={`text-sm ${isSelected ? 'text-navy-deep/70' : 'text-white/40'}`}>
+          {service.description}
+        </span>
+      </div>
+    </button>
+  );
+}
+
+function Step1({ selectedVehicle, setSelectedVehicle, selectedService, setSelectedService }) {
+  return (
+    <div className="flex flex-col gap-8 w-full">
+
+      {/* Page heading */}
+      <div>
+        <h1 className="text-[2rem] lg:text-[3rem] font-bold text-white leading-tight">
           What are we washing?
         </h1>
-
         <p className="text-lg text-text-secondary mt-2">
-          Select your vehicle and service
+          Select your vehicle type and service type
         </p>
       </div>
 
-      <div
-        className="flex flex-col xl:justify-between xl:flex-row 
-            [&_h2]:text-center [&_h2]:mb-6 [&_h2]:text-[1.7rem]"
-      >
-        {/* vehicle type */}
-        <div className="flex-1 text-white">
-          <h2>Vehicle Type</h2>
+      {/* ── Grid Container ── */}
+      <div className="flex flex-col xl:justify-between xl:flex-row ">
 
-          {/* vehicle selection */}
-          <div
-            className="flex flex-col gap-6 w-full text-[1rem] sm:text-[1.5rem]
-                    [&>div>div]:flex [&>div>div]:items-center [&>div>div]:gap-2"
-          >
-            {vehicles.map((vehicle, index) => (
-              <div
-                key={index}
-                onClick={() => setSelectedVehicle(vehicle.name)}
-                className={`flex flex-row justify-between items-center p-4 border rounded-2xl w-full cursor-pointer transition-all duration-200
-                                    ${
-                                      selectedVehicle === vehicle.name
-                                        ? 'bg-blue-action text-navy-deep border-blue-action'
-                                        : 'bg-gray-dark text-white border-border-dark hover:border-blue-action'
-                                    }`}
-              >
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-car-icon lucide-car"
-                  >
-                    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
-                    <circle cx="7" cy="17" r="2" />
-                    <path d="M9 17h6" />
-                    <circle cx="17" cy="17" r="2" />
-                  </svg>
+        {/* Vehicle selection */}
+        <section className="w-full">
 
-                  <p>{vehicle.name}</p>
-                </div>
+          <div className="flex justify-center text-center mb-4">
+            {/* <span className="text-xs font-bold  uppercase ">Step A</span> */}
+            <h2 className="text-xl font-bold text-blue-action tracking-widest uppercase">Vehicle Type</h2>
+          </div>
 
-                <p>₦{vehicle.price}</p>
-              </div>
+          <div className="flex flex-col gap-3">
+            {VEHICLES.map((vehicle) => (
+              <VehicleCard
+                key={vehicle.name}
+                vehicle={vehicle}
+                isSelected={selectedVehicle === vehicle.name}
+                onSelect={setSelectedVehicle}
+              />
             ))}
           </div>
-        </div>
+        </section>
 
-        <div className="divider xl:divider-horizontal divider-info"></div>
+         <div className="divider xl:divider-horizontal divider-info"></div>
 
-        {/* Service level */}
-        <div className="flex-1 text-white">
-          <h2>Service Level</h2>
+        {/* Service selection */}
+        <section className="w-full">
 
-          {/* level selection */}
-          <div
-            className="flex flex-col gap-6 w-full text-[1rem] sm:text-[1.5rem]
-                    [&>div]:
-                    [&>div>div]:flex [&>div>div]:items-center [&>div>div]:gap-2
-                    [&_p]:"
-          >
-            {services.map((service, index) => (
-              <div
-                key={index}
-                onClick={() => setSelectedService(service.name)}
-                className={`flex flex-row justify-between items-center p-4 border rounded-2xl w-full cursor-pointer transition-all duration-200
-                                    ${
-                                      selectedService === service.name
-                                        ? 'bg-blue-action text-navy-deep border-blue-action'
-                                        : 'bg-gray-dark text-white border-border-dark hover:border-blue-action'
-                                    }`}
-              >
-                <div>
-                  <p>{service.name}</p>
-                </div>
+          <div className="flex justify-center text-center mb-4">
+            {/* <span className="text-xs font-bold tracking-widest  text-blue-action">Step B</span> */}
+            <h2 className="text-xl font-bold text-blue-action tracking-widest uppercase">Service Type</h2>
+          </div>
 
-                <div>
-                  <p>₦{service.price}</p>
-                </div>
-              </div>
+          <div className="flex flex-col gap-3">
+            {SERVICES.map((service) => (
+              <ServiceCard
+                key={service.name}
+                service={service}
+                isSelected={selectedService === service.name}
+                onSelect={setSelectedService}
+              />
             ))}
           </div>
-        </div>
+
+        </section>
       </div>
+
+      {/* Live price summary */}
+      {selectedVehicle && selectedService && (() => {
+        const v = VEHICLES.find(x => x.name === selectedVehicle);
+        const s = SERVICES.find(x => x.name === selectedService);
+        const total = (v?.price ?? 0) + (s?.price ?? 0);
+        return (
+          <div className="flex items-center justify-between px-6 py-4 rounded-2xl
+            bg-blue-action/10 border border-blue-action/30 text-white w-full
+            animate-[fadeIn_0.3s_ease_both]">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">{v?.icon}</span>
+              <div>
+                <p className="font-semibold">{selectedVehicle} · {selectedService}</p>
+                <p className="text-sm text-white/50">{s?.time} · {s?.description}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-white/40 uppercase tracking-wide">Estimated Total</p>
+              <p className="text-2xl font-bold text-blue-action">₦{total}</p>
+            </div>
+          </div>
+        );
+      })()}
+
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }

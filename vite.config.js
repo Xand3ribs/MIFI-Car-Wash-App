@@ -3,4 +3,11 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  // server: {
+  //   watch: {
+  //     usePolling: true,
+  //     interval: 10,
+  //   },
+  // },
+  // base: '/MIFI-Car-Wash-App/',
 });
