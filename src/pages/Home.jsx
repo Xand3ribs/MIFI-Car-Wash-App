@@ -1,14 +1,45 @@
-import Header from '../components/header';
+import { useRef } from 'react';
+import Header from '../components/Header';
+import Hero   from '../components/Hero';
 import Footer from '../components/Footer';
-import Hero from '../components/Hero';
+
+import Services    from '../components/home/Services';
+import HowItWorks  from '../components/home/HowItWorks';
+import ContactUs     from '../components/home/ContactUs';
 
 function Home() {
-  return (
-    <div className="flex flex-col min-h-screen w-screen bg-slate-50">
-      <Header />
+  // Create solid references to your DOM elements
+  const servicesRef = useRef(null);
+  const howItWorksRef = useRef(null);
+  const contactUsRef = useRef(null);
 
-      <main className="flex-grow">
+  // Group them neatly into an object map to give to the header
+  const sectionRefs = {
+    services: servicesRef,
+    'how-it-works': howItWorksRef,
+    'contact-us': contactUsRef,
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen w-full bg-[#0D1B2A] overflow-x-hidden">
+      {/* Pass the refs object into your header */}
+      <Header sectionRefs={sectionRefs} />
+
+      <main>
         <Hero />
+
+        {/* Attach the refs directly to your section containers */}
+        <section id="services" ref={servicesRef}>
+          <Services />
+        </section>
+
+        <section id="how-it-works" ref={howItWorksRef}>
+          <HowItWorks />
+        </section>
+
+        <section id="contact-us" ref={contactUsRef}>
+          <ContactUs />
+        </section>
       </main>
 
       <Footer />
