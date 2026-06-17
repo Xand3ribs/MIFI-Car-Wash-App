@@ -1,11 +1,10 @@
 import { HashRouter } from 'react-router-dom';
 import AppRoutes from './routes';
-import { AuthProvider, useAuth } from './context/AuthContext'; // Make sure this path matches your file structure
+import { AuthProvider, useAuth } from './context/AuthContext'; 
 
 function AppContent() {
   const { user, loading } = useAuth();
 
-  // Protect routes from flashing/crashing while checking if a session exists
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-[#0D1B2A]">
@@ -14,7 +13,6 @@ function AppContent() {
     );
   }
 
-  // Pass the real Supabase user object (with its database role) down into your routes
   return <AppRoutes user={user} />;
 }
 

@@ -41,6 +41,7 @@ export default function BookingHeader({ currentStep, isLoggedIn }) {
       <div className="flex items-center h-20 px-5 lg:px-10 gap-6">
         <Link
           to={isLoggedIn ? '/account/dashboard' : '/'}
+          aria-label={isLoggedIn ? 'Back to dashboard' : 'Back to home'}
           className="flex items-center justify-center w-9 h-9 rounded-xl bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white hover:border-white/25 transition-all duration-200 shrink-0"
         >
           <ChevronLeft size={18} strokeWidth={2.5} />

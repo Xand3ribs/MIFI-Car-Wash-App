@@ -23,6 +23,7 @@ export default function WasherOnboardModal({
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close modal"
             className="p-1.5 hover:bg-slate-800 text-slate-500 hover:text-white rounded-lg transition-colors"
           >
             <X size={16} />

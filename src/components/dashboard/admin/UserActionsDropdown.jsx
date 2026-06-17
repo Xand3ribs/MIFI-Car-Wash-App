@@ -8,6 +8,7 @@ export default function UserActionsDropdown({ user, onToggleStatus }) {
       <button
         type="button"
         tabIndex={0}
+        aria-label="Open user actions"
         className="p-1.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-lg transition-colors focus:outline-none"
       >
         <MoreVertical size={16} />

@@ -193,7 +193,7 @@ function Services() {
         </div>
 
         {/* Fine print */}
-        <p className="text-center text-white/25 text-xs mt-10">
+        <p className="text-center text-white/60 text-xs mt-10">
           All prices are per vehicle. SUV/Truck pricing may vary slightly —
           confirm at booking.
         </p>

@@ -221,7 +221,7 @@ function Step2({ address, setAddress }) {
             <div
               className="flex items-start gap-3 px-4 py-3.5 rounded-2xl
               bg-green-500/10 border border-green-500/25
-              animate-[fadeIn_0.25s_ease_both]"
+              transition-all duration-300 ease-out translate-y-0 opacity-100"
             >
               <MapPin size={15} className="text-green-400 mt-0.5 shrink-0" />
               <div>
@@ -258,13 +258,6 @@ function Step2({ address, setAddress }) {
           </MapContainer>
         </div>
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(6px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }

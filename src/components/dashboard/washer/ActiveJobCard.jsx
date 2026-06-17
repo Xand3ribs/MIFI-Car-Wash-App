@@ -37,6 +37,7 @@ export default function ActiveJobCard({ job, onClick }) {
           <a
             href={`tel:${job.phone || '+234800000000'}`}
             onClick={(e) => e.stopPropagation()} // Stops the card from opening the detail screen when just trying to call!
+            aria-label={`Call ${job?.name ?? 'customer'}`}
             className="mt-2 p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl border border-slate-700 flex items-center justify-center transition-colors"
           >
             <Phone size={14} />

@@ -14,7 +14,7 @@ function DashboardLayout({ user }) {
 
       {/* Page content here */}
       <div className="drawer flex-1 min-h-0">
-        <input id="sidebar-drawer" type="checkbox" class="drawer-toggle" />
+        <input id="sidebar-drawer" type="checkbox" className="drawer-toggle" />
 
         <div className="overflow-hidden drawer-content flex h-full">
           <aside className="hidden xl:block h-full  shrink-0 bg-navy-deep sticky border-r  border-r-border-dark">

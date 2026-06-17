@@ -37,6 +37,7 @@ function HistoryDetailModal({ log, role, onClose }) {
               </div>
               <button
                 onClick={onClose}
+                aria-label="Close details"
                 className="p-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition-colors"
               >
                 <X size={18} />
