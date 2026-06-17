@@ -15,6 +15,7 @@ export default function PayoutReceiptModal({ payout, onClose }) {
           </div>
           <button
             onClick={onClose}
+            aria-label="Close receipt"
             className="p-1.5 hover:bg-slate-800 rounded-xl text-slate-400 hover:text-white transition-colors"
           >
             <X size={16} />

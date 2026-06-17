@@ -1,13 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, ShieldCheck, Droplets } from 'lucide-react';
-import heroBg from '/src/assets/hero-bg.jpg';
+import heroBg from '/src/assets/hero-bg.webp';
 
-/*
-  Split-screen hero:
-  - Left panel: Navy deep gradient with typographic content (text, CTA, trust badge)
-  - Right panel: The car wash photo, clipped to fill the right side
-  - On mobile: stacks to a full-width overlay layout
-*/
 function Hero() {
   return (
     <section
@@ -27,7 +21,7 @@ function Hero() {
 
         {/* Eyebrow */}
         <p
-          className="text-xs font-semibold tracking-[0.2em] uppercase text-[#1565C0] mb-4
+          className="text-xs font-semibold tracking-[0.2em] uppercase text-[#42A5F5] mb-4
             animate-[slideUp_0.5s_ease_both_0.1s]"
           style={{ opacity: 0, animation: 'slideUp 0.55s ease forwards 0.1s' }}
         >
@@ -94,38 +88,6 @@ function Hero() {
           </Link>
         </div>
 
-        {/* Trust signal row */}
-        {/* <div
-          className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6"
-          style={{ opacity: 0, animation: 'slideUp 0.6s ease forwards 0.56s' }}
-        > */}
-        {/* Stars + rating */}
-        {/* <div className="flex items-center gap-2.5 pl-3 pr-4 py-2.5 rounded-2xl bg-white/5 border border-white/10">
-            <div className="flex items-center gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={13} className="fill-amber-400 text-amber-400" />
-              ))}
-            </div>
-            <span className="text-sm font-semibold text-white">4.9</span>
-            <span className="text-xs text-slate-400">from 500+ washes</span>
-          </div> */}
-
-        {/* Divider (desktop) */}
-        {/* <div className="hidden sm:block w-px h-8 bg-white/10" /> */}
-
-        {/* Badges */}
-        {/* <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5 text-xs text-slate-400">
-              <ShieldCheck size={14} className="text-[#1565C0] shrink-0" />
-              Insured & Vetted
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-slate-400">
-              <Droplets size={14} className="text-[#1565C0] shrink-0" />
-              Eco-Friendly Products
-            </div>
-          </div>
-        </div> */}
-
         {/* Diagonal mask for the split (desktop only) — purely decorative */}
         <div
           className="hidden lg:block absolute top-0 right-0 h-full w-24 z-20"
@@ -173,19 +135,6 @@ function Hero() {
         <div className="absolute inset-0 bg-[#0D1B2A]/80" />
       </div>
 
-      {/* Keyframe styles */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=Inter:wght@400;500;600;700&display=swap');
-
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(18px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
-      `}</style>
     </section>
   );
 }

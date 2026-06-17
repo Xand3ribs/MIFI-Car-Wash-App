@@ -141,12 +141,14 @@ function Header({ sectionRefs }) {
           <div className="flex lg:hidden items-center gap-2">
             <Link
               to="/login"
+              aria-label="Open login"
               className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/8 transition-colors duration-200"
             >
               <UserCircle2 size={24} strokeWidth={1.75} />
             </Link>
             <button
               onClick={() => setMenuOpen((v) => !v)}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               className="p-2 rounded-xl text-white/70 hover:text-white hover:bg-white/8 transition-colors duration-200"
             >
               {menuOpen ? (

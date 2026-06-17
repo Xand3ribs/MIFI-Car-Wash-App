@@ -33,7 +33,7 @@ function RescheduleModal({ isOpen, onClose, defaultDate, defaultTime, onConfirm,
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-navy-deep border border-slate-800 w-full max-w-xl rounded-3xl p-6 relative shadow-2xl overflow-y-auto max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
-        <button onClick={onClose} className="absolute top-5 right-5 text-slate-400 hover:text-slate-100 transition-colors">
+        <button onClick={onClose} aria-label="Close modal" className="absolute top-5 right-5 text-slate-400 hover:text-slate-100 transition-colors">
           <X size={20} />
         </button>
 

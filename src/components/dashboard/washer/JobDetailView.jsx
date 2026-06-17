@@ -47,6 +47,7 @@ export default function JobDetailView({
             <div className="flex items-center gap-3 mt-2">
               <a
                 href={`tel:${job.phone || '+234800000000'}`}
+                aria-label={`Call ${job?.name ?? 'customer'}`}
                 className="p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl border border-slate-700 flex items-center justify-center transition-colors"
               >
                 <Phone size={14} />
@@ -54,6 +55,7 @@ export default function JobDetailView({
 
               <a
                 href={`sms:${job.phone || '+234800000000'}?body=Hi%20${encodeURIComponent(job.name)},%20this%20is%20your%20MiFai%20Wash%20crew%20pro!`}
+                aria-label={`Send SMS to ${job?.name ?? 'customer'}`}
                 className="p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl border border-slate-700 flex items-center justify-center transition-colors"
               >
                 <MessageSquare size={14} />

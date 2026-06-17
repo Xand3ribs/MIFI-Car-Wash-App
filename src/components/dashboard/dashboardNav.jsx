@@ -48,10 +48,11 @@ function DashboardNav({ user }) {
             <div
               tabIndex={0}
               role="button"
+              aria-label="Open notifications"
               className="btn btn-ghost btn-circle"
             >
               <div className="indicator">
-                <span class="indicator-item badge badge-info">8</span>
+                <span className="indicator-item badge badge-info">8</span>
 
                 <div>
                   <svg
