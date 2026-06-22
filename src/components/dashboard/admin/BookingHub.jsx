@@ -2,23 +2,25 @@ import React, { useState } from 'react';
 import { MapPin, Calendar } from 'lucide-react';
 
 const STATUS_BORDERS = {
-  Pending: 'border-l-red-500',
-  Assigned: 'border-l-yellow-500',
+  Pending: 'border-l-orange-500',
+  Confirmed: 'border-l-yellow-500',
   'In Progress': 'border-l-blue-500',
   Completed: 'border-l-green-500',
+  Cancelled: 'border-l-red-500',
 };
 
 const STATUS_BADGES = {
-  Pending: 'bg-red-500 bg-opacity-20 text-red-400',
-  Assigned: 'bg-yellow-500 bg-opacity-20 text-yellow-400',
+  Pending: 'bg-orange-500 bg-opacity-20 text-orange-400',
+  Confirmed: 'bg-yellow-500 bg-opacity-20 text-yellow-400',
   'In Progress': 'bg-blue-500 bg-opacity-20 text-blue-400',
   Completed: 'bg-green-500 bg-opacity-20 text-green-400',
+  Cancelled: 'bg-red-500 bg-opacity-20 text-red-400',
 };
 
 function BookingHub({ mockBookings, onSelectBooking }) {
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const filters = ['All', 'Pending', 'Assigned', 'In Progress', 'Completed'];
+  const filters = ['All', 'Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled'];
 
   const getCount = (status) => {
     if (status === 'All') return mockBookings.length;
@@ -78,7 +80,7 @@ function BookingHub({ mockBookings, onSelectBooking }) {
                 {count}
               </span>
               {filter === 'Pending' && count > 0 && (
-                <span className="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="inline-block w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
               )}
             </button>
           );
@@ -103,8 +105,10 @@ function BookingHub({ mockBookings, onSelectBooking }) {
               <div
                 key={booking.id}
                 onClick={() => onSelectBooking(booking.id)}
-                className={`flex flex-col lg:flex-row lg:items-center justify-between p-4 bg-gray-dark border border-border-dark border-l-4 ${STATUS_BORDERS[booking.status] || 'border-l-slate-600'} rounded-xl gap-4 cursor-pointer hover:border-gray-700 active:scale-[0.995] transition-all`}
+                className={`flex flex-col lg:flex-row lg:items-center justify-between p-4 bg-gray-dark border border-border-dark border-l-4 
+                  ${STATUS_BORDERS[booking.status] || 'border-l-slate-600'} rounded-xl gap-4 cursor-pointer  active:scale-[0.995] transition-all`}
               >
+                
                 <div>
                   <div className="flex items-center gap-2">
                     <h4 className="text-white font-semibold text-base sm:text-lg">
@@ -143,7 +147,7 @@ function BookingHub({ mockBookings, onSelectBooking }) {
                       <p className="text-slate-300 text-xs font-medium">
                         Washer:{' '}
                         <span className="text-white font-semibold">
-                          {booking.assignedWasher || 'Marcus Kruse'}
+                          {booking.assignedWasher || 'Unassigned'}
                         </span>
                       </p>
                     </div>
