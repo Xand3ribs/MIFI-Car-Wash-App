@@ -3,32 +3,34 @@ import AdminBookingManager from './admin/AdminBookingManager';
 import FleetRoster from './admin/FleetRoster';
 import { supabase } from '../../supabaseClient';
 
-const INITIAL_WASHERS = [
-  { id: 1, name: 'Elena Rostova', shift: '8:00 AM - 5:00 PM', status: 'Available' },
-  { id: 2, name: 'Jordan Brooks', shift: '10:00 AM - 7:00 PM', status: 'Available' },
- 
-];
-
 function AdminDashboardView() {
-  
   const [bookings, setBookings] = useState([]);
-  const [washers, setWashers] = useState(INITIAL_WASHERS);
+  const [washers, setWashers] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  
   useEffect(() => {
-    async function fetchLiveBookings() {
+    async function fetchDashboardData() {
       try {
         setIsLoading(true);
-        const { data, error: supabaseError } = await supabase
-          .from('bookings')
-          .select('*') 
-          .order('created_at', { ascending: false });
 
-        if (supabaseError) throw supabaseError;
+        // Fetch live bookings and live washer profiles concurrently
+        const [bookingsResponse, washersResponse] = await Promise.all([
+          supabase
+            .from('bookings')
+            .select('*')
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('profiles')
+            .select('*')
+            .eq('role', 'washer')
+        ]);
 
-        const mappedBookings = (data || []).map((b) => ({
+        if (bookingsResponse.error) throw bookingsResponse.error;
+        if (washersResponse.error) throw washersResponse.error;
+
+        // 1. Map Live Bookings safely
+        const mappedBookings = (bookingsResponse.data || []).map((b) => ({
           id: b.id,
           name: b.customer_name || 'Anonymous Client',
           number: b.number || b.booking_number || `BK-00${b.id}`,
@@ -36,10 +38,27 @@ function AdminDashboardView() {
           time: b.selected_time ? `${b.selected_date || 'Today'} at ${b.selected_time}` : 'No Time Set',
           address: b.address || b.location || 'No Address Provided',
           status: b.status || 'Pending',
-          assignedWasher: b.assignedWasher || b.assigned_washer || null
+          assignedWasher: b.assigned_washer || null
         }));
 
+        // 2. Map Live Washers based purely on active booking workloads
+        const mappedWashers = (washersResponse.data || []).map((w) => {
+          // Check if this washer's name is assigned to an active, uncompleted job
+          const isCurrentlyWorking = mappedBookings.some(
+            (b) => b.assignedWasher === w.full_name && b.status !== 'Completed'
+          );
+
+          return {
+            id: w.id, 
+            name: w.full_name || 'Unnamed Operator',
+            shift: '8:00 AM - 5:00 PM', 
+            // 🟢 CHANGED: Simple binary check. If working -> Busy, otherwise -> Available
+            status: isCurrentlyWorking ? 'Busy' : 'Available',
+          };
+        });
+
         setBookings(mappedBookings);
+        setWashers(mappedWashers);
       } catch (err) {
         console.error('Error loading data from Supabase:', err);
         setError(err.message);
@@ -48,7 +67,7 @@ function AdminDashboardView() {
       }
     }
 
-    fetchLiveBookings();
+    fetchDashboardData();
   }, []);
 
   const handleAssignWasher = async (bookingId, washerId) => {
@@ -99,7 +118,7 @@ function AdminDashboardView() {
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-screen bg-[#0D1B2A] text-white">
         <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-slate-400 font-medium">Loading live booking records...</p>
+        <p className="text-slate-400 font-medium">Loading live dashboard records...</p>
       </div>
     );
   }
