@@ -66,7 +66,7 @@ function Booking() {
     if (currentStep === 1) return !selectedVehicle || !selectedService;
     if (currentStep === 2) return !address;
     if (currentStep === 3) return !selectedDate || !selectedTime;
-    if (currentStep === 4 && !isLoggedIn) return !isStep4Valid; // Direct, clean evaluation
+    if (currentStep === 4 && !isLoggedIn) return !isStep4Valid; 
     return false;
   })();
 
@@ -74,6 +74,11 @@ function Booking() {
     setIsSubmitting(true);
     try {
       let targetUserId = activeUser?.id;
+      
+      // Determine the customer name based on login status
+      let customerName = !isLoggedIn 
+        ? `${userInfo.firstName} ${userInfo.lastName}`.trim()
+        : (activeUser?.user_metadata?.full_name || activeUser?.email);
 
       if (!isLoggedIn) {
         const { data: authData, error: signUpError } =
@@ -84,7 +89,7 @@ function Booking() {
               data: {
                 first_name: userInfo.firstName,
                 last_name: userInfo.lastName,
-                phone: userInfo.phone,
+                full_name: customerName, 
               },
             },
           });
@@ -98,6 +103,7 @@ function Booking() {
       const { error: bookingError } = await supabase.from('bookings').insert([
         {
           user_id: targetUserId,
+          customer_name: customerName, 
           selected_vehicle: selectedVehicle,
           selected_service: selectedService,
           address,
