@@ -13,6 +13,8 @@ import {
 function HistoryDetailModal({ log, role, onClose }) {
   if (!log) return null;
 
+  const isCancelled = log.status?.toLowerCase() === 'cancelled';
+
   return (
     <>
       {/* Dark Backdrop Overlay */}
@@ -32,7 +34,7 @@ function HistoryDetailModal({ log, role, onClose }) {
                   Session Breakdown
                 </span>
                 <h3 className="text-xl font-black mt-0.5">
-                  Order #{log.id}8294
+                  Order #BK-{log.id}
                 </h3>
               </div>
               <button
@@ -74,7 +76,7 @@ function HistoryDetailModal({ log, role, onClose }) {
                       {log.vehicle}
                     </p>
                     <p className="text-[11px] text-slate-400">
-                      Premium Sedan Treatment Tier
+                      Premium Care Treatment Tier
                     </p>
                   </div>
                 </div>
@@ -91,7 +93,7 @@ function HistoryDetailModal({ log, role, onClose }) {
                       <Clock size={11} /> Service Started
                     </span>
                     <span className="font-bold text-slate-300">
-                      {log.timeStarted || '09:14 AM'}
+                      {isCancelled ? '---' : (log.timeStarted || '09:14 AM')}
                     </span>
                   </div>
                   <div className="flex flex-col gap-0.5 border-l border-slate-800 pl-3">
@@ -99,7 +101,7 @@ function HistoryDetailModal({ log, role, onClose }) {
                       <Clock size={11} /> Service Completed
                     </span>
                     <span className="font-bold text-slate-300">
-                      {log.timeEnded || '10:32 AM'}
+                      {isCancelled ? 'Cancelled' : (log.timeEnded || '10:32 AM')}
                     </span>
                   </div>
                 </div>
@@ -116,28 +118,26 @@ function HistoryDetailModal({ log, role, onClose }) {
                     className="text-slate-500 shrink-0 mt-0.5"
                   />
                   <p className="leading-relaxed font-medium">
-                    {log.address ||
-                      'Plot 14, Admiralty Way, Lekki Phase 1, Lagos'}
+                    {log.address}
                   </p>
                 </div>
               </div>
 
               {/* Personnel Block */}
-              <div className="flex flex-col gap-1">
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                  {role === 'user'
-                    ? 'Assigned Detailing Operator'
-                    : 'Client Profile Details'}
-                </p>
-                <div className="text-xs bg-navy-deep p-3 rounded-xl border border-slate-800 flex justify-between items-center">
-                  <span className="font-bold text-slate-200">
-                    {role === 'user' ? log.washerName : log.customerName}
-                  </span>
-                  <span className="text-[10px] bg-slate-800 border border-slate-700/60 px-2 py-0.5 rounded text-slate-400 font-semibold">
-                    ID: #WM-094
-                  </span>
+              {!(role === 'user' && isCancelled) && (
+                <div className="flex flex-col gap-1">
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                    {role === 'user'
+                      ? 'Assigned Detailing Operator'
+                      : 'Client Profile Details'}
+                  </p>
+                  <div className="text-xs bg-navy-deep p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <span className="font-bold text-slate-200">
+                      {role === 'user' ? log.washerName : log.customerName}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Pricing Breakdown */}
               <div className="flex flex-col gap-1 mt-1">
@@ -178,7 +178,10 @@ function HistoryDetailModal({ log, role, onClose }) {
           {/* Action Footer */}
           <div className="pt-4 border-t border-slate-800/80 mt-5">
             {role === 'user' ? (
-              <button className="w-full bg-blue-action text-navy-deep py-3 rounded-xl font-black text-sm shadow-xl hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+              <button 
+                onClick={() => alert('Rebooking implementation scoped for next development task.')}
+                className="w-full bg-blue-action text-navy-deep py-3 rounded-xl font-black text-sm shadow-xl hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+              >
                 <ArrowRightLeft size={16} /> Rebook This Exact Clean
               </button>
             ) : (

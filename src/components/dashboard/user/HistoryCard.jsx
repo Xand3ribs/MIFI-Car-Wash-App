@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 
 function HistoryCard({ log, role, onCardClick }) {
+  const isCancelled = log.status?.toLowerCase() === 'cancelled';
+
   return (
     <div
       onClick={() => onCardClick(log)}
@@ -45,12 +47,15 @@ function HistoryCard({ log, role, onCardClick }) {
             <Car size={18} className="text-blue-action" /> {log.vehicle}
           </h4>
 
-          <p className="text-xs text-slate-400 leading-normal mt-0.5">
-            <span className="font-bold text-slate-500">
-              {role === 'user' ? 'Assigned Operator: ' : 'Client Name: '}
-            </span>
-            {role === 'user' ? log.washerName : log.customerName}
-          </p>
+          {/* PERMANENT FIX: Hide assigned operator for cancelled washes when viewed by users */}
+          {!(role === 'user' && isCancelled) && (
+            <p className="text-xs text-slate-400 leading-normal mt-0.5">
+              <span className="font-bold text-slate-500">
+                {role === 'user' ? 'Assigned Operator: ' : 'Client Name: '}
+              </span>
+              {role === 'user' ? log.washerName : log.customerName}
+            </p>
+          )}
         </div>
       </div>
 
@@ -85,4 +90,4 @@ function HistoryCard({ log, role, onCardClick }) {
   );
 }
 
-export default HistoryCard; // <-- Fixed style consistency
+export default HistoryCard;

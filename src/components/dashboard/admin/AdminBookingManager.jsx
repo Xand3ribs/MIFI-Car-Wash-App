@@ -2,16 +2,14 @@ import React, { useState } from 'react';
 import BookingHub from './BookingHub';
 import JobDetailView from '../washer/JobDetailView';
 
-// Destructure availableWashers and onAssignWasher from the main dashboard context
 export default function AdminBookingManager({
-  mockBookings,
+  bookings,
   availableWashers = [],
   onAssignWasher,
 }) {
   const [selectedBookingId, setSelectedBookingId] = useState(null);
 
-  // Extract the specific active order configuration
-  const activeBooking = mockBookings.find((b) => b.id === selectedBookingId);
+  const activeBooking = bookings.find((b) => b.id === selectedBookingId);
 
   if (activeBooking) {
     return (
@@ -27,7 +25,7 @@ export default function AdminBookingManager({
 
   return (
     <BookingHub
-      mockBookings={mockBookings}
+      bookings={bookings}
       onSelectBooking={(id) => setSelectedBookingId(id)}
     />
   );
