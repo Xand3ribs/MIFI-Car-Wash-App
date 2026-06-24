@@ -4,64 +4,115 @@ import HistoryDetailModal from '../components/dashboard/user/HistoryDetailModal'
 
 const FILTER_TIERS = ['all', 'completed', 'cancelled'];
 
+const MONTHS = [
+  { value: 'all', label: 'All Months' },
+  { value: '0', label: 'January' },
+  { value: '1', label: 'February' },
+  { value: '2', label: 'March' },
+  { value: '3', label: 'April' },
+  { value: '4', label: 'May' },
+  { value: '5', label: 'June' },
+  { value: '6', label: 'July' },
+  { value: '7', label: 'August' },
+  { value: '8', label: 'September' },
+  { value: '9', label: 'October' },
+  { value: '10', label: 'November' },
+  { value: '11', label: 'December' },
+];
+
 function MasterHistoryLog({ role = 'user', initialData = [] }) {
   const [filter, setFilter] = useState('all');
+  const [selectedMonth, setSelectedMonth] = useState('all');
   const [selectedLog, setSelectedLog] = useState(null);
 
-  // 1. Pre-calculate the counts for each status tier
+  // Helper function to safely extract the month index from any date format
+  const getMonthFromDateStr = (dateStr) => {
+    if (!dateStr || dateStr.includes('Pending')) return null;
+    const parsedDate = new Date(dateStr);
+    return isNaN(parsedDate.getTime()) ? null : parsedDate.getMonth().toString();
+  };
+
+  // 1. First, separate the data based purely on the chosen month dropdown
+  const monthFilteredData = initialData.filter((item) => {
+    if (selectedMonth === 'all') return true;
+    const itemMonth = getMonthFromDateStr(item.date);
+    return itemMonth === selectedMonth;
+  });
+
+  // 2. Pre-calculate dynamic status pill counts relative to the selected month
   const counts = {
-    all: initialData.length,
-    completed: initialData.filter(
+    all: monthFilteredData.length,
+    completed: monthFilteredData.filter(
       (item) => item.status?.toLowerCase() === 'completed'
     ).length,
-    cancelled: initialData.filter(
+    cancelled: monthFilteredData.filter(
       (item) => item.status?.toLowerCase() === 'cancelled'
     ).length,
   };
 
-  // 2. Filter the data based on current state selection
-  const filteredData = initialData.filter((item) => {
+  // 3. Final array combining both month and status conditions
+  const finalFilteredData = monthFilteredData.filter((item) => {
     if (filter === 'all') return true;
     return item.status?.toLowerCase() === filter.toLowerCase();
   });
 
   return (
     <div className="flex flex-col gap-6 w-full relative">
-      {/* FILTER BUTTONS ROW */}
-      <div className="flex gap-2 bg-navy-deep/60 border border-slate-800 p-1.5 rounded-xl self-start max-w-full overflow-x-auto">
-        {FILTER_TIERS.map((tier) => (
-          <button
-            key={tier}
-            onClick={() => setFilter(tier)}
-            className={`px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap ${
-              filter === tier
-                ? 'bg-blue-action text-navy-deep shadow-md'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            <span>{tier}</span>
-            {/* Dynamic Badge Pill */}
-            <span
-              className={`px-1.5 py-0.5 rounded-md text-[10px] font-black ${
+      
+      {/* FILTER CONTROLS ROW */}
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center w-full">
+        
+        {/* Status Tab Group */}
+        <div className="flex gap-2 bg-navy-deep/60 border border-slate-800 p-1.5 rounded-xl max-w-full overflow-x-auto">
+          {FILTER_TIERS.map((tier) => (
+            <button
+              key={tier}
+              onClick={() => setFilter(tier)}
+              className={`px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 whitespace-nowrap ${
                 filter === tier
-                  ? 'bg-navy-deep/20 text-navy-deep'
-                  : 'bg-slate-800 text-slate-400'
+                  ? 'bg-blue-action text-navy-deep shadow-md'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              {counts[tier] || 0}
-            </span>
-          </button>
-        ))}
+              <span>{tier}</span>
+              <span
+                className={`px-1.5 py-0.5 rounded-md text-[10px] font-black ${
+                  filter === tier
+                    ? 'bg-navy-deep/20 text-navy-deep'
+                    : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                {counts[tier] || 0}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Combined Month Dropdown Selector */}
+        <div className="w-full sm:w-auto">
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="w-full sm:w-48 bg-navy-deep/60 border border-slate-800 text-slate-300 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-blue-action transition-all cursor-pointer"
+          >
+            {MONTHS.map((m) => (
+              <option key={m.value} value={m.value} className="bg-gray-dark text-white">
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
       </div>
 
       {/* RENDER LIST FEED OF CARDS */}
       <div className="flex flex-col gap-4">
-        {filteredData.length === 0 ? (
-          <div className="bg-gray-dark border border-border-dark rounded-2xl p-12 text-center text-slate-500 text-sm">
-            No past historical records found matching your selection.
+        {finalFilteredData.length === 0 ? (
+          <div className="bg-gray-dark border border-slate-800 rounded-2xl p-12 text-center text-slate-500 text-sm">
+            No past historical records found matching your selection parameters.
           </div>
         ) : (
-          filteredData.map((log) => (
+          finalFilteredData.map((log) => (
             <HistoryCard
               key={log.id}
               log={log}

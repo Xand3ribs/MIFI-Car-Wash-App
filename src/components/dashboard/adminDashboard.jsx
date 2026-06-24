@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import AdminBookingManager from './admin/AdminBookingManager';
-import FleetRoster from './admin/FleetRoster';
 import { supabase } from '../../supabaseClient';
 
 function AdminDashboardView() {
@@ -14,7 +13,6 @@ function AdminDashboardView() {
       try {
         setIsLoading(true);
 
-        // Fetch live bookings and live washer profiles concurrently
         const [bookingsResponse, washersResponse] = await Promise.all([
           supabase
             .from('bookings')
@@ -26,7 +24,6 @@ function AdminDashboardView() {
         if (bookingsResponse.error) throw bookingsResponse.error;
         if (washersResponse.error) throw washersResponse.error;
 
-        // 1. Map Live Bookings safely
         const mappedBookings = (bookingsResponse.data || []).map((b) => ({
           id: b.id,
           name: b.customer_name || 'Anonymous Client',
@@ -42,9 +39,7 @@ function AdminDashboardView() {
           assignedWasher: b.assigned_washer || null,
         }));
 
-        // 2. Map Live Washers based purely on active booking workloads
         const mappedWashers = (washersResponse.data || []).map((w) => {
-          // Check if this washer's name is assigned to an active, uncompleted job
           const isCurrentlyWorking = mappedBookings.some(
             (b) => b.assignedWasher === w.full_name && b.status !== 'Completed'
           );
@@ -53,7 +48,6 @@ function AdminDashboardView() {
             id: w.id,
             name: w.full_name || 'Unnamed Operator',
             shift: '8:00 AM - 5:00 PM',
-            // 🟢 CHANGED: Simple binary check. If working -> Busy, otherwise -> Available
             status: isCurrentlyWorking ? 'Busy' : 'Available',
           };
         });
@@ -61,7 +55,6 @@ function AdminDashboardView() {
         setBookings(mappedBookings);
         setWashers(mappedWashers);
       } catch (err) {
-        console.error('Error loading data from Supabase:', err);
         setError(err.message);
       } finally {
         setIsLoading(false);
@@ -76,9 +69,7 @@ function AdminDashboardView() {
     const oldWasherName = targetBooking ? targetBooking.assignedWasher : null;
 
     const selectedWasher = washers.find((w) => w.id === washerId);
-    const newWasherName = selectedWasher
-      ? selectedWasher.name
-      : 'Assigned Crew';
+    const newWasherName = selectedWasher ? selectedWasher.name : 'Assigned Crew';
 
     try {
       const { error: updateError } = await supabase
@@ -111,8 +102,6 @@ function AdminDashboardView() {
         })
       );
     } catch (err) {
-      console.error('Error saving assignment to Supabase:', err);
-      alert(`Could not save assignment: ${err.message}`);
     }
   };
 
@@ -147,11 +136,10 @@ function AdminDashboardView() {
   return (
     <div className="flex flex-col lg:flex-row h-full min-h-0 w-full p-3">
       <AdminBookingManager
-        mockBookings={bookings}
+        bookings={bookings}
         availableWashers={washers.filter((w) => w.status === 'Available')}
         onAssignWasher={handleAssignWasher}
       />
-      {/* <FleetRoster mockWashers={washers} /> */}
     </div>
   );
 }
