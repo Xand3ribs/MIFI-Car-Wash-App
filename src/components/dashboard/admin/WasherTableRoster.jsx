@@ -42,7 +42,7 @@ export default function WasherTableRoster({ crewList, onToggleDuty }) {
                   <Phone size={13} className="text-slate-600" />
                   {washer.phone}
                 </span>
-              </td>            
+              </td>
 
               {/* Quick utility tools */}
               <td className="py-4 px-2 text-right">

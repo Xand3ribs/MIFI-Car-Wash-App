@@ -1,8 +1,8 @@
 // src/components/dashboard/settings/ManageWashers.jsx
 import React, { useState, useEffect } from 'react';
 import { UserPlus } from 'lucide-react';
-import { createClient } from '@supabase/supabase-js'; 
-import { supabase } from '../../../supabaseClient'; 
+import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../../../supabaseClient';
 import WasherTableRoster from '../admin/WasherTableRoster';
 import WasherOnboardModal from '../admin/WasherOnboardModal';
 
@@ -63,28 +63,29 @@ export default function ManageWashers() {
 
     try {
       const supabaseAdminAuth = createClient(
-        supabase.supabaseUrl, 
-        supabase.supabaseKey, 
+        supabase.supabaseUrl,
+        supabase.supabaseKey,
         {
           auth: {
-            persistSession: false, 
+            persistSession: false,
             autoRefreshToken: false,
           },
         }
       );
 
-      const { data: authData, error: signUpError } = await supabaseAdminAuth.auth.signUp({
-        email: generatedEmail,
-        password: generatedPassword,
-        options: {
-          data: {
-            full_name: formData.name,
-            phone: formData.phone,
-            location: formData.location, // Sent safely into user metadata payload
-            role: 'washer', 
+      const { data: authData, error: signUpError } =
+        await supabaseAdminAuth.auth.signUp({
+          email: generatedEmail,
+          password: generatedPassword,
+          options: {
+            data: {
+              full_name: formData.name,
+              phone: formData.phone,
+              location: formData.location, // Sent safely into user metadata payload
+              role: 'washer',
+            },
           },
-        },
-      });
+        });
 
       if (signUpError) throw signUpError;
 
@@ -97,17 +98,16 @@ export default function ManageWashers() {
       };
 
       setCrewList((prev) => [...prev, newWasher]);
-      
+
       alert(
         `🎉 Washer Registered Successfully!\n\n` +
-        `Provide these credentials to the crew member:\n` +
-        `📧 Email: ${generatedEmail}\n` +
-        `🔑 Password: ${generatedPassword}`
+          `Provide these credentials to the crew member:\n` +
+          `📧 Email: ${generatedEmail}\n` +
+          `🔑 Password: ${generatedPassword}`
       );
 
       setFormData({ name: '', phone: '', location: '' });
       setIsModalOpen(false);
-
     } catch (error) {
       console.error('Error onboarding crew member:', error);
       alert(`Registration Failed: ${error.message}`);
@@ -123,7 +123,8 @@ export default function ManageWashers() {
             Washer Crew Roster
           </h3>
           <p className="text-xs text-slate-500">
-            Manage team operational metrics, duty logs, and account creation access.
+            Manage team operational metrics, duty logs, and account creation
+            access.
           </p>
         </div>
 

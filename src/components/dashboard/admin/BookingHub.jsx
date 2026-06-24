@@ -20,7 +20,14 @@ const STATUS_BADGES = {
 function BookingHub({ mockBookings, onSelectBooking }) {
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const filters = ['All', 'Pending', 'Confirmed', 'In Progress', 'Completed', 'Cancelled'];
+  const filters = [
+    'All',
+    'Pending',
+    'Confirmed',
+    'In Progress',
+    'Completed',
+    'Cancelled',
+  ];
 
   const getCount = (status) => {
     if (status === 'All') return mockBookings.length;
@@ -108,7 +115,6 @@ function BookingHub({ mockBookings, onSelectBooking }) {
                 className={`flex flex-col lg:flex-row lg:items-center justify-between p-4 bg-gray-dark border border-border-dark border-l-4 
                   ${STATUS_BORDERS[booking.status] || 'border-l-slate-600'} rounded-xl gap-4 cursor-pointer  active:scale-[0.995] transition-all`}
               >
-                
                 <div>
                   <div className="flex items-center gap-2">
                     <h4 className="text-white font-semibold text-base sm:text-lg">

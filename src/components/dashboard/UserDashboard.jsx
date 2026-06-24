@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../../supabaseClient'; // Make sure this path correctly points to your supabase client file
+import { supabase } from '../../supabaseClient'; 
 
 import LiveProgressTracker from './user/LiveProgressTracker';
 import QuickHistoryCard from './user/QuickHistoryCard';
@@ -13,91 +13,99 @@ function UserDashboard() {
   const [activeUser, setActiveUser] = useState(null);
   const [activeBooking, setActiveBooking] = useState(null);
 
-  // States representing our horizontal progress tracker bar indices
   const [washTimeline, setWashTimeline] = useState([
     { step: 'Confirmed', label: 'Confirmed', done: false },
     { step: 'En Route', label: 'En Route', done: false },
+    { step: 'Arrived', label: 'Arrived', done: false },
     { step: 'Washing', label: 'Washing', done: false },
     { step: 'Done', label: 'Completed', done: false },
   ]);
 
-  // Maps backend text status strings directly to true/false bubble glows
   const updateTimelineState = (statusString) => {
-    const states = ['Confirmed', 'En Route', 'Washing', 'Completed'];
-    const activeIndex = states.indexOf(statusString || 'Confirmed');
+    const normalized = statusString?.toLowerCase().trim();
+    let activeIndex = 0;
+
+    if (normalized === 'confirmed' || normalized === 'queued') {
+      activeIndex = 0;
+    } else if (normalized === 'en route') {
+      activeIndex = 1; 
+    } else if (normalized === 'arrived') {
+      activeIndex = 2; 
+    } else if (normalized === 'in progress' || normalized === 'washing') {
+      activeIndex = 3; 
+    } else if (normalized === 'completed' || normalized === 'done') {
+      activeIndex = 4; 
+    }
 
     setWashTimeline([
       { step: 'Confirmed', label: 'Confirmed', done: activeIndex >= 0 },
       { step: 'En Route', label: 'En Route', done: activeIndex >= 1 },
-      { step: 'Washing', label: 'Washing', done: activeIndex >= 2 },
-      { step: 'Done', label: 'Completed', done: activeIndex >= 3 },
+      { step: 'Arrived', label: 'Arrived', done: activeIndex >= 2 },
+      { step: 'Washing', label: 'Washing', done: activeIndex >= 3 },
+      { step: 'Done', label: 'Completed', done: activeIndex >= 4 },
     ]);
   };
 
   useEffect(() => {
-  let userRefId = null;
+    let userRefId = null;
 
-  const fetchDashboardContext = async () => {
-    try {
-      // 1. Grab currently logged in user context
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      
-      setActiveUser(user);
-      userRefId = user.id; // Store local reference immediately for the listener
+    const fetchDashboardContext = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
 
-      // 2. Query active bookings (Exclude BOTH Completed and Cancelled rows)
-      const { data: bookings, error } = await supabase
-        .from('bookings')
-        .select('*')
-        .not('status', 'in', '("Completed","Cancelled")')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1);
+        setActiveUser(user);
+        userRefId = user.id; 
 
-      if (error) throw error;
+        const { data: bookings, error } = await supabase
+          .from('bookings')
+          .select('*')
+          .not('status', 'in', '("Completed","Cancelled")')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(1);
 
-      if (bookings && bookings.length > 0) {
-        const liveWash = bookings[0];
-        setActiveBooking(liveWash);
-        updateTimelineState(liveWash.status);
+        if (error) throw error;
+
+        if (bookings && bookings.length > 0) {
+          const liveWash = bookings[0];
+          setActiveBooking(liveWash);
+          updateTimelineState(liveWash.status);
+        }
+      } catch (err) {
+        // Silent catch to prevent runtime breakdown
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error hydrating user dashboard:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchDashboardContext();
+    fetchDashboardContext();
 
-  // 3. Setup real-time listener bound to the active channel stream
-  const channel = supabase
-    .channel('live-booking-status-feed')
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'bookings' },
-      (payload) => {
-        // Fallback to payload data or state tracking safely
-        const rowData = payload.new || payload.old;
-        const currentUserId = userRefId || activeUser?.id;
+    const channel = supabase
+      .channel('live-booking-status-feed')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bookings' },
+        (payload) => {
+          const rowData = payload.new || payload.old;
+          const currentUserId = userRefId || activeUser?.id;
 
-        if (rowData && rowData.user_id === currentUserId) {
-          if (rowData.status === 'Completed' || rowData.status === 'Cancelled') {
-            setActiveBooking(null); 
-          } else {
-            setActiveBooking(rowData);
-            updateTimelineState(rowData.status);
+          if (rowData && rowData.user_id === currentUserId) {
+            if (rowData.status === 'Completed' || rowData.status === 'Cancelled') {
+              setActiveBooking(null);
+            } else {
+              setActiveBooking(rowData);
+              updateTimelineState(rowData.status);
+            }
           }
         }
-      }
-    )
-    .subscribe();
+      )
+      .subscribe();
 
-  return () => {
-    supabase.removeChannel(channel);
-  };
-}, [activeUser?.id]);
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [activeUser?.id]);
 
   const firstName = activeUser?.user_metadata?.first_name || 'Client';
 
@@ -117,37 +125,20 @@ function UserDashboard() {
   return (
     <div className="min-h-screen bg-navy-deep text-white p-6 md:p-8 lg:p-12">
       <div className="max-w-6xl mx-auto flex flex-col gap-8">
-        
-        {/* WELCOME HEADER */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b border-border-dark/40 pb-6">
           <div>
-            <h1 className="text-3xl lg:text-5xl font-black tracking-tight">
-              Hello, {firstName}
-            </h1>
-            <p className="text-slate-400 mt-1.5 text-sm lg:text-base font-medium">
-              Welcome back to your premium car care headquarters.
-            </p>
+            <h1 className="text-3xl lg:text-5xl font-black tracking-tight">Hello, {firstName}</h1>
+            <p className="text-slate-400 mt-1.5 text-sm lg:text-base font-medium">Welcome back to your premium car care headquarters.</p>
           </div>
-
-          <Link
-            to="/booking"
-            className="bg-blue-action text-navy-deep px-6 py-3 rounded-xl font-extrabold text-sm shadow-lg hover:brightness-110 active:scale-[0.98] transition-all self-start md:self-auto"
-          >
-            + Book New Wash
-          </Link>
+          <Link to="/booking" className="bg-blue-action text-navy-deep px-6 py-3 rounded-xl font-extrabold text-sm shadow-lg hover:brightness-110 active:scale-[0.98] transition-all self-start md:self-auto">+ Book New Wash</Link>
         </div>
 
-        {/* WORKSPACE ZONE */}
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 pl-1">
-              Live Appointment Tracking
-            </h2>
-
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 pl-1">Live Appointment Tracking</h2>
             {!activeBooking ? (
               <NoActiveBookingCard />
             ) : (
-              /* Mapping our snake_case database object attributes cleanly */
               <LiveProgressTracker
                 bookingId={activeBooking.id}
                 selectedService={activeBooking.selected_service}
@@ -160,7 +151,6 @@ function UserDashboard() {
               />
             )}
           </div>
-
           <div className="flex flex-col items-center gap-4 lg:gap-6">
             <div className="flex flex-col lg:flex-row gap-4 lg:justify-between w-full">
               <QuickHistoryCard historyData={history} />
