@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../../supabaseClient';
 import {
   ArrowLeft,
   Clock,
@@ -18,8 +19,70 @@ export default function JobDetailView({
   isAdmin = false,
   availableWashers = [],
   onAssignWasher,
+  setJobs,
 }) {
+  const [currentStatus, setCurrentStatus] = useState(job.status);
   const [showReportForm, setShowReportForm] = useState(false);
+
+  useEffect(() => {
+    setCurrentStatus(job.status);
+  }, [job.status]);
+
+  const statusKey = currentStatus?.toLowerCase().trim();
+
+  const getStatusStyles = (status) => {
+    switch (status?.toLowerCase().trim()) {
+      case 'confirmed':
+      case 'queued':
+        return 'bg-blue-500 bg-opacity-10 text-blue-400';
+      case 'en route':
+        return 'bg-amber-500 bg-opacity-10 text-amber-400';
+      case 'arrived':
+        return 'bg-purple-500 bg-opacity-10 text-purple-400';
+      case 'washing':
+      case 'in progress':
+        return 'bg-indigo-500 bg-opacity-10 text-indigo-400';
+      case 'completed':
+        return 'bg-emerald-500 bg-opacity-10 text-emerald-400';
+      default:
+        return 'bg-slate-500 bg-opacity-10 text-slate-400';
+    }
+  };
+
+  const advanceWorkflowStatus = async () => {
+    let nextStatus = currentStatus;
+
+    if (statusKey === 'confirmed' || statusKey === 'queued') {
+      nextStatus = 'En Route';
+    } else if (statusKey === 'en route') {
+      nextStatus = 'Arrived';
+    } else if (statusKey === 'arrived') {
+      nextStatus = 'Washing';
+    }
+
+    try {
+      const databaseId = Number(job.id);
+      if (!databaseId || isNaN(databaseId)) return;
+
+      const { data, error } = await supabase
+        .from('bookings')
+        .update({ status: nextStatus })
+        .eq('id', databaseId)
+        .select();
+
+      if (error) throw error;
+      if (!data || data.length === 0) return;
+
+      setCurrentStatus(nextStatus);
+      if (setJobs) {
+        setJobs((prev) =>
+          prev.map((j) => (j.id === job.id ? { ...j, status: nextStatus } : j))
+        );
+      }
+    } catch (err) {
+      // Handled securely
+    }
+  };
 
   return (
     <div className="w-full min-h-full bg-navy-deep p-4 text-white flex flex-col gap-6 animate-fadeIn">
@@ -40,14 +103,15 @@ export default function JobDetailView({
           </div>
 
           <div className="flex flex-col items-center gap-3 mt-1">
-            <span className="text-xs bg-blue-500 bg-opacity-10 text-blue-400 font-bold px-2.5 py-1 rounded-md">
-              {job.status}
+            <span
+              className={`text-xs font-bold px-2.5 py-1 rounded-md capitalize tracking-wide ${getStatusStyles(currentStatus)}`}
+            >
+              {statusKey === 'confirmed' ? 'Queued' : currentStatus}
             </span>
 
             <div className="flex items-center gap-3 mt-2">
               <a
                 href={`tel:${job.phone || '+234800000000'}`}
-                aria-label={`Call ${job?.name ?? 'customer'}`}
                 className="p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl border border-slate-700 flex items-center justify-center transition-colors"
               >
                 <Phone size={14} />
@@ -55,7 +119,6 @@ export default function JobDetailView({
 
               <a
                 href={`sms:${job.phone || '+234800000000'}?body=Hi%20${encodeURIComponent(job.name)},%20this%20is%20your%20MiFai%20Wash%20crew%20pro!`}
-                aria-label={`Send SMS to ${job?.name ?? 'customer'}`}
                 className="p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl border border-slate-700 flex items-center justify-center transition-colors"
               >
                 <MessageSquare size={14} />
@@ -118,7 +181,6 @@ export default function JobDetailView({
           </p>
         </div>
 
-        {/* ADMIN EXCLUSIVE DEPLOYMENT DROP-DOWN COMPONENT AREA */}
         {isAdmin && (
           <div className="border-t border-slate-800 pt-4 flex flex-col gap-2">
             <div className="flex items-center gap-1 lg:justify-between ">
@@ -126,8 +188,7 @@ export default function JobDetailView({
                 Operational Assignment
               </span>
 
-              {/* Display current assignment using your exact design token block if already assigned */}
-              {job.status !== 'Pending' && (
+              {statusKey !== 'pending' && (
                 <div className="mt-1 inline-flex items-center gap-1.5 bg-slate-800 border border-slate-700 p-3 rounded-xl w-auto animate-fadeIn">
                   <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-slate-950 font-black">
                     W
@@ -141,19 +202,18 @@ export default function JobDetailView({
               )}
             </div>
 
-            {/* Show selection dropdown for all active, non-completed jobs */}
-            {job.status !== 'Completed' ? (
+            {statusKey !== 'completed' ? (
               <div className="dropdown dropdown-top w-full mt-1">
                 <div
                   tabIndex={0}
                   role="button"
                   className={`text-center w-full py-3 font-bold text-sm rounded-xl transition-colors ${
-                    job.status === 'Pending'
+                    statusKey === 'pending'
                       ? 'bg-blue-500 hover:bg-blue-600 text-slate-950'
                       : 'bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 text-xs mt-1'
                   }`}
                 >
-                  {job.status === 'Pending'
+                  {statusKey === 'pending'
                     ? 'Assign Washer ▼'
                     : 'Change / Reassign Washer ▼'}
                 </div>
@@ -188,7 +248,6 @@ export default function JobDetailView({
                 </ul>
               </div>
             ) : (
-              /* If completed, just display your design container without rendering an assignment button */
               <div className="mt-1 inline-flex items-center gap-1.5 bg-emerald-950 bg-opacity-20 border border-emerald-900/30 p-3 rounded-xl w-full">
                 <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center text-[10px] text-slate-950 font-black">
                   ✓
@@ -205,28 +264,60 @@ export default function JobDetailView({
         )}
       </div>
 
-      {/* WASHER EXCLUSIVE ACTIONS AREA */}
-      {!isAdmin &&
-        (!showReportForm ? (
-          <div className="flex flex-col gap-3 mt-auto">
-            <div className="flex items-center justify-between px-2 text-sm">
-              <span className="text-slate-400">Your Pending Payout:</span>
-              <span className="text-emerald-400 font-bold flex items-center text-lg">
-                ₦25.00
-              </span>
-            </div>
-            <button
-              onClick={() => setShowReportForm(true)}
-              className="w-full bg-green-500 hover:bg-green-600 text-slate-950 font-black py-4 rounded-xl text-base flex items-center justify-center gap-2 shadow-lg transition-colors"
-            >
-              <Check size={18} strokeWidth={3} /> Mark as Completed
-            </button>
+      {!isAdmin && (
+        <div className="flex flex-col gap-3 mt-auto">
+          <div className="flex items-center justify-between px-2 text-sm">
+            <span className="text-slate-400">Your Pending Payout:</span>
+            <span className="text-emerald-400 font-bold flex items-center text-lg">
+              ₦25.00
+            </span>
           </div>
-        ) : (
-          <JobReportForm
-            onSubmit={(formData) => onCompleteJob(job.id, formData)}
-          />
-        ))}
+
+          {!showReportForm ? (
+            <>
+              {(statusKey === 'confirmed' || statusKey === 'queued') && (
+                <button
+                  onClick={advanceWorkflowStatus}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-slate-950 font-black py-4 rounded-xl text-base flex items-center justify-center gap-2 shadow-lg transition-colors"
+                >
+                  <Navigation size={18} strokeWidth={3} /> Start Trip
+                </button>
+              )}
+
+              {statusKey === 'en route' && (
+                <button
+                  onClick={advanceWorkflowStatus}
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-black py-4 rounded-xl text-base flex items-center justify-center gap-2 shadow-lg transition-colors"
+                >
+                  <MapPin size={18} strokeWidth={3} /> Arrived at Location
+                </button>
+              )}
+
+              {statusKey === 'arrived' && (
+                <button
+                  onClick={advanceWorkflowStatus}
+                  className="w-full bg-purple-500 hover:bg-purple-600 text-white font-black py-4 rounded-xl text-base flex items-center justify-center gap-2 shadow-lg transition-colors"
+                >
+                  <Car size={18} strokeWidth={3} /> Start Wash
+                </button>
+              )}
+
+              {(statusKey === 'washing' || statusKey === 'in progress') && (
+                <button
+                  onClick={() => setShowReportForm(true)}
+                  className="w-full bg-green-500 hover:bg-green-600 text-slate-950 font-black py-4 rounded-xl text-base flex items-center justify-center gap-2 shadow-lg transition-colors"
+                >
+                  <Check size={18} strokeWidth={3} /> Complete Wash
+                </button>
+              )}
+            </>
+          ) : (
+            <JobReportForm
+              onSubmit={(formData) => onCompleteJob(job.id, formData)}
+            />
+          )}
+        </div>
+      )}
     </div>
   );
 }

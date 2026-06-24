@@ -134,7 +134,6 @@ function Hero() {
       >
         <div className="absolute inset-0 bg-[#0D1B2A]/80" />
       </div>
-
     </section>
   );
 }

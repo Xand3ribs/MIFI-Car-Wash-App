@@ -5,7 +5,7 @@ import { supabase } from '../../supabaseClient';
 
 function AdminDashboardView() {
   const [bookings, setBookings] = useState([]);
-  const [washers, setWashers] = useState([]); 
+  const [washers, setWashers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -20,10 +20,7 @@ function AdminDashboardView() {
             .from('bookings')
             .select('*')
             .order('created_at', { ascending: false }),
-          supabase
-            .from('profiles')
-            .select('*')
-            .eq('role', 'washer')
+          supabase.from('profiles').select('*').eq('role', 'washer'),
         ]);
 
         if (bookingsResponse.error) throw bookingsResponse.error;
@@ -34,11 +31,15 @@ function AdminDashboardView() {
           id: b.id,
           name: b.customer_name || 'Anonymous Client',
           number: b.number || b.booking_number || `BK-00${b.id}`,
-          car: b.selected_vehicle ? `${b.selected_service} (${b.selected_vehicle})` : 'No Vehicle Set',
-          time: b.selected_time ? `${b.selected_date || 'Today'} at ${b.selected_time}` : 'No Time Set',
+          car: b.selected_vehicle
+            ? `${b.selected_service} (${b.selected_vehicle})`
+            : 'No Vehicle Set',
+          time: b.selected_time
+            ? `${b.selected_date || 'Today'} at ${b.selected_time}`
+            : 'No Time Set',
           address: b.address || b.location || 'No Address Provided',
           status: b.status || 'Pending',
-          assignedWasher: b.assigned_washer || null
+          assignedWasher: b.assigned_washer || null,
         }));
 
         // 2. Map Live Washers based purely on active booking workloads
@@ -49,9 +50,9 @@ function AdminDashboardView() {
           );
 
           return {
-            id: w.id, 
+            id: w.id,
             name: w.full_name || 'Unnamed Operator',
-            shift: '8:00 AM - 5:00 PM', 
+            shift: '8:00 AM - 5:00 PM',
             // 🟢 CHANGED: Simple binary check. If working -> Busy, otherwise -> Available
             status: isCurrentlyWorking ? 'Busy' : 'Available',
           };
@@ -75,14 +76,16 @@ function AdminDashboardView() {
     const oldWasherName = targetBooking ? targetBooking.assignedWasher : null;
 
     const selectedWasher = washers.find((w) => w.id === washerId);
-    const newWasherName = selectedWasher ? selectedWasher.name : 'Assigned Crew';
+    const newWasherName = selectedWasher
+      ? selectedWasher.name
+      : 'Assigned Crew';
 
     try {
       const { error: updateError } = await supabase
         .from('bookings')
-        .update({ 
-          status: 'Confirmed', 
-          assigned_washer: newWasherName 
+        .update({
+          status: 'Confirmed',
+          assigned_washer: newWasherName,
         })
         .eq('id', bookingId);
 
@@ -107,7 +110,6 @@ function AdminDashboardView() {
           return w;
         })
       );
-
     } catch (err) {
       console.error('Error saving assignment to Supabase:', err);
       alert(`Could not save assignment: ${err.message}`);
@@ -118,7 +120,9 @@ function AdminDashboardView() {
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-screen bg-[#0D1B2A] text-white">
         <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-slate-400 font-medium">Loading live dashboard records...</p>
+        <p className="text-slate-400 font-medium">
+          Loading live dashboard records...
+        </p>
       </div>
     );
   }
@@ -126,10 +130,12 @@ function AdminDashboardView() {
   if (error) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center min-h-screen bg-[#0D1B2A] text-white p-6 text-center">
-        <div className="text-red-500 text-xl font-bold mb-2">Failed to Sync Database</div>
+        <div className="text-red-500 text-xl font-bold mb-2">
+          Failed to Sync Database
+        </div>
         <p className="text-slate-400 max-w-md mb-4">{error}</p>
-        <button 
-          onClick={() => window.location.reload()} 
+        <button
+          onClick={() => window.location.reload()}
           className="px-5 py-2 bg-blue-500 hover:bg-blue-600 rounded-xl text-sm font-semibold transition-all"
         >
           Retry Connection

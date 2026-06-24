@@ -69,7 +69,7 @@ export default function AppRoutes({ user }) {
           path="washer/dashboard"
           element={
             user?.role === 'washer' ? (
-              <WasherDashboardView />
+              <WasherDashboardView user={user} />
             ) : (
               <Navigate to="/account/dashboard" replace />
             )
