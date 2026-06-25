@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 function SubscriptionCard() {
   // Mock subscription context variables
-  const hasSubscription = true;
+  const hasSubscription = false;
   const planName = 'MiFai Club Elite';
   const washesUsed = 2;
   const totalWashes = 4;
@@ -15,8 +15,9 @@ function SubscriptionCard() {
 
   if (!hasSubscription) {
     return (
-      <div className="flex-1 bg-gradient-to-br from-gray-dark to-slate-900 border border-blue-action/20 rounded-3xl p-5 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 bg-blue-action text-navy-deep text-[9px] font-black uppercase px-3 py-1 rounded-bl-xl tracking-wider">
+      <div className="flex-1 flex flex-col justify-between bg-gradient-to-br from-gray-dark to-slate-900 border border-blue-action/20 rounded-3xl p-5 shadow-xl relative overflow-hidden">
+
+        <div className="absolute top-0 right-0 bg-blue-action text-navy-deep text-[15px] font-black uppercase px-6 py-3 rounded-bl-xl tracking-wider">
           Save 25%
         </div>
 
@@ -24,21 +25,23 @@ function SubscriptionCard() {
           <Zap size={15} className="text-blue-action" /> Join MiFai Wash Club
         </h4>
 
-        <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+        <p className="text-xs text-slate-400 mt-2 leading-relaxed text-center">
           Get automatic recurring care for your vehicle. Save money with 4
           scheduled details per month.
         </p>
-        <button className="w-full bg-blue-action text-navy-deep text-xs font-black py-2.5 rounded-xl mt-4 hover:brightness-110 transition-all">
-          Explore Plans
+        <button className="w-full bg-blue-action opacity-70 text-navy-deep text-xs font-black py-2.5 rounded-xl mt-4 hover:brightness-110 transition-all btn-disabled">
+          {/* Explore Plans */} Feature Coming Soon
         </button>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 bg-gray-dark border border-border-dark rounded-3xl p-5 shadow-xl flex flex-col gap-4">
+    <div className="flex-1 bg-gray-dark border border-border-dark rounded-3xl p-5 shadow-xl flex flex-col gap-4 justify-between">
+
       {/* Plan Tier Banner Badge */}
       <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+
         <div className="flex items-center gap-2">
           <div className="p-1.5 bg-blue-action/10 text-blue-action rounded-lg">
             <ShieldCheck size={16} />

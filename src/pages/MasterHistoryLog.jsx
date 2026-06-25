@@ -25,21 +25,18 @@ function MasterHistoryLog({ role = 'user', initialData = [] }) {
   const [selectedMonth, setSelectedMonth] = useState('all');
   const [selectedLog, setSelectedLog] = useState(null);
 
-  // Helper function to safely extract the month index from any date format
   const getMonthFromDateStr = (dateStr) => {
     if (!dateStr || dateStr.includes('Pending')) return null;
     const parsedDate = new Date(dateStr);
     return isNaN(parsedDate.getTime()) ? null : parsedDate.getMonth().toString();
   };
 
-  // 1. First, separate the data based purely on the chosen month dropdown
   const monthFilteredData = initialData.filter((item) => {
     if (selectedMonth === 'all') return true;
     const itemMonth = getMonthFromDateStr(item.date);
     return itemMonth === selectedMonth;
   });
 
-  // 2. Pre-calculate dynamic status pill counts relative to the selected month
   const counts = {
     all: monthFilteredData.length,
     completed: monthFilteredData.filter(
@@ -50,7 +47,6 @@ function MasterHistoryLog({ role = 'user', initialData = [] }) {
     ).length,
   };
 
-  // 3. Final array combining both month and status conditions
   const finalFilteredData = monthFilteredData.filter((item) => {
     if (filter === 'all') return true;
     return item.status?.toLowerCase() === filter.toLowerCase();
