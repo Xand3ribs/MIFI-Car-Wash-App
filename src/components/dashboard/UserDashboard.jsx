@@ -8,10 +8,26 @@ import SupportCard from './user/SupportCard';
 import NoActiveBookingCard from './user/NoActiveBookingCard';
 import SubscriptionCard from './user/SubscriptionCard';
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return 'Recent Wash';
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  } catch {
+    return dateStr;
+  }
+};
+
 function UserDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeUser, setActiveUser] = useState(null);
   const [activeBooking, setActiveBooking] = useState(null);
+  const [history, setHistory] = useState([]);
 
   const [washTimeline, setWashTimeline] = useState([
     { step: 'Confirmed', label: 'Confirmed', done: false },
@@ -52,11 +68,15 @@ function UserDashboard() {
     const fetchDashboardContext = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) {
+          setLoading(false);
+          return;
+        }
 
         setActiveUser(user);
         userRefId = user.id; 
 
+        // 1. Fetch live active booking
         const { data: bookings, error } = await supabase
           .from('bookings')
           .select('*')
@@ -72,15 +92,44 @@ function UserDashboard() {
           setActiveBooking(liveWash);
           updateTimelineState(liveWash.status);
         }
+
+        // 2. Fetch history: Only Completed and Cancelled, just like the history page
+        try {
+          const { data: historyData, error: historyErr } = await supabase
+            .from('bookings')
+            .select('*')
+            .eq('user_id', user.id)
+            .in('status', ['Completed', 'completed', 'Cancelled', 'cancelled'])
+            .order('created_at', { ascending: false })
+            .limit(3);
+
+          if (historyErr) throw historyErr;
+
+          if (historyData) {
+            const parsedHistory = historyData.map((item) => ({
+              id: item.id,
+              date: formatDate(item.selected_date),
+              vehicle: item.selected_vehicle || 'Vehicle Details',
+              service: item.selected_service || 'Premium Wash',
+              amount: item.total_price || '0',
+              status: item.status,
+            }));
+            setHistory(parsedHistory);
+          }
+        } catch (historyCrash) {
+          console.error('History mapping column mismatch:', historyCrash);
+        }
       } catch (err) {
-        // Silent catch to prevent runtime breakdown
+        console.error('Core Dashboard fetch error:', err);
       } finally {
-        setLoading(false);
+        // This is now guaranteed to execute no matter what happens above
+        setLoading(false); 
       }
     };
 
     fetchDashboardContext();
 
+    // 4. Enhanced realtime tracking network channel
     const channel = supabase
       .channel('live-booking-status-feed')
       .on(
@@ -91,8 +140,23 @@ function UserDashboard() {
           const currentUserId = userRefId || activeUser?.id;
 
           if (rowData && rowData.user_id === currentUserId) {
-            if (rowData.status === 'Completed' || rowData.status === 'Cancelled') {
+            const statusLower = rowData.status?.toLowerCase();
+            
+            if (statusLower === 'completed' || statusLower === 'cancelled') {
               setActiveBooking(null);
+              
+              // If marked complete, dynamically feed into history log view window immediately
+              if (statusLower === 'completed') {
+                const freshHistoryRow = {
+                  id: rowData.id,
+                  date: formatDate(rowData.selected_date),
+                  vehicle: rowData.selected_vehicle || 'Vehicle Details',
+                  service: rowData.selected_service || 'Premium Wash',
+                  amount: rowData.amount || rowData.price || '0',
+                  status: rowData.status,
+                };
+                setHistory((prev) => [freshHistoryRow, ...prev.slice(0, 2)]);
+              }
             } else {
               setActiveBooking(rowData);
               updateTimelineState(rowData.status);
@@ -108,11 +172,6 @@ function UserDashboard() {
   }, [activeUser?.id]);
 
   const firstName = activeUser?.user_metadata?.first_name || 'Client';
-
-  const history = [
-    { id: 1, date: 'May 10, 2026', vehicle: 'Tesla Model 3', service: 'Deep Clean', status: 'Completed', amount: '15,000' },
-    { id: 2, date: 'April 15, 2026', vehicle: 'Tesla Model 3', service: 'Quick Wash', status: 'Completed', amount: '15,000' },
-  ];
 
   if (loading) {
     return (
@@ -153,6 +212,7 @@ function UserDashboard() {
           </div>
           <div className="flex flex-col items-center gap-4 lg:gap-6">
             <div className="flex flex-col lg:flex-row gap-4 lg:justify-between w-full">
+              {/* 5. Fed live formatted history array state into the presentation layout element */}
               <QuickHistoryCard historyData={history} />
               <SubscriptionCard />
             </div>

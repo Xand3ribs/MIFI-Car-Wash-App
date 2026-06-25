@@ -1,7 +1,7 @@
 // src/components/dashboards/user/QuickHistoryCard.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, ChevronRight } from 'lucide-react';
+import { CheckCircle2, ChevronRight, XCircle } from 'lucide-react';
 
 function QuickHistoryCard({ historyData }) {
   return (
@@ -16,9 +16,26 @@ function QuickHistoryCard({ historyData }) {
           className="flex items-center justify-between p-3.5 rounded-xl bg-navy-deep/40 border border-border-dark/30 hover:border-blue-action/40 transition-colors group cursor-pointer"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg">
+
+            {/* <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg">
               <CheckCircle2 size={16} />
+            </div> */}
+
+            <div
+              className={`p-3 rounded-xl mt-1 shrink-0 ${
+                // Check for both 'Completed' and 'completed'
+                item.status?.toLowerCase() === 'completed'
+                  ? 'bg-emerald-500/10 text-emerald-400'
+                  : 'bg-red-500/10 text-red-400'
+              }`}
+            >
+              {item.status?.toLowerCase() === 'completed' ? (
+                <CheckCircle2 size={16} />
+              ) : (
+                <XCircle size={16} />
+              )}
             </div>
+
             <div>
               <h4 className="font-bold text-sm group-hover:text-blue-400 transition-colors">
                 {item.service}
