@@ -13,37 +13,39 @@ export default function ManageWashers() {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    location: '',
+    address: '',
   });
 
-  // 🟢 Read live washers from your Supabase profiles table on component refresh
-  useEffect(() => {
-    async function loadWashers() {
-      try {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('role', 'washer');
+  // 🟢 Read live washers from your Supabase washer_profiles table on component refresh
+useEffect(() => {
+  async function loadWashers() {
+    try {
+      const { data, error } = await supabase
+        .from('washer_profiles') // 👈 Swapped target table name
+        .select('*');            // 👈 No longer need .eq('role') filter since this table contains ONLY washers
 
-        if (error) throw error;
+      if (error) throw error;
 
-        if (data) {
-          // Map database structure safely back into your layout properties
-          const formattedCrew = data.map((profile) => ({
-            id: profile.id,
-            name: profile.full_name || 'Unnamed Operator',
-            phone: profile.phone || 'No Phone',
-            location: profile.location || 'No Location',
-          }));
-          setCrewList(formattedCrew);
-        }
-      } catch (err) {
-        console.error('Error fetching live washer registry logs:', err.message);
+      if (data) {
+        // Map new database table columns back to your table roster properties
+        const formattedCrew = data.map((profile) => ({
+          id: profile.id,
+          // Merges first_name and last_name back into your layout visual string
+          name: profile.first_name || profile.last_name 
+            ? `${profile.first_name} ${profile.last_name}`.trim() 
+            : 'Unnamed Operator',
+          phone: profile.phone || 'No Phone',
+          address: profile.address || 'No Address', // Ensure this column matches your table layout setup
+        }));
+        setCrewList(formattedCrew);
       }
+    } catch (err) {
+      console.error('Error fetching live washer registry logs:', err.message);
     }
+  }
 
-    loadWashers();
-  }, []);
+  loadWashers();
+}, []);
 
   const handleToggleDuty = (id) => {
     setCrewList((prev) =>
@@ -55,7 +57,7 @@ export default function ManageWashers() {
 
   const handleOnboardSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !formData.location) return;
+    if (!formData.name || !formData.phone || !formData.address) return;
 
     const cleanName = formData.name.trim().toLowerCase().replace(/\s+/g, '.');
     const generatedEmail = `${cleanName}@mifaiwash.com`;
@@ -81,7 +83,7 @@ export default function ManageWashers() {
             data: {
               full_name: formData.name,
               phone: formData.phone,
-              location: formData.location, // Sent safely into user metadata payload
+              address: formData.address, // Sent safely into user metadata payload
               role: 'washer',
             },
           },
@@ -94,7 +96,7 @@ export default function ManageWashers() {
         id: authData.user?.id || `WSH-00${crewList.length + 1}`,
         name: formData.name,
         phone: formData.phone,
-        location: formData.location,
+        address: formData.address,
       };
 
       setCrewList((prev) => [...prev, newWasher]);
@@ -106,7 +108,7 @@ export default function ManageWashers() {
           `🔑 Password: ${generatedPassword}`
       );
 
-      setFormData({ name: '', phone: '', location: '' });
+      setFormData({ name: '', phone: '', address: '' });
       setIsModalOpen(false);
     } catch (error) {
       console.error('Error onboarding crew member:', error);

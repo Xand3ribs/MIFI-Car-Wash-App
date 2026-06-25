@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate, Outlet, Link } from 'react-router-dom';
 import {
   User,
-  Home,
   Shield,
   CreditCard,
   ChevronRight,
@@ -21,7 +20,19 @@ export default function SettingsView({ user }) {
   // Clean up trailing/leading slashes from the wildcard parameter
   const cleanSubRoute = subRoute?.replace(/^\/|\/$/g, '') || '';
 
-  const activeTab = cleanSubRoute === '' ? 'profile' : cleanSubRoute;
+  // Determine the active tab based on the URL path
+  const activeTab = cleanSubRoute === '' ? (isAdmin ? 'users' : 'profile') : cleanSubRoute;
+
+  // Automatically redirect from the root settings path to the proper default tab
+  useEffect(() => {
+    if (cleanSubRoute === '') {
+      if (isAdmin) {
+        navigate('/account/settings/users', { replace: true });
+      } else {
+        navigate('/account/settings/profile', { replace: true });
+      }
+    }
+  }, [cleanSubRoute, isAdmin, navigate]);
 
   // Force absolute path navigation to prevent URL stacking spirals
   const handleTabChange = (pathKey) => {
@@ -31,13 +42,6 @@ export default function SettingsView({ user }) {
   const getMenuItems = () => {
     if (isAdmin) {
       return [
-        {
-          id: 'profile',
-          label: 'Admin Identity Controls',
-          shorthand: 'Profile',
-          path: 'profile',
-          icon: User,
-        },
         {
           id: 'users',
           label: 'Customer Registry Log',
@@ -72,17 +76,6 @@ export default function SettingsView({ user }) {
         path: 'profile',
         icon: User,
       },
-      ...(!isWasher
-        ? [
-            {
-              id: 'address',
-              label: 'Dispatch Location Ledger',
-              shorthand: 'Addresses',
-              path: 'address',
-              icon: Home,
-            },
-          ]
-        : []),
       {
         id: 'subscription',
         label: isWasher ? 'Bank Payout Methods' : 'Manage Subscription Plan',
@@ -115,9 +108,8 @@ export default function SettingsView({ user }) {
           Account Settings
         </h2>
         <p className="text-xs md:text-sm text-slate-400 mt-1">
-          {/* * * CHANGE MADE HERE: Added contextual dynamic text for Admin role header subtitle * * */}
           {isAdmin
-            ? 'Manage your administrative identity profile, audit registered customer files, onboard your laundry service crew, and verify internal security protocols.'
+            ? 'Audit registered customer files, onboard your laundry service crew, and verify internal security protocols.'
             : isWasher
               ? 'Manage your operational availability, linked bank settlement hubs, and compliance security settings.'
               : 'Configure your profile identity, personal addresses, subscription options, and credential security layers.'}
@@ -138,7 +130,8 @@ export default function SettingsView({ user }) {
                 onChange={() => handleTabChange(item.path)}
               />
               <div className="tab-content bg-gray-dark border-slate-800 max-w-full rounded-3xl p-8 shadow-xl">
-                <Outlet />
+                {/* FIXED: Only render Outlet if we aren't currently waiting on the root redirect framework */}
+                {cleanSubRoute !== '' && <Outlet />}
               </div>
             </React.Fragment>
           ))}
@@ -180,7 +173,8 @@ export default function SettingsView({ user }) {
             </button>
 
             <div className="mt-2">
-              <Outlet />
+              {/* FIXED: Prevent content flashing during routing evaluations on mobile viewports */}
+              {cleanSubRoute !== '' && <Outlet />}
             </div>
           </div>
         )}
