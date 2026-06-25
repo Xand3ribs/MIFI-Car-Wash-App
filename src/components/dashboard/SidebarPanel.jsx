@@ -73,7 +73,7 @@ function SidebarPanel({ user }) {
             </NavLink>
           )}
 
-          {user?.role === 'user' && (
+          {user?.role === 'customer' && (
             <NavLink to="/account/history" className={getNavLinkStyle}>
               <History />
               History

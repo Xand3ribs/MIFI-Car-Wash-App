@@ -21,19 +21,21 @@ function WasherDashboardView({ user }) {
       try {
         setLoading(true);
 
+        // 1. Corrected to fetch from 'washer_profiles' using your exact schema columns
         const { data: profile, error: profileErr } = await supabase
-          .from('profiles')
-          .select('full_name')
+          .from('washer_profiles')
+          .select('first_name, last_name')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
         if (profileErr) throw profileErr;
-        if (!profile || !profile.full_name) {
+        if (!profile) {
           setLoading(false);
           return;
         }
 
-        const targetWasherName = profile.full_name.trim();
+        // 2. Combine names into a single string to match how your 'bookings' table tracks them
+        const targetWasherName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
         setWasherName(targetWasherName);
 
         const { data: bookings, error: bookingsErr } = await supabase
@@ -112,7 +114,8 @@ function WasherDashboardView({ user }) {
 
         setJobs(processedJobs);
       } catch (err) {
-        // Silent catch to protect dashboard execution runtime
+        // Unsilenced the logger so you can spot failing RLS policies or column spelling bugs immediately
+        console.error('Error compiling washer workflow data:', err);
       } finally {
         setLoading(false);
       }
@@ -137,7 +140,7 @@ function WasherDashboardView({ user }) {
       setJobs((prev) => prev.filter((j) => j.id !== jobId));
       setSelectedJob(null);
     } catch (err) {
-      // Silent catch to prevent UI disruptions on complete operations
+      console.error('Error completing job:', err);
     }
   };
 

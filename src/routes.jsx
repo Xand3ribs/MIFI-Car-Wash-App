@@ -8,7 +8,6 @@ import AdminDashboardView from './components/dashboard/adminDashboard';
 import WasherDashboardView from './components/dashboard/WasherDashboard';
 import HistoryView from './components/dashboard/user/HistoryView';
 import WasherHistoryView from './components/dashboard/washer/WasherHistoryView';
-import ProfileView from './pages/ProfileView';
 import SettingsView from './pages/SettingsView';
 import ProfileForm from './components/dashboard/settings/ProfileForm';
 import AddressLedger from './components/dashboard/settings/AddressLedger';
@@ -22,9 +21,12 @@ import ManageWashers from './components/dashboard/settings/ManageWashers';
 import ManageUsers from './components/dashboard/settings/ManageUsers';
 
 export default function AppRoutes({ user }) {
+  // Normalize role to lowercase and safeguard against undefined states
+  const currentRole = user?.role?.toLowerCase();
+
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* Public Routes - Kept completely independent so their local states never unmount */}
       <Route path="/" element={<Home />} />
       <Route path="/booking" element={<Booking />} />
       <Route path="/login" element={<Login />} />
@@ -33,23 +35,33 @@ export default function AppRoutes({ user }) {
       <Route
         path="/account"
         element={
-          user ? (
-            <DashboardLayout user={user} />
-          ) : (
+          !user ? (
             <Navigate to="/login" replace />
+          ) : !currentRole ? (
+            // FIXED: If the user is authenticated but their role profile is still loading,
+            // freeze evaluation HERE. This prevents deep-linked sub-routes from misfiring 
+            // their fallback redirects.
+            <div className="w-full h-screen flex flex-col items-center justify-center bg-[#0D1B2A] gap-2 text-slate-400">
+              <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              <p className="text-[10px] font-black tracking-widest uppercase opacity-60">Verifying Profile...</p>
+            </div>
+          ) : (
+            <DashboardLayout user={user} />
           )
         }
       >
-        {/* dashboard */}
+        {/* Default index redirect */}
         <Route index element={<Navigate to="/account/dashboard" replace />} />
 
+        {/* Dynamic Dashboard Landing Router */}
         <Route
           path="dashboard"
           element={
-            user?.role === 'user' ? (
+            currentRole === 'customer' ? (
               <UserDashboard />
             ) : (
-              <Navigate to={`/account/${user?.role}/dashboard`} replace />
+              // Safely routes using the normalized, lowercase string
+              <Navigate to={`/account/${currentRole}/dashboard`} replace />
             )
           }
         />
@@ -57,7 +69,7 @@ export default function AppRoutes({ user }) {
         <Route
           path="admin/dashboard"
           element={
-            user?.role === 'admin' ? (
+            currentRole === 'admin' ? (
               <AdminDashboardView />
             ) : (
               <Navigate to="/account/dashboard" replace />
@@ -68,7 +80,7 @@ export default function AppRoutes({ user }) {
         <Route
           path="washer/dashboard"
           element={
-            user?.role === 'washer' ? (
+            currentRole === 'washer' ? (
               <WasherDashboardView user={user} />
             ) : (
               <Navigate to="/account/dashboard" replace />
@@ -80,7 +92,7 @@ export default function AppRoutes({ user }) {
         <Route
           path="admin/analytics"
           element={
-            user?.role === 'admin' ? (
+            currentRole === 'admin' ? (
               <AnalyticsView />
             ) : (
               <Navigate to="/account/dashboard" replace />
@@ -92,7 +104,7 @@ export default function AppRoutes({ user }) {
         <Route
           path="history"
           element={
-            user?.role === 'user' ? (
+            currentRole === 'customer' ? (
               <HistoryView />
             ) : (
               <Navigate to="/account/dashboard" replace />
@@ -103,7 +115,7 @@ export default function AppRoutes({ user }) {
         <Route
           path="washer/history"
           element={
-            user?.role === 'washer' ? (
+            currentRole === 'washer' ? (
               <WasherHistoryView />
             ) : (
               <Navigate to="/account/dashboard" replace />
@@ -121,7 +133,7 @@ export default function AppRoutes({ user }) {
           <Route
             path="subscription"
             element={
-              user?.role === 'washer' ? (
+              currentRole === 'washer' ? (
                 <PayoutDetails />
               ) : (
                 <SubscriptionManager />
@@ -132,13 +144,13 @@ export default function AppRoutes({ user }) {
         </Route>
 
         {/* support */}
-        <Route path="contact" element={<SupportView role={user?.role} />} />
+        <Route path="contact" element={<SupportView role={currentRole} />} />
 
         {/* earning ledger */}
         <Route
           path="washer/earnings"
           element={
-            user?.role === 'washer' ? (
+            currentRole === 'washer' ? (
               <EarningsLedger />
             ) : (
               <Navigate to="/account/dashboard" replace />

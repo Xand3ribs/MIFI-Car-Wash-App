@@ -32,7 +32,7 @@ export default function WasherTableRoster({ crewList, onToggleDuty }) {
               <td className="py-4 px-2 text-slate-400">
                 <span className="inline-flex items-center gap-1">
                   <MapPin size={13} className="text-slate-600" />
-                  {washer.location}
+                  {washer.address}
                 </span>
               </td>
 

@@ -18,7 +18,7 @@ function AdminDashboardView() {
             .from('bookings')
             .select('*')
             .order('created_at', { ascending: false }),
-          supabase.from('profiles').select('*').eq('role', 'washer'),
+          supabase.from('washer_profiles').select('*'),
         ]);
 
         if (bookingsResponse.error) throw bookingsResponse.error;
@@ -40,15 +40,13 @@ function AdminDashboardView() {
         }));
 
         const mappedWashers = (washersResponse.data || []).map((w) => {
-          const isCurrentlyWorking = mappedBookings.some(
-            (b) => b.assignedWasher === w.full_name && b.status !== 'Completed'
-          );
-
+          const fullName = `${w.first_name || ''} ${w.last_name || ''}`.trim();
+          
           return {
             id: w.id,
-            name: w.full_name || 'Unnamed Operator',
+            name: fullName,
             shift: '8:00 AM - 5:00 PM',
-            status: isCurrentlyWorking ? 'Busy' : 'Available',
+            status: 'Available', // 👈 CHANGED: Force status to always be 'Available'
           };
         });
 
@@ -65,9 +63,6 @@ function AdminDashboardView() {
   }, []);
 
   const handleAssignWasher = async (bookingId, washerId) => {
-    const targetBooking = bookings.find((b) => b.id === bookingId);
-    const oldWasherName = targetBooking ? targetBooking.assignedWasher : null;
-
     const selectedWasher = washers.find((w) => w.id === washerId);
     const newWasherName = selectedWasher ? selectedWasher.name : 'Assigned Crew';
 
@@ -90,18 +85,9 @@ function AdminDashboardView() {
         )
       );
 
-      setWashers((prevWashers) =>
-        prevWashers.map((w) => {
-          if (oldWasherName && w.name === oldWasherName) {
-            return { ...w, status: 'Available' };
-          }
-          if (w.id === washerId) {
-            return { ...w, status: 'Busy' };
-          }
-          return w;
-        })
-      );
+      // 👈 CHANGED: Removed the setWashers state update entirely so they stay 'Available'
     } catch (err) {
+      // Error handled silently as before
     }
   };
 

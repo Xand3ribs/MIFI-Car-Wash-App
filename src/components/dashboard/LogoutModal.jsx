@@ -1,4 +1,3 @@
-// components/LogoutModal.jsx
 import { createPortal } from 'react-dom'; // 1. Imported portal engine
 import { LogOut, X } from 'lucide-react';
 
