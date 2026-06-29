@@ -105,7 +105,7 @@ function MasterHistoryLog({ role = 'user', initialData = [] }) {
       <div className="flex flex-col gap-4">
         {finalFilteredData.length === 0 ? (
           <div className="bg-gray-dark border border-slate-800 rounded-2xl p-12 text-center text-slate-500 text-sm">
-            No past historical records found matching your selection parameters.
+            No past washes. Book a wash now 
           </div>
         ) : (
           finalFilteredData.map((log) => (
