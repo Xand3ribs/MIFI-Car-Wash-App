@@ -17,13 +17,10 @@ export default function SettingsView({ user }) {
   const isWasher = user?.role === 'washer';
   const isAdmin = user?.role === 'admin';
 
-  // Clean up trailing/leading slashes from the wildcard parameter
   const cleanSubRoute = subRoute?.replace(/^\/|\/$/g, '') || '';
 
-  // Determine the active tab based on the URL path
   const activeTab = cleanSubRoute === '' ? (isAdmin ? 'users' : 'profile') : cleanSubRoute;
 
-  // Automatically redirect from the root settings path to the proper default tab
   useEffect(() => {
     if (cleanSubRoute === '') {
       if (isAdmin) {

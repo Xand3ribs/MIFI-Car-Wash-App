@@ -5,7 +5,6 @@ const AuthContext = createContext({ user: null, loading: true, signOut: async ()
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  // CRITICAL: 'loading' is strictly for the initial application boot check
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -58,12 +57,10 @@ export function AuthProvider({ children }) {
         console.error("Error fetching profile details:", error);
       }
 
-      // 2. Commit the definitive profile data to state
       setUser(foundUser || { id: sessionUser.id, email: sessionUser.email, role: 'customer', name: 'User' });
       setLoading(false); 
     }
 
-    // Run once on application boot
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         getUserProfile(session.user);
@@ -72,11 +69,9 @@ export function AuthProvider({ children }) {
       }
     });
 
-    // Listen for auth events during the session lifetime
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        // FIXED: We NO LONGER call setLoading(true) here!
-        // This keeps your active booking wizard page safely mounted without erasing its steps.
+        
         getUserProfile(session.user);
       } else {
         setUser(null);

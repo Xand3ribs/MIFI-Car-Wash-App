@@ -13,7 +13,7 @@ import {
   HandCoins,
 } from 'lucide-react';
 
-import LogoutModal from './LogoutModal'; // ← import the modal
+import LogoutModal from './LogoutModal'; 
 
 function SidebarPanel({ user }) {
   const location = useLocation();
