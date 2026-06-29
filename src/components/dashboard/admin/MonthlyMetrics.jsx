@@ -1,10 +1,7 @@
 import React from 'react';
 import { Wallet, CalendarCheck } from 'lucide-react';
 
-/* * * NEW COMPONENT * *
- * Tracks section 1: Monthly business metrics.
- * Displays gross income volume and total processed bookings contextually for the filtered view.
- */
+
 export default function MonthlyMetrics({
   revenue,
   totalBookings,
