@@ -1,154 +1,99 @@
-import React, { useState } from 'react';
-import { ChevronDown, Filter, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { supabase } from '../../../supabaseClient';
 import UserTableLog from '../admin/UserTableLog';
 
-// Mock database registry simulating active Lagos client footprint
-const INITIAL_CUSTOMERS = [
-  {
-    id: 'USR-892',
-    name: 'Chioma Adebayo',
-    email: 'chioma@adebayo.co',
-    phone: '+234 802 111 2222',
-    tier: 'Premium',
-    status: 'Active',
-  },
-  {
-    id: 'USR-415',
-    name: 'Tunde Bakare',
-    email: 'tbakare@outlook.com',
-    phone: '+234 815 333 4444',
-    tier: 'Pay-As-You-Go',
-    status: 'Active',
-  },
-  {
-    id: 'USR-612',
-    name: 'Funmi Olowu',
-    email: 'funmi.olowu@gmail.com',
-    phone: '+234 809 555 6666',
-    tier: 'None',
-    status: 'Suspended',
-  },
-];
-
 export default function ManageUsers() {
-  const [userList, setUserList] = useState(INITIAL_CUSTOMERS);
+  const [userList, setUserList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
-  // Track our selected filter configuration
-  const [activeFilter, setActiveFilter] = useState('All Users');
+  useEffect(() => {
+    fetchUsers();
+  }, [currentPage]); // Re-fetch when page changes
 
-  // Handle Account Suspension / Re-activation toggles
-  const handleToggleStatus = (id) => {
-    setUserList((prev) =>
-      prev.map((user) => {
-        if (user.id === id) {
-          const nextStatus = user.status === 'Active' ? 'Suspended' : 'Active';
-          return { ...user, status: nextStatus };
-        }
-        return user;
-      })
-    );
-  };
+  async function fetchUsers() {
+    setLoading(true);
+    
+    // Calculate range for Supabase (0-9, 10-19, etc)
+    const from = (currentPage - 1) * pageSize;
+    const to = from + pageSize - 1;
 
-  // Filter List Config Array for mapping the dropdown options
-  const filterOptions = [
-    { label: 'All Users', value: 'All Users' },
-    { label: 'Premium Plan', value: 'Premium' },
-    { label: 'Pay-As-You-Go', value: 'Pay-As-You-Go' },
-    { label: 'None (Expired)', value: 'None' },
-    { label: 'Suspended Accounts', value: 'Suspended' },
-  ];
+    const { data, error } = await supabase
+      .from('customer_profiles')
+      .select('id, first_name, last_name, address, email, phone')
+      .range(from, to)
+      .order('first_name', { ascending: true });
 
-  // Filter & Search Evaluation Pipeline
+    if (error) console.error("Error fetching customers:", error);
+    else setUserList(data || []);
+    setLoading(false);
+  }
+
+  // Filter logic now works on the current page slice
   const filteredUsers = userList.filter((user) => {
-    const matchesSearch =
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.phone.includes(searchQuery);
-
-    if (activeFilter === 'All Users') return matchesSearch;
-    if (activeFilter === 'Suspended')
-      return matchesSearch && user.status === 'Suspended';
-
-    // Otherwise check against the specific subscription tier strings
-    return matchesSearch && user.tier === activeFilter;
+    const search = searchQuery.toLowerCase();
+    const fullName = `${user.first_name || ''} ${user.last_name || ''}`.toLowerCase();
+    return (
+      fullName.includes(search) ||
+      (user.email || '').toLowerCase().includes(search) ||
+      (user.phone || '').toString().includes(search)
+    );
   });
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      {/* Section Header */}
       <div className="border-b border-slate-800 pb-4">
-        <h3 className="text-lg font-bold text-slate-100">
-          Customer Registry Log
-        </h3>
-        <p className="text-xs text-slate-500">
-          Audit user base profiles, active subscription configurations, and tier
-          credentials.
-        </p>
+        <h3 className="text-lg font-bold text-slate-100">Customer Registry Log</h3>
       </div>
 
-      {/* Control Strip: Search Bar and New Dropdown Filter */}
-      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-        {/* Search Bar Input Container */}
+      <div className="flex flex-col sm:flex-row gap-3 justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search
-            size={14}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
-          />
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600" />
           <input
             type="text"
-            placeholder="Search customer name, phone, or email..."
+            placeholder="Search name, email, or phone..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white placeholder-slate-600 outline-none focus:border-blue-500 transition-colors"
+            className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-xs text-white"
           />
-        </div>
-
-        {/* * * NEW: DaisyUI Pure CSS Filter Dropdown * * */}
-        <div className="dropdown dropdown-end sm:dropdown-left">
-          <button
-            type="button"
-            tabIndex={0}
-            className="w-full sm:w-auto flex items-center justify-between gap-4 px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition-colors focus:outline-none"
-          >
-            <span className="flex items-center gap-2">
-              <Filter size={13} className="text-blue-400" />
-              Filter: <span className="text-white">{activeFilter}</span>
-            </span>
-            <ChevronDown size={14} className="text-slate-500" />
-          </button>
-
-          <ul
-            tabIndex={0}
-            className="dropdown-content menu p-1.5 shadow-2xl bg-slate-900 border border-slate-800 rounded-xl w-52 mt-1 sm:mt-0 z-30 text-left text-xs space-y-0.5"
-          >
-            <div className="px-2.5 py-1.5 text-[10px] font-black text-slate-500 uppercase tracking-wider border-b border-slate-800/60 mb-1">
-              Select Registry View
-            </div>
-            {filterOptions.map((option) => (
-              <li key={option.value}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveFilter(option.value);
-                    document.activeElement.blur(); // Dismiss dropdown after selection
-                  }}
-                  className={`px-3 py-2 rounded-lg font-medium transition-colors ${
-                    activeFilter === option.value
-                      ? 'bg-blue-500/10 text-blue-400 font-bold'
-                      : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                  }`}
-                >
-                  {option.label}
-                </button>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
 
-      {/* Structured Presentational Log Table */}
-      <UserTableLog users={filteredUsers} onToggleStatus={handleToggleStatus} />
+      {loading ? (
+        <div className="text-slate-500 text-center py-10">Loading...</div>
+      ) : (
+        <>
+          <UserTableLog users={filteredUsers} />
+          
+          {/* DaisyUI Pagination Controls */}
+          <div className="flex justify-center mt-6">
+            <div className="join">
+              <button 
+                className="join-item btn btn-sm bg-slate-900 border-slate-800"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => p - 1)}
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button className="join-item btn btn-sm bg-slate-900 border-slate-800 text-white">
+                Page {currentPage}
+              </button>
+              <button 
+                className="join-item btn btn-sm bg-slate-900 border-slate-800"
+                onClick={() => setCurrentPage(p => p + 1)}
+                disabled={userList.length < pageSize} // Simple check for next page
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
