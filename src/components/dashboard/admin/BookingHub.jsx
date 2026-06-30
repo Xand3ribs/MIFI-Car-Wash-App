@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MapPin, Calendar } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MapPin, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const STATUS_BORDERS = {
   Pending: 'border-l-orange-500',
@@ -20,15 +20,15 @@ const STATUS_BADGES = {
 function BookingHub({ bookings, onSelectBooking }) {
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  
-  const filters = [
-    'All',
-    'Pending',
-    'Confirmed',
-    'Washing',
-    'Completed',
-    'Cancelled',
-  ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+
+  const filters = ['All', 'Pending', 'Confirmed', 'Washing', 'Completed', 'Cancelled'];
+
+  // Reset to page 1 when user filters or searches
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter, searchQuery]);
 
   const getCount = (status) => {
     if (status === 'All') return bookings.length;
@@ -47,23 +47,19 @@ function BookingHub({ bookings, onSelectBooking }) {
       );
     });
 
+  const totalPages = Math.ceil(filteredBookings.length / pageSize);
+  const paginatedBookings = filteredBookings.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
   return (
     <div className="flex-1 lg:h-full overflow-y-auto p-6 min-h-0 border-b lg:border-b-0 lg:border-r border-gray-800 flex flex-col">
       <h2 className="text-2xl font-bold text-white mb-4">Booking Hub</h2>
 
       <label className="input flex items-center gap-2 bg-gray-dark rounded-2xl p-4 text-white border border-border-dark mb-4">
-        <svg
-          className="h-[1em] opacity-50"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-        >
-          <g
-            strokeLinejoin="round"
-            strokeLinecap="round"
-            strokeWidth="2.5"
-            fill="none"
-            stroke="currentColor"
-          >
+        <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2.5" fill="none" stroke="currentColor">
             <circle cx="11" cy="11" r="8"></circle>
             <path d="m21 21-4.3-4.3"></path>
           </g>
@@ -92,14 +88,9 @@ function BookingHub({ bookings, onSelectBooking }) {
               }`}
             >
               <span>{filter}</span>
-              <span
-                className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${isActive ? 'bg-slate-950 bg-opacity-20 text-slate-950' : 'bg-slate-800 text-slate-400'}`}
-              >
+              <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${isActive ? 'bg-slate-950 bg-opacity-20 text-slate-950' : 'bg-slate-800 text-slate-400'}`}>
                 {count}
               </span>
-              {filter === 'Pending' && count > 0 && (
-                <span className="inline-block w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-              )}
             </button>
           );
         })}
@@ -107,7 +98,7 @@ function BookingHub({ bookings, onSelectBooking }) {
 
       <div className="flex-1 min-h-0 overflow-y-auto">
         <div className="flex flex-col gap-3">
-          {filteredBookings.map((booking) => (
+          {paginatedBookings.map((booking) => (
             <div
               key={booking.id}
               onClick={() => onSelectBooking(booking.id)}
@@ -116,20 +107,12 @@ function BookingHub({ bookings, onSelectBooking }) {
             >
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="text-white font-semibold text-base sm:text-lg">
-                    {booking.name}
-                  </h4>
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-md font-medium ${STATUS_BADGES[booking.status]}`}
-                  >
+                  <h4 className="text-white font-semibold text-base sm:text-lg">{booking.name}</h4>
+                  <span className={`text-xs px-2 py-0.5 rounded-md font-medium ${STATUS_BADGES[booking.status]}`}>
                     {booking.status}
                   </span>
                 </div>
-
-                <p className="text-slate-500 text-sm mt-1">
-                  #{booking.number}
-                </p>
-
+                <p className="text-slate-500 text-sm mt-1">#{booking.number}</p>
                 <div className="text-slate-300 text-sm mt-1 flex items-center gap-2">
                   <Calendar size={16} />
                   <div className="flex flex-col xl:flex-row">
@@ -137,23 +120,14 @@ function BookingHub({ bookings, onSelectBooking }) {
                     <span className="text-sm">{booking.time}</span>
                   </div>
                 </div>
-
                 <p className="text-slate-300 text-sm mt-1 flex items-center gap-2">
                   <MapPin size={16} />
                   {booking.address}
                 </p>
-
                 {booking.status !== 'Pending' && (
                   <div className="mt-2 inline-flex items-center gap-1.5 bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-lg">
-                    <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-slate-950 font-black">
-                      W
-                    </div>
-                    <p className="text-slate-300 text-xs font-medium">
-                      Washer:{' '}
-                      <span className="text-white font-semibold">
-                        {booking.assignedWasher || 'Unassigned'}
-                      </span>
-                    </p>
+                    <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-[10px] text-slate-950 font-black">W</div>
+                    <p className="text-slate-300 text-xs font-medium">Washer: <span className="text-white font-semibold">{booking.assignedWasher || 'Unassigned'}</span></p>
                   </div>
                 )}
               </div>
@@ -161,12 +135,34 @@ function BookingHub({ bookings, onSelectBooking }) {
           ))}
 
           {filteredBookings.length === 0 && (
-            <p className="text-slate-500 text-center py-8">
-              No matching bookings found.
-            </p>
+            <p className="text-slate-500 text-center py-8">No matching bookings found.</p>
           )}
         </div>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex justify-center pt-4 border-t border-gray-800 mt-4">
+          <div className="join">
+            <button
+              className="join-item btn btn-sm bg-gray-dark border-border-dark"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(p => p - 1)}
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <button className="join-item btn btn-sm bg-gray-dark border-border-dark text-white cursor-default">
+              Page {currentPage} of {totalPages}
+            </button>
+            <button
+              className="join-item btn btn-sm bg-gray-dark border-border-dark"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(p => p + 1)}
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
