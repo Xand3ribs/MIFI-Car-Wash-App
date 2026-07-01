@@ -17,35 +17,36 @@ export default function ManageWashers() {
   });
 
   // 🟢 Read live washers from your Supabase washer_profiles table on component refresh
-useEffect(() => {
-  async function loadWashers() {
-    try {
-      const { data, error } = await supabase
-        .from('washer_profiles') // 👈 Swapped target table name
-        .select('*');            // 👈 No longer need .eq('role') filter since this table contains ONLY washers
+  useEffect(() => {
+    async function loadWashers() {
+      try {
+        const { data, error } = await supabase
+          .from('washer_profiles') // 👈 Swapped target table name
+          .select('*'); // 👈 No longer need .eq('role') filter since this table contains ONLY washers
 
-      if (error) throw error;
+        if (error) throw error;
 
-      if (data) {
-        // Map new database table columns back to your table roster properties
-        const formattedCrew = data.map((profile) => ({
-          id: profile.id,
-          // Merges first_name and last_name back into your layout visual string
-          name: profile.first_name || profile.last_name 
-            ? `${profile.first_name} ${profile.last_name}`.trim() 
-            : 'Unnamed Operator',
-          phone: profile.phone || 'No Phone',
-          address: profile.address || 'No Address', // Ensure this column matches your table layout setup
-        }));
-        setCrewList(formattedCrew);
+        if (data) {
+          // Map new database table columns back to your table roster properties
+          const formattedCrew = data.map((profile) => ({
+            id: profile.id,
+            // Merges first_name and last_name back into your layout visual string
+            name:
+              profile.first_name || profile.last_name
+                ? `${profile.first_name} ${profile.last_name}`.trim()
+                : 'Unnamed Operator',
+            phone: profile.phone || 'No Phone',
+            address: profile.address || 'No Address', // Ensure this column matches your table layout setup
+          }));
+          setCrewList(formattedCrew);
+        }
+      } catch (err) {
+        console.error('Error fetching live washer registry logs:', err.message);
       }
-    } catch (err) {
-      console.error('Error fetching live washer registry logs:', err.message);
     }
-  }
 
-  loadWashers();
-}, []);
+    loadWashers();
+  }, []);
 
   const handleToggleDuty = (id) => {
     setCrewList((prev) =>

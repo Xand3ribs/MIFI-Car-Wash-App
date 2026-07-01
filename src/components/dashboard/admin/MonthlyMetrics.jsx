@@ -1,7 +1,6 @@
 import React from 'react';
 import { Wallet, CalendarCheck } from 'lucide-react';
 
-
 export default function MonthlyMetrics({
   revenue,
   totalBookings,

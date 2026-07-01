@@ -11,11 +11,13 @@ function HistoryView() {
     async function fetchUserHistory() {
       try {
         setLoading(true);
-        
+
         // 1. Verify active session context
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (!user) {
-          setError("User authentication context missing.");
+          setError('User authentication context missing.');
           return;
         }
 
@@ -36,17 +38,17 @@ function HistoryView() {
           vehicle: b.selected_vehicle || 'No Vehicle Set',
           service: b.selected_service || 'Standard Wash',
           status: b.status || 'Pending',
-          price: Number(b.total_price || 0), 
+          price: Number(b.total_price || 0),
           washerName: b.assigned_washer || 'Unassigned Crew',
           customerName: b.customer_name || 'Client',
           address: b.address || 'No Address Provided',
           timeStarted: b.time_started || '09:00 AM',
-          timeEnded: b.time_ended || '10:15 AM'
+          timeEnded: b.time_ended || '10:15 AM',
         }));
 
         setBookings(mappedHistory);
       } catch (err) {
-        setError(err.message || "Failed to retrieve wash history.");
+        setError(err.message || 'Failed to retrieve wash history.');
       } finally {
         setLoading(false);
       }

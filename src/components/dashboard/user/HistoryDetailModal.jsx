@@ -93,7 +93,7 @@ function HistoryDetailModal({ log, role, onClose }) {
                       <Clock size={11} /> Service Started
                     </span>
                     <span className="font-bold text-slate-300">
-                      {isCancelled ? '---' : (log.timeStarted || '09:14 AM')}
+                      {isCancelled ? '---' : log.timeStarted || '09:14 AM'}
                     </span>
                   </div>
                   <div className="flex flex-col gap-0.5 border-l border-slate-800 pl-3">
@@ -101,7 +101,7 @@ function HistoryDetailModal({ log, role, onClose }) {
                       <Clock size={11} /> Service Completed
                     </span>
                     <span className="font-bold text-slate-300">
-                      {isCancelled ? 'Cancelled' : (log.timeEnded || '10:32 AM')}
+                      {isCancelled ? 'Cancelled' : log.timeEnded || '10:32 AM'}
                     </span>
                   </div>
                 </div>
@@ -117,9 +117,7 @@ function HistoryDetailModal({ log, role, onClose }) {
                     size={16}
                     className="text-slate-500 shrink-0 mt-0.5"
                   />
-                  <p className="leading-relaxed font-medium">
-                    {log.address}
-                  </p>
+                  <p className="leading-relaxed font-medium">{log.address}</p>
                 </div>
               </div>
 
@@ -178,8 +176,12 @@ function HistoryDetailModal({ log, role, onClose }) {
           {/* Action Footer */}
           <div className="pt-4 border-t border-slate-800/80 mt-5">
             {role === 'user' ? (
-              <button 
-                onClick={() => alert('Rebooking implementation scoped for next development task.')}
+              <button
+                onClick={() =>
+                  alert(
+                    'Rebooking implementation scoped for next development task.'
+                  )
+                }
                 className="w-full bg-blue-action text-navy-deep py-3 rounded-xl font-black text-sm shadow-xl hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
               >
                 <ArrowRightLeft size={16} /> Rebook This Exact Clean

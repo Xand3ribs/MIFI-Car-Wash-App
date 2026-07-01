@@ -35,7 +35,8 @@ function WasherDashboardView({ user }) {
         }
 
         // 2. Combine names into a single string to match how your 'bookings' table tracks them
-        const targetWasherName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
+        const targetWasherName =
+          `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
         setWasherName(targetWasherName);
 
         const { data: bookings, error: bookingsErr } = await supabase

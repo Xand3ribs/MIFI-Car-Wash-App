@@ -39,11 +39,13 @@ export default function AppRoutes({ user }) {
             <Navigate to="/login" replace />
           ) : !currentRole ? (
             // FIXED: If the user is authenticated but their role profile is still loading,
-            // freeze evaluation HERE. This prevents deep-linked sub-routes from misfiring 
+            // freeze evaluation HERE. This prevents deep-linked sub-routes from misfiring
             // their fallback redirects.
             <div className="w-full h-screen flex flex-col items-center justify-center bg-[#0D1B2A] gap-2 text-slate-400">
               <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-[10px] font-black tracking-widest uppercase opacity-60">Verifying Profile...</p>
+              <p className="text-[10px] font-black tracking-widest uppercase opacity-60">
+                Verifying Profile...
+              </p>
             </div>
           ) : (
             <DashboardLayout user={user} />

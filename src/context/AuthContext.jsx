@@ -1,7 +1,11 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
 
-const AuthContext = createContext({ user: null, loading: true, signOut: async () => {} });
+const AuthContext = createContext({
+  user: null,
+  loading: true,
+  signOut: async () => {},
+});
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -22,7 +26,7 @@ export function AuthProvider({ children }) {
         return {
           id: sessionUser.id,
           email: sessionUser.email,
-          role: prev?.role || null, 
+          role: prev?.role || null,
           name: prev?.name || '',
         };
       });
@@ -47,18 +51,25 @@ export function AuthProvider({ children }) {
             foundUser = {
               id: sessionUser.id,
               email: sessionUser.email,
-              role: result.table.replace('_profiles', ''), 
+              role: result.table.replace('_profiles', ''),
               name: `${result.data.first_name} ${result.data.last_name}`.trim(),
             };
             break;
           }
         }
       } catch (error) {
-        console.error("Error fetching profile details:", error);
+        console.error('Error fetching profile details:', error);
       }
 
-      setUser(foundUser || { id: sessionUser.id, email: sessionUser.email, role: 'customer', name: 'User' });
-      setLoading(false); 
+      setUser(
+        foundUser || {
+          id: sessionUser.id,
+          email: sessionUser.email,
+          role: 'customer',
+          name: 'User',
+        }
+      );
+      setLoading(false);
     }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -69,13 +80,14 @@ export function AuthProvider({ children }) {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        
         getUserProfile(session.user);
       } else {
         setUser(null);
-        setLoading(false); 
+        setLoading(false);
       }
     });
 
@@ -87,7 +99,11 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut();
   };
 
-  return <AuthContext.Provider value={{ user, loading, signOut }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, loading, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export const useAuth = () => useContext(AuthContext);

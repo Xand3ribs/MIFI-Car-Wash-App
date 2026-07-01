@@ -41,7 +41,7 @@ function AdminDashboardView() {
 
         const mappedWashers = (washersResponse.data || []).map((w) => {
           const fullName = `${w.first_name || ''} ${w.last_name || ''}`.trim();
-          
+
           return {
             id: w.id,
             name: fullName,
@@ -64,7 +64,9 @@ function AdminDashboardView() {
 
   const handleAssignWasher = async (bookingId, washerId) => {
     const selectedWasher = washers.find((w) => w.id === washerId);
-    const newWasherName = selectedWasher ? selectedWasher.name : 'Assigned Crew';
+    const newWasherName = selectedWasher
+      ? selectedWasher.name
+      : 'Assigned Crew';
 
     try {
       const { error: updateError } = await supabase

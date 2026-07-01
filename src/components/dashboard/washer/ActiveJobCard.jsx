@@ -66,7 +66,9 @@ export default function ActiveJobCard({ job, onClick }) {
       className={`bg-gray-dark border ${statusConfig.borderStyle} rounded-2xl p-4 shadow-xl flex flex-col gap-3 cursor-pointer
        transition-all active:scale-[0.99] group relative overflow-hidden`}
     >
-      <div className={`absolute top-0 right-0 left-0 h-[2px] ${statusConfig.bg.split(' ')[0]}`} />
+      <div
+        className={`absolute top-0 right-0 left-0 h-[2px] ${statusConfig.bg.split(' ')[0]}`}
+      />
 
       <div className="flex justify-between items-start">
         <div className="flex-1 min-w-0">
@@ -75,7 +77,9 @@ export default function ActiveJobCard({ job, onClick }) {
               {job.service}
             </span>
 
-            <span className={`text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-md border flex items-center gap-1 ${statusConfig.bg}`}>
+            <span
+              className={`text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-md border flex items-center gap-1 ${statusConfig.bg}`}
+            >
               {statusConfig.icon} {statusConfig.text}
             </span>
           </div>
@@ -116,7 +120,8 @@ export default function ActiveJobCard({ job, onClick }) {
           </p>
         ) : job.status === 'In Progress' ? (
           <p className="text-emerald-400 font-medium">
-            🧼 Currently cleaning! Do not leave page until submission report is filed.
+            🧼 Currently cleaning! Do not leave page until submission report is
+            filed.
           </p>
         ) : (
           <p>
