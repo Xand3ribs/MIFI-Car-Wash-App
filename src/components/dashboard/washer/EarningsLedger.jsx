@@ -1,166 +1,173 @@
-import React, { useState } from 'react';
-import { Landmark, TrendingUp, CalendarDays } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Landmark, CalendarDays } from 'lucide-react';
+import { supabase } from '../../../supabaseClient';
 import MetricCard from './MetricCard';
 import SettlementFilters from './SettlementFilters';
 import SettlementList from './SettlementList';
 import PayoutReceiptModal from './PayoutReceiptModal';
 
+const AVAILABLE_MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+const AVAILABLE_YEARS = ['2024', '2025', '2026'];
+
 export default function EarningsLedger() {
-  const [selectedMonth, setSelectedMonth] = useState('all');
-  const [selectedYear, setSelectedYear] = useState('all');
+  const [rawData, setRawData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [selectedMonth, setSelectedMonth] = useState('All');
+  const [selectedYear, setSelectedYear] = useState('All');
   const [selectedPayout, setSelectedPayout] = useState(null);
 
-  const months = [
-    { value: '01', label: 'January' },
-    { value: '02', label: 'February' },
-    { value: '03', label: 'March' },
-    { value: '04', label: 'April' },
-    { value: '05', label: 'May' },
-    { value: '06', label: 'June' },
-    { value: '07', label: 'July' },
-    { value: '08', label: 'August' },
-    { value: '09', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' },
-  ];
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 30;
 
-  const years = ['2024', '2025', '2026'];
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const performanceStats = [
-    {
-      id: 1,
-      label: 'Payout Method',
-      value: 'Access Bank',
-      subtext: '•••• 4321',
-      icon: Landmark,
-      color: 'text-blue-action',
-    },
-    {
-      id: 2,
-      label: 'This Month',
-      value: '₦32,700',
-      subtext: 'Earned',
-      icon: CalendarDays,
-      color: 'text-amber-400',
-    },
-    {
-      id: 3,
-      label: 'This Week',
-      value: '₦12,800',
-      subtext: 'Earned',
-      icon: TrendingUp,
-      color: 'text-emerald-400',
-    },
-  ];
+  async function fetchData() {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('bookings')
+      .select(
+        'id, total_price, customer_name, status, selected_date, selected_time'
+      )
+      .eq('status', 'Completed')
+      .order('selected_date', { ascending: false });
 
-  const recentPayouts = [
-    {
-      id: 'TXN-1024',
-      date: 'June 04, 2026',
-      rawMonth: '06',
-      rawYear: '2026',
-      amount: '₦14,200',
-      status: 'Settled',
-      bank: 'Access Bank •••• 4321',
-      gross: '₦16,500',
-      fee: '₦2,300',
-    },
-    {
-      id: 'TXN-0981',
-      date: 'May 28, 2026',
-      rawMonth: '05',
-      rawYear: '2026',
-      amount: '₦18,500',
-      status: 'Settled',
-      bank: 'OPay •••• 9876',
-      gross: '₦21,000',
-      fee: '₦2,500',
-    },
-    {
-      id: 'TXN-0842',
-      date: 'March 15, 2025',
-      rawMonth: '03',
-      rawYear: '2025',
-      amount: '₦15,800',
-      status: 'Settled',
-      bank: 'Access Bank •••• 4321',
-      gross: '₦18,000',
-      fee: '₦2,200',
-    },
-    {
-      id: 'TXN-0711',
-      date: 'March 22, 2026',
-      rawMonth: '03',
-      rawYear: '2026',
-      amount: '₦11,000',
-      status: 'Settled',
-      bank: 'OPay •••• 9876',
-      gross: '₦13,000',
-      fee: '₦2,000',
-    },
-    {
-      id: 'TXN-0654',
-      date: 'January 10, 2024',
-      rawMonth: '01',
-      rawYear: '2024',
-      amount: '₦22,400',
-      status: 'Settled',
-      bank: 'Access Bank •••• 4321',
-      gross: '₦25,500',
-      fee: '₦3,100',
-    },
-  ];
+    if (error) console.error('Error fetching:', error);
+    else setRawData(data || []);
+    setLoading(false);
+  }
 
-  const filteredPayouts = recentPayouts.filter((payout) => {
+  const payouts = rawData.map((b) => {
+    const dateObj = new Date(b.selected_date);
+    return {
+      id: b.id,
+      amount: b.total_price || 0,
+      customer_name: b.customer_name || 'N/A',
+      date: `${b.selected_date}`,
+      metaMonth: dateObj.toLocaleString('default', { month: 'long' }),
+      metaYear: dateObj.getFullYear().toString(),
+      status: b.status,
+      gross_amount: b.total_price,
+      fee: Math.floor((b.total_price || 0) * 0.15),
+      bank_details: 'Access Bank •••• 4321',
+    };
+  });
+
+  const filteredData = payouts.filter((p) => {
     const matchesMonth =
-      selectedMonth === 'all' || payout.rawMonth === selectedMonth;
-    const matchesYear =
-      selectedYear === 'all' || payout.rawYear === selectedYear;
+      selectedMonth === 'All' || p.metaMonth === selectedMonth;
+    const matchesYear = selectedYear === 'All' || p.metaYear === selectedYear;
     return matchesMonth && matchesYear;
   });
 
+  useEffect(() => setCurrentPage(1), [selectedMonth, selectedYear]);
+
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const monthlyRevenue = filteredData.reduce(
+    (sum, curr) => sum + curr.amount,
+    0
+  );
+
   return (
-    <div className="p-4 md:p-6 bg-navy-dark min-h-screen text-white relative">
-      {/* SECTION HEADER */}
-      <div className="mb-6 md:mb-8">
-        <h2 className="text-xl md:text-2xl font-black tracking-tight text-slate-100">
-          Earnings History
-        </h2>
-        <p className="text-xs md:text-sm text-slate-400 mt-1"></p>
+    <div className="p-4 md:p-6 bg-navy-dark min-h-screen text-white flex flex-col gap-6">
+      <div className="mb-2">
+        <h2 className="text-2xl font-black tracking-tight">Earnings History</h2>
       </div>
 
-      {/* METRICS GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
-        {performanceStats.map((stat) => (
-          <MetricCard key={stat.id} {...stat} />
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <MetricCard
+          label="Payout Method"
+          value="Access Bank"
+          subtext="•••• 4321"
+          icon={Landmark}
+          color="text-blue-action"
+        />
+
+        <MetricCard
+          label="Earned Monthly"
+          value={`₦${monthlyRevenue.toLocaleString()}`}
+          subtext="Total Payout"
+          icon={CalendarDays}
+          color="text-emerald-400"
+        />
       </div>
 
-      {/* RECENT SETTLEMENTS LEDGER */}
-      <div className="bg-navy-deep border border-slate-800 rounded-2xl shadow-md p-4 md:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h3 className="text-sm md:text-base font-black text-slate-100">
-            Recent Settlements
-          </h3>
-
+      <div className="bg-navy-deep border border-slate-800 rounded-2xl p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <h3 className="font-black">Recent Settlements</h3>
           <SettlementFilters
             selectedMonth={selectedMonth}
             setSelectedMonth={setSelectedMonth}
             selectedYear={selectedYear}
             setSelectedYear={setSelectedYear}
-            months={months}
-            years={years}
+            months={AVAILABLE_MONTHS.map((m) => ({ value: m, label: m }))}
+            years={AVAILABLE_YEARS}
           />
         </div>
 
-        <SettlementList
-          payouts={filteredPayouts}
-          onPayoutClick={setSelectedPayout}
-        />
+        {loading ? (
+          <div className="text-center py-10">Loading...</div>
+        ) : filteredData.length > 0 ? (
+          <SettlementList
+            payouts={paginatedData}
+            onPayoutClick={setSelectedPayout}
+          />
+        ) : (
+          <div className="text-center py-12 border-2 border-dashed border-slate-800 rounded-2xl">
+            <div className="text-slate-500 mb-2">
+              <CalendarDays className="mx-auto h-8 w-8 opacity-50" />
+            </div>
+            <h4 className="text-white font-bold">No settlements found</h4>
+            <p className="text-slate-400 text-sm">
+              There are no completed washes for {selectedMonth} {selectedYear}.
+            </p>
+          </div>
+        )}
+
+        {filteredData.length >= pageSize && (
+          <div className="join mt-6 flex justify-center">
+            <button
+              className="join-item btn btn-sm"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+            >
+              «
+            </button>
+            <button className="join-item btn btn-sm cursor-default">
+              Page {currentPage}
+            </button>
+            <button
+              className="join-item btn btn-sm"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+            >
+              »
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* RESPONSIVE RECEIPT MODAL */}
       <PayoutReceiptModal
         payout={selectedPayout}
         onClose={() => setSelectedPayout(null)}

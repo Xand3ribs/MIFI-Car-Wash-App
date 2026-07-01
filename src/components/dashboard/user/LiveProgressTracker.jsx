@@ -17,7 +17,7 @@ function LiveProgressTracker({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const numericBookingId = parseInt(bookingId, 10);
-  
+
   const isActionLocked = [
     'en route',
     'arrived',
@@ -65,14 +65,18 @@ function LiveProgressTracker({
           <span className="text-[10px] font-bold text-blue-action tracking-widest uppercase bg-blue-action/10 px-2.5 py-1 rounded-md border border-blue-action/20">
             {selectedService}
           </span>
-          <h3 className="text-2xl font-black mt-3 text-slate-100">{selectedVehicle}</h3>
+          <h3 className="text-2xl font-black mt-3 text-slate-100">
+            {selectedVehicle}
+          </h3>
         </div>
 
         <span
           className={`text-xs font-black px-3 py-1.5 rounded-xl border tracking-wide flex items-center gap-1.5 capitalize 
             ${currentWashStatus === 'Completed' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-blue-action/10 text-blue-action border-blue-action/20'}`}
         >
-          <span className={`w-1.5 h-1.5 rounded-full ${currentWashStatus === 'Completed' ? 'bg-emerald-400' : 'bg-blue-action'}`} />
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${currentWashStatus === 'Completed' ? 'bg-emerald-400' : 'bg-blue-action'}`}
+          />
           {currentWashStatus === 'Confirmed' ? 'Queued' : currentWashStatus}
         </span>
       </div>
@@ -86,7 +90,9 @@ function LiveProgressTracker({
             >
               {phase.done ? '✓' : idx + 1}
             </div>
-            <span className={`text-[10px] font-bold tracking-wide ${phase.done ? 'text-slate-200' : 'text-slate-600'}`}>
+            <span
+              className={`text-[10px] font-bold tracking-wide ${phase.done ? 'text-slate-200' : 'text-slate-600'}`}
+            >
               {phase.step}
             </span>
           </div>
@@ -99,8 +105,12 @@ function LiveProgressTracker({
             <Calendar size={18} />
           </div>
           <div>
-            <p className="text-slate-500 text-[10px] uppercase font-bold tracking-wider">Scheduled Date & Time</p>
-            <p className="font-semibold text-slate-200">{selectedDate} at {selectedTime}</p>
+            <p className="text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+              Scheduled Date & Time
+            </p>
+            <p className="font-semibold text-slate-200">
+              {selectedDate} at {selectedTime}
+            </p>
           </div>
         </div>
 
@@ -109,7 +119,9 @@ function LiveProgressTracker({
             <MapPin size={18} />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-slate-500 text-[10px] uppercase font-bold tracking-wider">Service Location</p>
+            <p className="text-slate-500 text-[10px] uppercase font-bold tracking-wider">
+              Service Location
+            </p>
             <p className="font-semibold text-slate-200 truncate">{address}</p>
           </div>
         </div>
@@ -132,8 +144,20 @@ function LiveProgressTracker({
         </button>
       </div>
 
-      <CancelModal isOpen={activeModal === 'cancel'} onClose={() => setActiveModal(null)} onConfirm={handleCancelAction} isSubmitting={isSubmitting} />
-      <RescheduleModal isOpen={activeModal === 'reschedule'} onClose={() => setActiveModal(null)} defaultDate={selectedDate} defaultTime={selectedTime} onConfirm={handleRescheduleAction} isSubmitting={isSubmitting} />
+      <CancelModal
+        isOpen={activeModal === 'cancel'}
+        onClose={() => setActiveModal(null)}
+        onConfirm={handleCancelAction}
+        isSubmitting={isSubmitting}
+      />
+      <RescheduleModal
+        isOpen={activeModal === 'reschedule'}
+        onClose={() => setActiveModal(null)}
+        defaultDate={selectedDate}
+        defaultTime={selectedTime}
+        onConfirm={handleRescheduleAction}
+        isSubmitting={isSubmitting}
+      />
     </div>
   );
 }

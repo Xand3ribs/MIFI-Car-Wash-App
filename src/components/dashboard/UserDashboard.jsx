@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../../supabaseClient'; 
+import { supabase } from '../../supabaseClient';
 
 import LiveProgressTracker from './user/LiveProgressTracker';
 import QuickHistoryCard from './user/QuickHistoryCard';
@@ -44,13 +44,13 @@ function UserDashboard() {
     if (normalized === 'confirmed' || normalized === 'queued') {
       activeIndex = 0;
     } else if (normalized === 'en route') {
-      activeIndex = 1; 
+      activeIndex = 1;
     } else if (normalized === 'arrived') {
-      activeIndex = 2; 
+      activeIndex = 2;
     } else if (normalized === 'in progress' || normalized === 'washing') {
-      activeIndex = 3; 
+      activeIndex = 3;
     } else if (normalized === 'completed' || normalized === 'done') {
-      activeIndex = 4; 
+      activeIndex = 4;
     }
 
     setWashTimeline([
@@ -67,14 +67,16 @@ function UserDashboard() {
 
     const fetchDashboardContext = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (!user) {
           setLoading(false);
           return;
         }
 
         setActiveUser(user);
-        userRefId = user.id; 
+        userRefId = user.id;
 
         // 1. Fetch live active booking
         const { data: bookings, error } = await supabase
@@ -123,7 +125,7 @@ function UserDashboard() {
         console.error('Core Dashboard fetch error:', err);
       } finally {
         // This is now guaranteed to execute no matter what happens above
-        setLoading(false); 
+        setLoading(false);
       }
     };
 
@@ -141,10 +143,10 @@ function UserDashboard() {
 
           if (rowData && rowData.user_id === currentUserId) {
             const statusLower = rowData.status?.toLowerCase();
-            
+
             if (statusLower === 'completed' || statusLower === 'cancelled') {
               setActiveBooking(null);
-              
+
               // If marked complete, dynamically feed into history log view window immediately
               if (statusLower === 'completed') {
                 const freshHistoryRow = {
@@ -186,15 +188,26 @@ function UserDashboard() {
       <div className="max-w-6xl mx-auto flex flex-col gap-8">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b border-border-dark/40 pb-6">
           <div>
-            <h1 className="text-3xl lg:text-5xl font-black tracking-tight">Hello, {firstName}</h1>
-            <p className="text-slate-400 mt-1.5 text-sm lg:text-base font-medium">Welcome back to your premium car care headquarters.</p>
+            <h1 className="text-3xl lg:text-5xl font-black tracking-tight">
+              Hello, {firstName}
+            </h1>
+            <p className="text-slate-400 mt-1.5 text-sm lg:text-base font-medium">
+              Welcome back to your premium car care headquarters.
+            </p>
           </div>
-          <Link to="/booking" className="bg-blue-action text-navy-deep px-6 py-3 rounded-xl font-extrabold text-sm shadow-lg hover:brightness-110 active:scale-[0.98] transition-all self-start md:self-auto">+ Book New Wash</Link>
+          <Link
+            to="/booking"
+            className="bg-blue-action text-navy-deep px-6 py-3 rounded-xl font-extrabold text-sm shadow-lg hover:brightness-110 active:scale-[0.98] transition-all self-start md:self-auto"
+          >
+            + Book New Wash
+          </Link>
         </div>
 
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 pl-1">Live Appointment Tracking</h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 pl-1">
+              Live Appointment Tracking
+            </h2>
             {!activeBooking ? (
               <NoActiveBookingCard />
             ) : (

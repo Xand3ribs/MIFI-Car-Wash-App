@@ -19,7 +19,8 @@ export default function SettingsView({ user }) {
 
   const cleanSubRoute = subRoute?.replace(/^\/|\/$/g, '') || '';
 
-  const activeTab = cleanSubRoute === '' ? (isAdmin ? 'users' : 'profile') : cleanSubRoute;
+  const activeTab =
+    cleanSubRoute === '' ? (isAdmin ? 'users' : 'profile') : cleanSubRoute;
 
   useEffect(() => {
     if (cleanSubRoute === '') {

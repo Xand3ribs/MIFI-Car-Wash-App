@@ -16,7 +16,6 @@ function QuickHistoryCard({ historyData }) {
           className="flex items-center justify-between p-3.5 rounded-xl bg-navy-deep/40 border border-border-dark/30 hover:border-blue-action/40 transition-colors group cursor-pointer"
         >
           <div className="flex items-center gap-3">
-
             {/* <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg">
               <CheckCircle2 size={16} />
             </div> */}

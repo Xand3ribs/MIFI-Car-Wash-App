@@ -22,7 +22,7 @@ export default function ProfileForm() {
       if (!user?.id || !user?.role) return;
 
       setFetchingData(true);
-      
+
       const targetTable =
         user.role === 'admin'
           ? 'admin_profiles'
@@ -31,9 +31,10 @@ export default function ProfileForm() {
             : 'customer_profiles';
 
       try {
-        const selectColumns = user.role === 'admin' 
-          ? 'first_name, last_name, phone' 
-          : 'first_name, last_name, phone, address';
+        const selectColumns =
+          user.role === 'admin'
+            ? 'first_name, last_name, phone'
+            : 'first_name, last_name, phone, address';
 
         const { data, error } = await supabase
           .from(targetTable)
@@ -47,9 +48,9 @@ export default function ProfileForm() {
           setProfileData({
             firstName: data.first_name || '',
             lastName: data.last_name || '',
-            email: user.email || '', 
+            email: user.email || '',
             phone: data.phone || '',
-            address: data.address || '', 
+            address: data.address || '',
           });
         }
       } catch (err) {
@@ -64,8 +65,7 @@ export default function ProfileForm() {
     }
 
     fetchFreshProfileData();
-    // 👇 FIXED: Track the primitive strings, not the whole unstable object
-  }, [user?.id, user?.role]); 
+  }, [user?.id, user?.role]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,7 +97,10 @@ export default function ProfileForm() {
         phone: profileData.phone,
       };
 
-      if (targetTable === 'washer_profiles' || targetTable === 'customer_profiles') {
+      if (
+        targetTable === 'washer_profiles' ||
+        targetTable === 'customer_profiles'
+      ) {
         updatePayload.address = profileData.address;
       }
 

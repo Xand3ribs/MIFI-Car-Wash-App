@@ -5,7 +5,7 @@ export default function SubscriptionManager() {
   return (
     <div className="text-slate-200 flex flex-col gap-4">
       <span className="text-xs text-slate-400 font-bold uppercase tracking-widest">
-        Feature coming soon 
+        Feature coming soon
       </span>
 
       {/* Plan Status Banner */}

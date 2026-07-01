@@ -28,7 +28,9 @@ function MasterHistoryLog({ role = 'user', initialData = [] }) {
   const getMonthFromDateStr = (dateStr) => {
     if (!dateStr || dateStr.includes('Pending')) return null;
     const parsedDate = new Date(dateStr);
-    return isNaN(parsedDate.getTime()) ? null : parsedDate.getMonth().toString();
+    return isNaN(parsedDate.getTime())
+      ? null
+      : parsedDate.getMonth().toString();
   };
 
   const monthFilteredData = initialData.filter((item) => {
@@ -54,10 +56,8 @@ function MasterHistoryLog({ role = 'user', initialData = [] }) {
 
   return (
     <div className="flex flex-col gap-6 w-full relative">
-      
       {/* FILTER CONTROLS ROW */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center w-full">
-        
         {/* Status Tab Group */}
         <div className="flex gap-2 bg-navy-deep/60 border border-slate-800 p-1.5 rounded-xl max-w-full overflow-x-auto">
           {FILTER_TIERS.map((tier) => (
@@ -92,20 +92,23 @@ function MasterHistoryLog({ role = 'user', initialData = [] }) {
             className="w-full sm:w-48 bg-navy-deep/60 border border-slate-800 text-slate-300 rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-blue-action transition-all cursor-pointer"
           >
             {MONTHS.map((m) => (
-              <option key={m.value} value={m.value} className="bg-gray-dark text-white">
+              <option
+                key={m.value}
+                value={m.value}
+                className="bg-gray-dark text-white"
+              >
                 {m.label}
               </option>
             ))}
           </select>
         </div>
-
       </div>
 
       {/* RENDER LIST FEED OF CARDS */}
       <div className="flex flex-col gap-4">
         {finalFilteredData.length === 0 ? (
           <div className="bg-gray-dark border border-slate-800 rounded-2xl p-12 text-center text-slate-500 text-sm">
-            No past washes. Book a wash now 
+            No past washes. Book a wash now
           </div>
         ) : (
           finalFilteredData.map((log) => (

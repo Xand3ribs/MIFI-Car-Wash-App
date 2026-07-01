@@ -3,7 +3,20 @@ import { supabase } from '../../../supabaseClient';
 import MonthlyMetrics from './MonthlyMetrics';
 import FilteredTransactionLedger from './FilteredTransactionLedger';
 
-const AVAILABLE_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const AVAILABLE_MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 const AVAILABLE_YEARS = ['2025', '2026'];
 
 export default function AnalyticsView() {
@@ -12,9 +25,11 @@ export default function AnalyticsView() {
   const [searchQuery, setSearchQuery] = useState(''); // Added Search State
 
   const now = new Date();
-  const [metricsMonth, setMetricsMonth] = useState(now.toLocaleString('default', { month: 'long' }));
+  const [metricsMonth, setMetricsMonth] = useState(
+    now.toLocaleString('default', { month: 'long' })
+  );
   const [metricsYear, setMetricsYear] = useState(now.getFullYear().toString());
-  
+
   const [ledgerMonth, setLedgerMonth] = useState('All');
   const [ledgerYear, setLedgerYear] = useState('All');
 
@@ -26,10 +41,12 @@ export default function AnalyticsView() {
     setLoading(true);
     const { data, error } = await supabase
       .from('bookings')
-      .select('id, customer_name, selected_vehicle, assigned_washer, total_price, status, created_at')
+      .select(
+        'id, customer_name, selected_vehicle, assigned_washer, total_price, status, created_at'
+      )
       .order('created_at', { ascending: false });
 
-    if (error) console.error("Error fetching:", error);
+    if (error) console.error('Error fetching:', error);
     else setRawData(data || []);
     setLoading(false);
   }
@@ -45,14 +62,23 @@ export default function AnalyticsView() {
         washer: t.assigned_washer || 'Unassigned',
         amount: t.total_price || 0,
         status: t.status || 'Pending',
-        date: dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        date: dateObj.toLocaleDateString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric',
+        }),
         metaMonth: dateObj.toLocaleString('default', { month: 'long' }),
         metaYear: dateObj.getFullYear().toString(),
       };
     });
 
-  const filteredMetricsTxns = transactions.filter((t) => t.metaMonth === metricsMonth && t.metaYear === metricsYear);
-  const monthlyRevenue = filteredMetricsTxns.reduce((sum, curr) => sum + curr.amount, 0);
+  const filteredMetricsTxns = transactions.filter(
+    (t) => t.metaMonth === metricsMonth && t.metaYear === metricsYear
+  );
+  const monthlyRevenue = filteredMetricsTxns.reduce(
+    (sum, curr) => sum + curr.amount,
+    0
+  );
 
   return (
     <div className="flex-1 h-full overflow-y-auto bg-navy-deep p-6 text-white flex flex-col gap-6 animate-fadeIn">
@@ -62,18 +88,34 @@ export default function AnalyticsView() {
         </div>
 
         <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 p-1.5 rounded-xl">
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="bg-transparent text-xs text-white outline-none px-2 w-24 sm:w-32"
           />
-          <select value={metricsMonth} onChange={(e) => setMetricsMonth(e.target.value)} className="bg-transparent text-xs text-white font-bold outline-none cursor-pointer">
-            {AVAILABLE_MONTHS.map((m) => <option key={m} value={m}>{m}</option>)}
+          <select
+            value={metricsMonth}
+            onChange={(e) => setMetricsMonth(e.target.value)}
+            className="bg-transparent text-xs text-white font-bold outline-none cursor-pointer"
+          >
+            {AVAILABLE_MONTHS.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
           </select>
-          <select value={metricsYear} onChange={(e) => setMetricsYear(e.target.value)} className="bg-transparent text-xs text-white font-bold outline-none cursor-pointer border-l border-slate-800 pl-2">
-            {AVAILABLE_YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
+          <select
+            value={metricsYear}
+            onChange={(e) => setMetricsYear(e.target.value)}
+            className="bg-transparent text-xs text-white font-bold outline-none cursor-pointer border-l border-slate-800 pl-2"
+          >
+            {AVAILABLE_YEARS.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -90,11 +132,11 @@ export default function AnalyticsView() {
             selectedMonth={metricsMonth}
             selectedYear={metricsYear}
           />
-         <FilteredTransactionLedger
+          <FilteredTransactionLedger
             transactions={transactions}
             searchQuery={searchQuery}
-            selectedMonth={metricsMonth} 
-            selectedYear={metricsYear}   
+            selectedMonth={metricsMonth}
+            selectedYear={metricsYear}
           />
         </>
       )}

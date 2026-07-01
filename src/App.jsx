@@ -1,6 +1,6 @@
 import { HashRouter } from 'react-router-dom';
 import AppRoutes from './routes';
-import { AuthProvider, useAuth } from './context/AuthContext'; 
+import { AuthProvider, useAuth } from './context/AuthContext';
 
 function AppContent() {
   const { user, loading } = useAuth();
