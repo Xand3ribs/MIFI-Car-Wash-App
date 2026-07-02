@@ -14,10 +14,13 @@ function HistoryCard({ log, role, onCardClick }) {
   return (
     <div
       onClick={() => onCardClick(log)}
-      className="bg-gray-dark border border-border-dark rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all hover:border-slate-700/80 hover:bg-slate-900/40 cursor-pointer group"
+      className="bg-gray-dark border border-border-dark rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all 
+      hover:border-slate-700/80 hover:bg-slate-900/40 cursor-pointer group"
     >
+
       {/* Left Core Data Container Block */}
       <div className="flex items-start gap-4">
+
         <div
           className={`p-3 rounded-xl mt-1 shrink-0 ${
             log.status === 'Completed'
@@ -33,6 +36,7 @@ function HistoryCard({ log, role, onCardClick }) {
         </div>
 
         <div className="flex flex-col gap-1">
+          
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-700/40">
               {log.service}
@@ -47,7 +51,6 @@ function HistoryCard({ log, role, onCardClick }) {
             <Car size={18} className="text-blue-action" /> {log.vehicle}
           </h4>
 
-          {/* PERMANENT FIX: Hide assigned operator for cancelled washes when viewed by users */}
           {!(role === 'user' && isCancelled) && (
             <p className="text-xs text-slate-400 leading-normal mt-0.5">
               <span className="font-bold text-slate-500">
@@ -76,12 +79,14 @@ function HistoryCard({ log, role, onCardClick }) {
               e.stopPropagation();
               alert('Rebooking system running...');
             }}
-            className="bg-blue-action text-navy-deep px-4 py-2 rounded-xl font-extrabold text-xs shadow-md hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-1.5"
+            className="bg-blue-action text-navy-deep px-4 py-2 rounded-xl font-extrabold text-xs shadow-md hover:brightness-110 active:scale-[0.98] transition-all 
+            flex items-center gap-1.5"
           >
             <ArrowRightLeft size={12} /> Rebook Wash
           </button>
         ) : (
-          <button className="bg-slate-800 border border-slate-700 hover:bg-slate-700/80 text-slate-200 px-4 py-2 rounded-xl font-extrabold text-xs shadow-md active:scale-[0.98] transition-all flex items-center gap-1.5">
+          <button className="bg-slate-800 border border-slate-700 hover:bg-slate-700/80 text-slate-200 px-4 py-2 rounded-xl font-extrabold text-xs shadow-md 
+          active:scale-[0.98] transition-all flex items-center gap-1.5">
             <FileText size={12} /> View Breakdown
           </button>
         )}
