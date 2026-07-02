@@ -25,7 +25,8 @@ function HistoryDetailModal({ log, role, onClose }) {
 
       {/* Centered Modal Container */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-        <div className="bg-gray-dark border border-slate-800 w-[95%] sm:w-[92%] max-w-md max-h-[90vh] rounded-3xl p-6 shadow-2xl pointer-events-auto flex flex-col justify-between overflow-y-auto animate-zoom-in text-white">
+        <div className="bg-gray-dark border border-slate-800 w-[95%] sm:w-[92%] max-w-md max-h-[90vh] rounded-3xl p-6 shadow-2xl pointer-events-auto 
+        flex flex-col justify-between overflow-y-auto animate-zoom-in text-white">
           <div>
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
@@ -76,7 +77,7 @@ function HistoryDetailModal({ log, role, onClose }) {
                       {log.vehicle}
                     </p>
                     <p className="text-[11px] text-slate-400">
-                      Premium Care Treatment Tier
+                      {log.service}
                     </p>
                   </div>
                 </div>
@@ -139,35 +140,43 @@ function HistoryDetailModal({ log, role, onClose }) {
 
               {/* Pricing Breakdown */}
               <div className="flex flex-col gap-1 mt-1">
+
                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                   Fare Settlement Invoice
                 </p>
+
                 <div className="bg-navy-deep/40 rounded-xl p-3.5 border border-slate-800 text-xs flex flex-col gap-2">
+
                   <div className="flex justify-between text-slate-400">
                     <span>Base Rate</span>
                     <span className="font-mono">
                       ₦{(log.price * 0.85).toLocaleString()}
                     </span>
                   </div>
+
                   <div className="flex justify-between text-slate-400">
                     <span>Eco Water Levy</span>
                     <span className="font-mono">
                       ₦{(log.price * 0.1).toLocaleString()}
                     </span>
                   </div>
+
                   <div className="flex justify-between text-slate-400">
                     <span>Logistics Surcharge</span>
                     <span className="font-mono">
                       ₦{(log.price * 0.05).toLocaleString()}
                     </span>
                   </div>
+
                   <div className="h-px bg-slate-800 my-1" />
+
                   <div className="flex justify-between text-sm font-black text-slate-100">
                     <span>Total Net Paid Balance</span>
                     <span className="font-mono text-blue-action">
                       ₦{log.price.toLocaleString()}
                     </span>
                   </div>
+
                 </div>
               </div>
             </div>

@@ -21,6 +21,7 @@ const MONTHS = [
 ];
 
 function MasterHistoryLog({ role = 'user', initialData = [] }) {
+
   const [filter, setFilter] = useState('all');
   const [selectedMonth, setSelectedMonth] = useState('all');
   const [selectedLog, setSelectedLog] = useState(null);
@@ -56,8 +57,10 @@ function MasterHistoryLog({ role = 'user', initialData = [] }) {
 
   return (
     <div className="flex flex-col gap-6 w-full relative">
+      
       {/* FILTER CONTROLS ROW */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center w-full">
+
         {/* Status Tab Group */}
         <div className="flex gap-2 bg-navy-deep/60 border border-slate-800 p-1.5 rounded-xl max-w-full overflow-x-auto">
           {FILTER_TIERS.map((tier) => (
