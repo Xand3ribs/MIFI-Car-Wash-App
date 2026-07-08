@@ -16,6 +16,7 @@ export default function SettingsView({ user }) {
 
   const isWasher = user?.role === 'washer';
   const isAdmin = user?.role === 'admin';
+  const isCustomer = user?.role === 'customer';
 
   const cleanSubRoute = subRoute?.replace(/^\/|\/$/g, '') || '';
 
@@ -32,7 +33,6 @@ export default function SettingsView({ user }) {
     }
   }, [cleanSubRoute, isAdmin, navigate]);
 
-  // Force absolute path navigation to prevent URL stacking spirals
   const handleTabChange = (pathKey) => {
     navigate(`/account/settings/${pathKey}`);
   };
@@ -64,6 +64,32 @@ export default function SettingsView({ user }) {
       ];
     }
 
+    if (isCustomer) {
+      return [
+        {
+          id: 'profile',
+          label: 'Profile Identity Controls',
+          shorthand: 'Profile',
+          path: 'profile',
+          icon: User,
+        },
+        {
+          id: 'subscription',
+          label: 'Manage Subscription Plan',
+          shorthand: 'Subscription',
+          path: 'subscription',
+          icon: CreditCard,
+        },
+        {
+          id: 'security',
+          label: 'Account Security Tiers',
+          shorthand: 'Security',
+          path: 'security',
+          icon: Shield,
+        },
+      ];
+    }
+
     return [
       {
         id: 'profile',
@@ -73,13 +99,6 @@ export default function SettingsView({ user }) {
         shorthand: 'Profile',
         path: 'profile',
         icon: User,
-      },
-      {
-        id: 'subscription',
-        label: isWasher ? 'Bank Payout Methods' : 'Manage Subscription Plan',
-        shorthand: isWasher ? 'Payout Details' : 'Subscription',
-        path: 'subscription',
-        icon: CreditCard,
       },
       {
         id: 'security',
@@ -93,7 +112,6 @@ export default function SettingsView({ user }) {
 
   const menuItems = getMenuItems();
 
-  // Mobile navigation trigger check against clean route token
   const showingMobileSubPage = menuItems.some(
     (item) => item.path === cleanSubRoute
   );
@@ -128,7 +146,6 @@ export default function SettingsView({ user }) {
                 onChange={() => handleTabChange(item.path)}
               />
               <div className="tab-content bg-gray-dark border-slate-800 max-w-full rounded-3xl p-8 shadow-xl">
-                {/* FIXED: Only render Outlet if we aren't currently waiting on the root redirect framework */}
                 {cleanSubRoute !== '' && <Outlet />}
               </div>
             </React.Fragment>
