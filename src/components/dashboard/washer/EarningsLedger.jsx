@@ -96,13 +96,13 @@ export default function EarningsLedger() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <MetricCard
+        {/* <MetricCard
           label="Payout Method"
           value="Access Bank"
           subtext="•••• 4321"
           icon={Landmark}
           color="text-blue-action"
-        />
+        /> */}
 
         <MetricCard
           label="Earned Monthly"

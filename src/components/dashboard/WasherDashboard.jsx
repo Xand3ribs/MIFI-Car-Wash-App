@@ -21,7 +21,6 @@ function WasherDashboardView({ user }) {
       try {
         setLoading(true);
 
-        // 1. Corrected to fetch from 'washer_profiles' using your exact schema columns
         const { data: profile, error: profileErr } = await supabase
           .from('washer_profiles')
           .select('first_name, last_name')
@@ -34,7 +33,6 @@ function WasherDashboardView({ user }) {
           return;
         }
 
-        // 2. Combine names into a single string to match how your 'bookings' table tracks them
         const targetWasherName =
           `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
         setWasherName(targetWasherName);
@@ -115,7 +113,6 @@ function WasherDashboardView({ user }) {
 
         setJobs(processedJobs);
       } catch (err) {
-        // Unsilenced the logger so you can spot failing RLS policies or column spelling bugs immediately
         console.error('Error compiling washer workflow data:', err);
       } finally {
         setLoading(false);

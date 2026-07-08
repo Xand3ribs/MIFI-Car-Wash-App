@@ -131,17 +131,19 @@ export default function AppRoutes({ user }) {
           <Route path="profile" element={<ProfileForm user={user} />} />
           <Route path="washers" element={<ManageWashers />} />
           <Route path="users" element={<ManageUsers />} />
-          <Route path="address" element={<AddressLedger />} />
-          <Route
+          <Route path="subscription" element={<SubscriptionManager />} />
+
+          {/* <Route path="address" element={<AddressLedger />} /> */}
+          {/* <Route
             path="subscription"
             element={
-              currentRole === 'washer' ? (
+              currentRole === 'user' ? (
                 <PayoutDetails />
               ) : (
                 <SubscriptionManager />
               )
             }
-          />
+          /> */}
           <Route path="security" element={<SecurityTiers />} />
         </Route>
 
