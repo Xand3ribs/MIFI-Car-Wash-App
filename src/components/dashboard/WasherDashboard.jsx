@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ScheduleSummary from './washer/ScheduleSummary';
 import ActiveJobCard from './washer/ActiveJobCard';
 import JobDetailView from './washer/JobDetailView';
@@ -13,7 +14,10 @@ function WasherDashboardView({ user }) {
   const [washerName, setWasherName] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedJob, setSelectedJob] = useState(null);
+  
+  const [searchParams, setSearchParams] = useSearchParams();
 
+  // 1. Fetch all assigned jobs for the washer
   useEffect(() => {
     if (!user?.id) return;
 
@@ -122,6 +126,17 @@ function WasherDashboardView({ user }) {
     fetchWasherWorkflow();
   }, [user?.id]);
 
+  // 2. Automatically select job if ?job=ID is present in the URL once jobs are loaded
+  useEffect(() => {
+    const targetJobId = searchParams.get('job');
+    if (targetJobId && jobs.length > 0) {
+      const foundJob = jobs.find((j) => String(j.id) === String(targetJobId));
+      if (foundJob) {
+        setSelectedJob(foundJob);
+      }
+    }
+  }, [searchParams, jobs]);
+
   const handleCompleteJob = async (jobId, reportData) => {
     try {
       const databaseId = Number(jobId);
@@ -166,7 +181,11 @@ function WasherDashboardView({ user }) {
     return (
       <JobDetailView
         job={selectedJob}
-        onBack={() => setSelectedJob(null)}
+        onBack={() => {
+          setSelectedJob(null);
+          // Clear query params from the URL when going back to the hub
+          setSearchParams({});
+        }}
         onCompleteJob={handleCompleteJob}
         setJobs={setJobs}
       />
@@ -175,6 +194,7 @@ function WasherDashboardView({ user }) {
 
   return (
     <div className="flex flex-col lg:flex-row h-full min-h-0 w-full">
+      
       <div className="flex flex-col gap-6 lg:gap-10 flex-1 p-3">
         <ScheduleSummary
           totalJobs={totalJobs}
@@ -204,7 +224,8 @@ function WasherDashboardView({ user }) {
             upcomingQueue.map((job) => (
               <div
                 key={job.id}
-                className="p-4 bg-gray-dark bg-opacity-60 border border-border-dark rounded-xl flex items-center justify-between gap-4"
+                className="p-4 bg-gray-dark bg-opacity-60 border border-border-dark rounded-xl flex items-center justify-between gap-4 cursor-pointer hover:border-blue-500/50 transition-colors"
+                onClick={() => setSelectedJob(job)}
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">

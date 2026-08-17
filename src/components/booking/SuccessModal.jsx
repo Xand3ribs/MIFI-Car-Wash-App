@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 
 export default function SuccessModal({ isLoggedIn, activeUser, userInfo }) {
-  // 1. Compute display name safely
   const getDisplayName = () => {
     if (userInfo?.firstName) return userInfo.firstName;
     if (activeUser?.user_metadata?.first_name)
@@ -9,14 +8,12 @@ export default function SuccessModal({ isLoggedIn, activeUser, userInfo }) {
     return 'Client';
   };
 
-  // 2. Compute the correct dashboard redirect path based on user role
   const getDashboardRedirectPath = () => {
-    // Check metadata role first (or fallback to activeUser context role)
     const role = activeUser?.user_metadata?.role || activeUser?.role;
 
     if (role === 'admin') return '/account/admin/dashboard';
     if (role === 'washer') return '/account/washer/dashboard';
-    return '/account/dashboard'; // Default client dashboard
+    return '/account/dashboard'; 
   };
 
   const displayName = getDisplayName();
@@ -24,7 +21,8 @@ export default function SuccessModal({ isLoggedIn, activeUser, userInfo }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-deep/80 backdrop-blur-sm px-4">
-      <div className="w-full max-w-md bg-gray-dark border border-border-dark rounded-3xl p-8 text-center shadow-[0_0_60px_rgba(0,200,255,0.1)] animate-in fade-in zoom-in-95 duration-200">
+      <div className="w-full max-w-md bg-gray-dark border border-border-dark rounded-3xl p-8 text-center 
+      shadow-[0_0_60px_rgba(0,200,255,0.1)] animate-in fade-in zoom-in-95 duration-200">
         {/* Animated Green Checkmark Badge */}
         <div className="flex justify-center mb-6">
           <div className="relative">
@@ -61,7 +59,8 @@ export default function SuccessModal({ isLoggedIn, activeUser, userInfo }) {
         {/* Action Button — Now completely dynamic! */}
         <Link
           to={redirectPath}
-          className="block w-full py-4 rounded-2xl bg-blue-action text-navy-deep font-bold text-lg transition-all duration-200 shadow-[0_0_24px_rgba(0,200,255,0.3)] hover:brightness-110 active:scale-[0.98]"
+          className="block w-full py-4 rounded-2xl bg-blue-action text-navy-deep font-bold text-lg transition-all 
+          duration-200 shadow-[0_0_24px_rgba(0,200,255,0.3)] hover:brightness-110 active:scale-[0.98]"
         >
           Go to Dashboard
         </Link>

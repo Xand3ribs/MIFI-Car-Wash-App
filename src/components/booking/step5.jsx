@@ -62,7 +62,6 @@ function Step5({
   isLoggedIn,
   activeUser,
 }) {
-  // Pull rich data from config so Step5 can show price + duration without extra props
   const vehicleData = VEHICLES.find((v) => v.name === selectedVehicle);
   const serviceData = SERVICES.find((s) => s.name === selectedService);
   const estimatedTotal = (vehicleData?.price ?? 0) + (serviceData?.price ?? 0);
@@ -74,7 +73,7 @@ function Step5({
     ? activeUser?.user_metadata?.last_name
     : userInfo.lastName;
   const email = isLoggedIn ? activeUser?.email : userInfo.email;
-  const phone = isLoggedIn ? activeUser?.user_metadata?.phone : userInfo.phone;
+  const phone = isLoggedIn ? activeUser?.phone : userInfo.phone;
 
   return (
     <div className="flex flex-col gap-8 w-full animate-[fadeSlideUp_0.35s_ease_both]">

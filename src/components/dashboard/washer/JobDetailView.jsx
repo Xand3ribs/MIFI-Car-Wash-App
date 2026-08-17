@@ -62,7 +62,10 @@ export default function JobDetailView({
 
     try {
       const databaseId = Number(job.id);
-      if (!databaseId || isNaN(databaseId)) return;
+      if (!databaseId || isNaN(databaseId)) {
+        console.error('Invalid database ID:', job.id);
+        return;
+      }
 
       const { data, error } = await supabase
         .from('bookings')
@@ -70,8 +73,89 @@ export default function JobDetailView({
         .eq('id', databaseId)
         .select();
 
-      if (error) throw error;
-      if (!data || data.length === 0) return;
+      if (error) {
+        console.error('Booking status update failed:', error.message);
+        return;
+      }
+      if (!data || data.length === 0) {
+        console.error('No booking found to update for ID:', databaseId);
+        return;
+      }
+
+      const updatedBooking = data[0];
+      const rawNumberString = String(job.number || databaseId).replace(/\D/g, '');
+      const paddedNumber = rawNumberString ? rawNumberString.padStart(2, '0') : String(databaseId);
+      const formattedBookingId = `BK-00${paddedNumber}`;
+      const washerName = updatedBooking.assigned_washer || job.assignedWasher || job.assigned_washer || 'Your assigned washer';
+
+      const { data: adminRecord, error: adminError } = await supabase
+        .from('admin_profiles')
+        .select('id')
+        .limit(1)
+        .single();
+
+      if (adminError) {
+        console.error('Failed to fetch admin profile:', adminError.message);
+      }
+
+      const notificationsToInsert = [];
+      const customerId = job.user_id || job.customer_id;
+
+      let adminTitle = '';
+      let adminMessage = '';
+      let customerTitle = '';
+      let customerMessage = '';
+
+      if (nextStatus === 'En Route') {
+        adminTitle = 'Washer En Route';
+        adminMessage = `${washerName} is on their way to customer ${job.name} for Booking ${formattedBookingId}.`;
+        customerTitle = 'Washer On The Way';
+        customerMessage = `${washerName} is on the way to your location!`;
+      } else if (nextStatus === 'Arrived') {
+        adminTitle = 'Washer Arrived';
+        adminMessage = `${washerName} has arrived at the location for Booking ${formattedBookingId}.`;
+        customerTitle = 'Washer Arrived';
+        customerMessage = `${washerName} has arrived at your location.`;
+      } else if (nextStatus === 'Washing') {
+        adminTitle = 'Wash Started';
+        adminMessage = `Wash has officially started by ${washerName} for Booking ${formattedBookingId}.`;
+        customerTitle = 'Wash Started';
+        customerMessage = `${washerName} has started washing your vehicle!`;
+      }
+
+      if (adminRecord?.id && adminTitle) {
+        notificationsToInsert.push({
+          user_id: adminRecord.id,
+          role: 'admin',
+          title: adminTitle,
+          message: adminMessage,
+          booking_id: databaseId,
+          is_read: false,
+        });
+      }
+
+      if (customerId && customerTitle) {
+        notificationsToInsert.push({
+          user_id: customerId,
+          role: 'customer',
+          title: customerTitle,
+          message: customerMessage,
+          booking_id: databaseId,
+          is_read: false,
+        });
+      }
+
+      if (notificationsToInsert.length > 0) {
+        const { error: notifError } = await supabase
+          .from('notifications')
+          .insert(notificationsToInsert);
+
+        if (notifError) {
+          console.error('SUPABASE NOTIFICATION INSERT ERROR:', notifError.message);
+        } else {
+          console.log('Notifications inserted successfully!');
+        }
+      }
 
       setCurrentStatus(nextStatus);
       if (setJobs) {
@@ -80,7 +164,124 @@ export default function JobDetailView({
         );
       }
     } catch (err) {
-      // Handled securely
+      console.error('Unexpected workflow error caught:', err);
+    }
+  };
+
+  const handleCompleteJobWithNotifications = async (jobId, formData) => {
+    try {
+      const databaseId = Number(jobId);
+      if (!databaseId || isNaN(databaseId)) return;
+
+      const imageUrls = [];
+
+      // 1. Upload proof-of-work images to Supabase Storage bucket ('job-reports')
+      if (formData.images && formData.images.length > 0) {
+        for (let i = 0; i < formData.images.length; i++) {
+          const file = formData.images[i];
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${databaseId}_${Date.now()}_${i}.${fileExt}`;
+          const filePath = `${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('job-reports')
+            .upload(filePath, file);
+
+          if (uploadError) {
+            console.error('Image upload failed:', uploadError.message);
+          } else {
+            const { data: publicUrlData } = supabase.storage
+              .from('job-reports')
+              .getPublicUrl(filePath);
+
+            if (publicUrlData?.publicUrl) {
+              imageUrls.push(publicUrlData.publicUrl);
+            }
+          }
+        }
+      }
+
+      // 2. Update booking status and save report details into precise columns
+      const { data, error } = await supabase
+        .from('bookings')
+        .update({ 
+          status: 'Completed',
+          preexisting_conditions: formData.issues || {},      // JSONB checkboxes state
+          proof_images: imageUrls,                            // Array of public storage URLs
+          operational_notes: formData.washerNotes || ''       // Optional operational notes text
+        })
+        .eq('id', databaseId)
+        .select();
+
+      if (error) {
+        console.error('Failed to complete booking:', error.message);
+        return;
+      }
+
+      const updatedBooking = data[0];
+      const rawNumberString = String(updatedBooking.number || databaseId).replace(/\D/g, '');
+      const paddedNumber = rawNumberString ? rawNumberString.padStart(2, '0') : String(databaseId);
+      const formattedBookingId = `BK-00${paddedNumber}`;
+      const washerName = updatedBooking.assigned_washer || job.assignedWasher || job.assigned_washer || 'Your assigned washer';
+
+      const { data: adminRecord, error: adminError } = await supabase
+        .from('admin_profiles')
+        .select('id')
+        .limit(1)
+        .single();
+
+      if (adminError) {
+        console.error('Failed to fetch admin profile:', adminError.message);
+      }
+
+      const notificationsToInsert = [];
+      const customerId = updatedBooking.user_id || updatedBooking.customer_id;
+
+      const adminTitle = 'Wash Completed';
+      const adminMessage = `Wash has been completed by ${washerName} for Booking ${formattedBookingId}.`;
+      const customerTitle = 'Wash Completed';
+      const customerMessage = `Your vehicle wash has been completed by ${washerName}! Thank you for choosing us.`;
+
+      if (adminRecord?.id) {
+        notificationsToInsert.push({
+          user_id: adminRecord.id,
+          role: 'admin',
+          title: adminTitle,
+          message: adminMessage,
+          booking_id: databaseId,
+          is_read: false,
+        });
+      }
+
+      if (customerId) {
+        notificationsToInsert.push({
+          user_id: customerId,
+          role: 'customer',
+          title: customerTitle,
+          message: customerMessage,
+          booking_id: databaseId,
+          is_read: false,
+        });
+      }
+
+      if (notificationsToInsert.length > 0) {
+        const { error: notifError } = await supabase
+          .from('notifications')
+          .insert(notificationsToInsert);
+
+        if (notifError) {
+          console.error('SUPABASE NOTIFICATION INSERT ERROR:', notifError.message);
+        } else {
+          console.log('Completion notifications sent successfully!');
+        }
+      }
+
+      setCurrentStatus('Completed');
+      if (typeof onCompleteJob === 'function') {
+        onCompleteJob(jobId, formData);
+      }
+    } catch (err) {
+      console.error('Unexpected error completing job:', err);
     }
   };
 
@@ -313,7 +514,7 @@ export default function JobDetailView({
             </>
           ) : (
             <JobReportForm
-              onSubmit={(formData) => onCompleteJob(job.id, formData)}
+              onSubmit={(formData) => handleCompleteJobWithNotifications(job.id, formData)}
             />
           )}
         </div>
