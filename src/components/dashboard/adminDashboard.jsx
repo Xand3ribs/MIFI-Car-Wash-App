@@ -63,33 +63,67 @@ function AdminDashboardView() {
   }, []);
 
   const handleAssignWasher = async (bookingId, washerId) => {
-    const selectedWasher = washers.find((w) => w.id === washerId);
-    const newWasherName = selectedWasher
-      ? selectedWasher.name
-      : 'Assigned Crew';
+  // Create the formatted ID string (e.g., BK-0017)
+  const formattedBookingId = `BK-00${bookingId}`;
 
+  const selectedWasher = washers.find((w) => w.id === washerId);
+  const newWasherName = selectedWasher ? selectedWasher.name : 'Assigned Crew';
+
+  try {
+    const { error: updateError } = await supabase
+      .from('bookings')
+      .update({
+        status: 'Confirmed',
+        assigned_washer: newWasherName,
+      })
+      .eq('id', bookingId);
+
+    if (updateError) throw updateError;
+
+    // Use the formattedBookingId here instead of the raw bookingId number
+    await sendNotification(
+      washerId, 
+      "New Wash Assigned!", 
+      `You have been assigned to order #${formattedBookingId}. Check your dashboard for details.`,
+      'washer',
+      bookingId // Keep this as the raw ID for the database column!
+    );
+
+    setBookings((prevBookings) =>
+      prevBookings.map((b) =>
+        b.id === bookingId
+          ? { ...b, status: 'Confirmed', assignedWasher: newWasherName }
+          : b
+      )
+    );
+  } catch (err) {
+    console.error("Assignment error:", err);
+  }
+};
+
+  const sendNotification = async (userId, title, message, role, bookingId) => {
     try {
-      const { error: updateError } = await supabase
-        .from('bookings')
-        .update({
-          status: 'Confirmed',
-          assigned_washer: newWasherName,
-        })
-        .eq('id', bookingId);
-
-      if (updateError) throw updateError;
-
-      setBookings((prevBookings) =>
-        prevBookings.map((b) =>
-          b.id === bookingId
-            ? { ...b, status: 'Confirmed', assignedWasher: newWasherName }
-            : b
-        )
-      );
-
-      // 👈 CHANGED: Removed the setWashers state update entirely so they stay 'Available'
+      const { data, error } = await supabase.from('notifications').insert([
+        {
+          user_id: userId,
+          title,
+          message,
+          role,
+          booking_id: bookingId,
+          is_read: false,
+        },
+      ]);
+      
+      if (error) {
+        // Change the log to show the detailed error object
+        console.error('Detailed Supabase Error:', error.message);
+        console.error('Hint:', error.hint);
+        console.error('Details:', error.details);
+      } else {
+        console.log('Notification successfully inserted!');
+      }
     } catch (err) {
-      // Error handled silently as before
+      console.error('General Dispatcher Error:', err);
     }
   };
 

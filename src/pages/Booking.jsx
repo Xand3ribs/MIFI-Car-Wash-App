@@ -100,19 +100,38 @@ function Booking() {
       if (!targetUserId)
         throw new Error('User validation failed. Register or log back in.');
 
-      const { error: bookingError } = await supabase.from('bookings').insert([
-        {
-          user_id: targetUserId,
-          customer_name: customerName,
-          selected_vehicle: selectedVehicle,
-          selected_service: selectedService,
-          address,
-          selected_date: selectedDate,
-          selected_time: selectedTime,
-        },
-      ]);
+      // 1. Insert the booking and return the created record to get its ID
+      const { data: newBooking, error: bookingError } = await supabase
+        .from('bookings')
+        .insert([
+          {
+            user_id: targetUserId,
+            customer_name: customerName,
+            selected_vehicle: selectedVehicle,
+            selected_service: selectedService,
+            address,
+            selected_date: selectedDate,
+            selected_time: selectedTime,
+          },
+        ])
+        .select()
+        .single();
 
       if (bookingError) throw bookingError;
+
+      // 2. Trigger notification for your Admin
+      const { error: notifError } = await supabase.from('notifications').insert({
+        user_id: '0d92e9e3-e305-452e-8e29-7725cdda1d2b', // Replace with your actual admin user UUID string
+        title: 'New Booking Created',
+        message: `Customer ${customerName} booked a ${selectedService} for ${selectedVehicle} on ${selectedDate} at ${selectedTime}.`,
+        booking_id: newBooking.id,
+        is_read: false,
+      });
+
+      if (notifError) {
+        console.error('Error sending admin notification:', notifError);
+      }
+
       setIsLoggedIn(true);
       setIsSuccess(true);
     } catch (error) {
