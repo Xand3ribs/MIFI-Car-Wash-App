@@ -120,7 +120,7 @@ function ServiceCard({ service, index, isVisible }) {
       </ul>
 
       {/* CTA */}
-      <Link
+      {/* <Link
         to="/booking"
         className={`
           group flex items-center justify-center gap-2
@@ -138,7 +138,7 @@ function ServiceCard({ service, index, isVisible }) {
           size={14}
           className="transition-transform duration-200 group-hover:translate-x-0.5"
         />
-      </Link>
+      </Link> */}
     </div>
   );
 }

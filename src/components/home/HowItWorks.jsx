@@ -1,29 +1,34 @@
-// components/home/HowItWorks.jsx
-import { MapPin, CalendarCheck, Truck, Star } from 'lucide-react';
+import { MapPin, CalendarCheck, Truck, Star, MousePointerClick  } from 'lucide-react';
 import { useInView } from '../../hooks/useInView';
 
 const STEPS = [
   {
-    icon: MapPin,
+    icon: MousePointerClick,
     number: '01',
+    title: 'Chose Your Service',
+    body: 'Choose from our premium car wash packages, ranging from a basic exterior wash to full-service detailing.',
+  },
+  {
+    icon: MapPin,
+    number: '02',
     title: 'Enter Your Location',
     body: 'Drop a pin or type your address. We come to you — at home, the office, wherever your car is parked.',
   },
   {
     icon: CalendarCheck,
-    number: '02',
-    title: 'Pick a Time',
+    number: '03',
+    title: 'Pick a Date & Time',
     body: 'Choose a date and time slot that fits your schedule. Same-day bookings available.',
   },
   {
     icon: Truck,
-    number: '03',
+    number: '04',
     title: 'We Arrive & Wash',
     body: 'Our licensed pro arrives with all equipment. Zero effort on your end — not even moving the car.',
   },
   {
     icon: Star,
-    number: '04',
+    number: '05',
     title: 'Drive Away Spotless',
     body: 'Inspect your car, rate the wash in the app, and repeat whenever you need us.',
   },
@@ -45,11 +50,11 @@ function Step({ step, index, isVisible, isLast }) {
       {/* Icon circle */}
       <div className="relative mb-5">
         <div
-          className="w-16 h-16 rounded-2xl flex items-center justify-center
+          className="w-10 h-10 rounded-2xl flex items-center justify-center
             bg-[#1565C0]/15 border border-[#1565C0]/35
             shadow-[0_0_24px_rgba(21,101,192,0.15)]"
         >
-          <Icon size={26} className="text-[#42A5F5]" strokeWidth={1.75} />
+          <Icon size={22} className="text-[#42A5F5]" strokeWidth={1.75} />
         </div>
 
         {/* Step number badge */}
@@ -147,7 +152,7 @@ function HowItWorks() {
         </div>
 
         {/* Steps grid — 4-column desktop, 1-column mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-0 lg:gap-4 relative">
+        <div className="grid grid-cols-1  lg:grid-cols-3 2xl:grid-cols-5 gap-0 lg:gap-4 relative">
           {STEPS.map((step, i) => (
             <Step
               key={step.number}
