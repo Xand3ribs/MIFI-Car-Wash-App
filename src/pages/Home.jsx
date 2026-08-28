@@ -13,7 +13,7 @@ function Home() {
   const contactUsRef = useRef(null);
 
   const sectionRefs = {
-    services: servicesRef,
+    'services': servicesRef,
     'how-it-works': howItWorksRef,
     'contact-us': contactUsRef,
   };
