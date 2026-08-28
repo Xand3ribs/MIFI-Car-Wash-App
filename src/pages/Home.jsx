@@ -8,12 +8,10 @@ import HowItWorks from '../components/home/HowItWorks';
 import ContactUs from '../components/home/ContactUs';
 
 function Home() {
-  // Create solid references to your DOM elements
   const servicesRef = useRef(null);
   const howItWorksRef = useRef(null);
   const contactUsRef = useRef(null);
 
-  // Group them neatly into an object map to give to the header
   const sectionRefs = {
     services: servicesRef,
     'how-it-works': howItWorksRef,
@@ -22,13 +20,11 @@ function Home() {
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-[#0D1B2A] overflow-x-hidden">
-      {/* Pass the refs object into your header */}
       <Header sectionRefs={sectionRefs} />
 
       <main>
         <Hero />
 
-        {/* Attach the refs directly to your section containers */}
         <section id="services" ref={servicesRef}>
           <Services />
         </section>
